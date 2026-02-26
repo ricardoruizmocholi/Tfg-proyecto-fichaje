@@ -1,0 +1,310 @@
+
+.filter-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-form {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+
+.stats-info {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table-container {
+    background: white;
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.fichajes-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.fichajes-table th {
+    background: #667eea;
+    color: white;
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.fichajes-table td {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.fila-completo {
+    background-color: #d4edda73;
+}
+
+.fila-proceso {
+    background-color: #fff3cd86;
+}
+.fila-completo td:first-child {
+    border-left: 2px solid #28a745 !important;
+}
+
+.fila-proceso td:first-child {
+    border-left: 2px solid #ffc107 !important;
+}
+
+/* Opcional: un efecto hover para que se vea qué línea estás mirando */
+.fichajes-table tr:hover {
+    background-color: #ffffff;
+}
+
+
+.horas-badge {
+    background: #667eea;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-save,
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    transition: transform 0.2s;
+}
+
+.btn-save:hover,
+.btn-delete:hover {
+    transform: scale(1.2);
+}
+
+.no-results {
+    background: white;
+    padding: 40px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    margin: 3% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: slideDown 0.3s;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-content h3 {
+    clear: both;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+}
+/* Estilo base para todos los inputs y selects */
+.filter-group input,
+.filter-group select,
+.input-text,
+.input-time,
+.form-group input,
+.form-group select {
+    padding: 10px 14px; /* Un poco más de aire */
+    border: 1.5px solid #e0e0e0; /* Borde más fino y gris claro */
+    border-radius: 6px; /* Esquinas ligeramente más redondeadas */
+    font-size: 14px;
+    color: #333;
+    background-color: #fcfcfc;
+    transition: all 0.2s ease-in-out; /* Transición suave para el foco */
+    width: 100%;
+    box-sizing: border-box; /* Para que el padding no rompa el ancho */
+}
+
+/* Efecto cuando el usuario hace clic (Focus) */
+.filter-group input:focus,
+.filter-group select:focus,
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea; /* Tu color principal */
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1); /* "Aura" azul sutil alrededor */
+}
+
+/* Estilo para los Labels (etiquetas) */
+.filter-group label,
+.form-group label {
+    font-weight: 600;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 6px;
+    text-transform: uppercase; /* Queda muy limpio en admins */
+    letter-spacing: 0.5px;
+}
+
+.filter-group select, 
+.form-group select,
+.input-select {
+    padding: 10px 35px 10px 14px; /* Más espacio a la derecha para la flecha */
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    background-color: #fcfcfc;
+    
+    /* ESTO ES LO MÁS IMPORTANTE */
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    /* Añadimos una flechita sutil propia */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C2.185 5.355 2.403 5 2.808 5h9.432c.405 0 .623.355.357.658l-4.796 5.482a.503.503 0 0 1-.754 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 12px) center;
+    background-size: 12px;
+    
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* El mismo efecto de Focus que los inputs */
+.filter-group select:focus, 
+.form-group select:focus {
+    border-color: #667eea;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}

@@ -1,0 +1,138 @@
+/* Paleta de colores coherente */
+:root {
+    --primary: #5c7bf7;
+    --primary-light: #edf2ff;
+    --success: #2f9e44;
+    --warning: #f08c00;
+    --danger: #e03131;
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --bg-card: #ffffff;
+    --border-color: #e1e4e8;
+}
+
+/* Contenedor principal */
+.fichaje-wrapper {
+    padding: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Tarjetas de filtro con "calidez" */
+.filter-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07); /* Sombra suave para dar profundidad */
+}
+
+.new-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.f-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.f-control {
+    width: 100%;
+    border: 1.5px solid var(--border-color);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.f-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(74, 108, 247, 0.1);
+}
+
+/* Botones con degradados sutiles */
+.btn-search {
+    background: linear-gradient(135deg, var(--primary) 0%, #3451d1 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(74, 108, 247, 0.2);
+}
+
+.btn-reset {
+    background: #f8f9fa;
+    color: var(--text-muted);
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+/* Diseño de Tablas por Día */
+.day-container {
+    background: var(--bg-card);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 30px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.day-header {
+    background: var(--primary);
+    padding: 15px 25px;
+    font-weight: 700;
+    color: var(--bg-card);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.f-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.f-table th {
+    padding: 15px 25px;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.f-table td {
+    padding: 18px 25px;
+    border-bottom: 1px solid #f8f9fa;
+    font-size: 0.95rem;
+}
+
+/* Badges de Estado */
+.st-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.st-badge.ausente { background: #fff5f5; color: var(--danger); }
+.st-badge.proceso { background: #fff9db; color: var(--warning); }
+.st-badge.ok { background: #ebfbee; color: var(--success); }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

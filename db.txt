@@ -1,0 +1,443 @@
+USE sistema_fichajes;
+
+SET FOREIGN_KEY_CHECKS = 0;
+SET SQL_SAFE_UPDATES = 0;
+
+
+select * from empresa;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- Agregar columna para la foto de perfil (si no existe)
+ALTER TABLE USUARIO ADD COLUMN foto_perfil VARCHAR(255) DEFAULT 'uploads/perfil_default.png';
+UPDATE USUARIO 
+SET foto_perfil = 'secciones/uploads/perfil_default.jpg'
+WHERE foto_perfil = 'secciones/uploads/perfil_defauld.jpg';
+-- Agregar columna created_at si no existe (opcional, para mostrar desde cuándo es usuario)
+ALTER TABLE USUARIO ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+
+-- Usuarios (contraseñas en texto plano para luego hashear)
+INSERT INTO USUARIO (id_usuario, nombre, apellidos, NIF, Numero_Afiliciacion, email, password_hash, activo) VALUES
+(5, 'Ricardo', 'Ruiz', '12332678A', 'AFF163456', 'ricardo.ruiz@alu.ceacfp.es', 'password1', 1);
+
+-- Empresa_usuario
+INSERT INTO EMPRESA_USUARIO (id_empresa, id_usuario, admin, activo) VALUES
+-- (1, 1, 1, 1), -- Ricardo admin en Ensenyem(2, 2, 1, 1), -- Ana admin en SM(1, 3, 0, 1), -- Luis empleado en Ensenyem(2, 4, 0, 1); -- Marta empleado en SM
+(2,5,1,1); -- Ricardo admin un SM
+-- Fichaje
+INSERT INTO FICHAJE (id_fichaje, id_usuario, fecha, hora_entrada, hora_pausa, hora_reanudacion, hora_salida, tipo, observaciones) VALUES
+
+(5, 5, '2025-11-01', '09:15:00', '13:15:00', '14:00:00', '18:15:00', 'normal', 'Reunión por la tarde');
+
+
+
+-- Vacaciones
+INSERT INTO VACACIONES (id_vacacion, id_usuario, fecha_inicio, fecha_fin, dias_totales, estado, comentario, fecha_solicitud, fecha_resolucion) VALUES
+(1, 1, '2025-12-20', '2025-12-24', 5, 'pendiente', 'Vacaciones Navidad', '2025-11-01', NULL),
+(2, 2, '2025-08-01', '2025-08-15', 15, 'aprobado', 'Vacaciones verano', '2025-06-10', '2025-06-20'),
+(3, 3, '2025-07-10', '2025-07-20', 11, 'rechazado', 'Vacaciones verano', '2025-06-15', '2025-06-30'),
+(4, 4, '2025-11-25', '2025-11-29', 5, 'pendiente', 'Vacaciones noviembre', '2025-11-01', NULL);
+ALTER TABLE VACACIONES 
+ADD COLUMN id_solicitud INT NULL AFTER id_vacacion,
+ADD CONSTRAINT fk_vacaciones_solicitud 
+FOREIGN KEY (id_solicitud) REFERENCES SOLICITUDES_HORARIO(id_solicitud) ON DELETE SET NULL;
+
+
+-- Vacaciones_acumulado
+INSERT INTO VACACIONES_ACUMULADO (id_vacaciones_acum, id_usuario, año, dias_totales, dias_utilizados, dias_restantes) VALUES
+(1, 1, 2025, 30, 5, 25),
+(2, 2, 2025, 25, 15, 10),
+(3, 3, 2025, 20, 11, 9),
+(4, 4, 2025, 28, 0, 28);
+
+
+
+CREATE TABLE HORARIOS (
+    id_horario INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_empresa INT NOT NULL,
+    fecha DATE NOT NULL,
+    tipo_jornada ENUM('TRABAJO', 'VACACIONES', 'MEDICO', 'LIBRE', 'FESTIVO') DEFAULT 'TRABAJO',
+    hora_inicio TIME NULL,
+    hora_fin TIME NULL,
+    horas_totales DECIMAL(4,2) NULL,
+    observaciones TEXT NULL,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_empresa) REFERENCES EMPRESA(id_empresa) ON DELETE CASCADE,
+    UNIQUE KEY unico_fecha_usuario (id_usuario, id_empresa, fecha),
+    INDEX idx_fecha (fecha),
+    INDEX idx_usuario_fecha (id_usuario, fecha)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Horarios aprobados por fecha';
+
+-- TABLA: SOLICITUDES_HORARIO
+-- Almacena las peticiones pendientes de validación
+CREATE TABLE SOLICITUDES_HORARIO (
+    id_solicitud INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_empresa INT NOT NULL,
+    tipo_solicitud ENUM('HORARIO_MES', 'VACACIONES', 'MEDICO') NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NULL,
+    estado ENUM('PENDIENTE', 'APROBADO', 'RECHAZADO') DEFAULT 'PENDIENTE',
+    motivo_rechazo TEXT NULL,
+    observaciones TEXT NULL,
+    validado_por INT NULL,
+    validado_en TIMESTAMP NULL,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_empresa) REFERENCES EMPRESA(id_empresa) ON DELETE CASCADE,
+    FOREIGN KEY (validado_por) REFERENCES USUARIO(id_usuario) ON DELETE SET NULL,
+    INDEX idx_estado (estado),
+    INDEX idx_usuario (id_usuario),
+    INDEX idx_empresa (id_empresa),
+    INDEX idx_fecha_inicio (fecha_inicio)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Solicitudes de horarios pendientes de validación';
+
+-- TABLA: DETALLE_SOLICITUD_HORARIO
+-- Detalle día a día de cada solicitud de horario mensual
+CREATE TABLE DETALLE_SOLICITUD_HORARIO (
+    id_detalle INT AUTO_INCREMENT PRIMARY KEY,
+    id_solicitud INT NOT NULL,
+    fecha DATE NOT NULL,
+    tipo_jornada ENUM('TRABAJO', 'VACACIONES', 'MEDICO', 'LIBRE', 'FESTIVO') DEFAULT 'TRABAJO',
+    hora_inicio TIME NULL,
+    hora_fin TIME NULL,
+    horas_totales DECIMAL(4,2) NULL,
+    observaciones TEXT NULL,
+    FOREIGN KEY (id_solicitud) REFERENCES SOLICITUDES_HORARIO(id_solicitud) ON DELETE CASCADE,
+    INDEX idx_solicitud (id_solicitud),
+    INDEX idx_fecha (fecha)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Detalle diario de solicitudes de horario';
+
+-- TABLA: HISTORIAL_VALIDACIONES
+-- Registro de todas las validaciones realizadas (auditoría)
+CREATE TABLE HISTORIAL_VALIDACIONES (
+    id_historial INT AUTO_INCREMENT PRIMARY KEY,
+    id_solicitud INT NOT NULL,
+    accion ENUM('APROBADO', 'RECHAZADO', 'MODIFICADO') NOT NULL,
+    motivo TEXT NULL,
+    validado_por INT NOT NULL,
+    validado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_solicitud) REFERENCES SOLICITUDES_HORARIO(id_solicitud) ON DELETE CASCADE,
+    FOREIGN KEY (validado_por) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    INDEX idx_solicitud (id_solicitud),
+    INDEX idx_validado_por (validado_por)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Historial de validaciones de horarios';
+
+INSERT INTO HORARIOS (id_usuario, id_empresa, fecha, tipo_jornada, hora_inicio, hora_fin, horas_totales, observaciones) 
+VALUES 
+    -- Semana 1
+    (5, 2, '2024-12-02', 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Jornada normal'),
+    (5, 2, '2024-12-03', 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Jornada normal'),
+    (5, 2, '2024-12-04', 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Jornada normal'),
+    (5, 2, '2024-12-05', 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Jornada normal'),
+    (5, 2, '2024-12-06', 'TRABAJO', '09:00:00', '14:00:00', 5.00, 'Viernes jornada reducida'),
+    
+    -- Semana 2
+    (5, 2, '2024-12-09', 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Jornada normal'),
+    (5, 2, '2024-12-10', 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Jornada normal'),
+    (5, 2, '2024-12-11', 'MEDICO', '10:00:00', '12:00:00', 2.00, 'Cita médica'),
+    (5, 2, '2024-12-12', 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Jornada normal'),
+    (5, 2, '2024-12-13', 'TRABAJO', '09:00:00', '14:00:00', 5.00, 'Viernes jornada reducida');
+
+-- Solicitud pendiente de vacaciones para Navidad
+INSERT INTO SOLICITUDES_HORARIO (id_usuario, id_empresa, tipo_solicitud, fecha_inicio, fecha_fin, estado, observaciones)
+VALUES 
+    (5, 2, 'VACACIONES', '2024-12-23', '2024-12-27', 'PENDIENTE', 'Vacaciones de Navidad');
+
+-- Detalle de la solicitud de vacaciones
+INSERT INTO DETALLE_SOLICITUD_HORARIO (id_solicitud, fecha, tipo_jornada)
+SELECT 
+    LAST_INSERT_ID(),
+    DATE_ADD('2024-12-23', INTERVAL n DAY),
+    'VACACIONES'
+FROM (
+    SELECT 0 as n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4
+) numbers;
+
+-- Solicitud de horario de Enero 2025 (ejemplo)
+INSERT INTO SOLICITUDES_HORARIO (id_usuario, id_empresa, tipo_solicitud, fecha_inicio, fecha_fin, estado, observaciones)
+VALUES 
+    (5, 2, 'HORARIO_MES', '2025-01-01', '2025-01-31', 'PENDIENTE', 'Horario de Enero 2025');
+    
+SELECT 'HORARIOS APROBADOS' as tabla, COUNT(*) as total FROM HORARIOS;
+
+SELECT 'SOLICITUDES PENDIENTES' as tabla, COUNT(*) as total 
+FROM SOLICITUDES_HORARIO 
+WHERE estado = 'PENDIENTE';
+
+
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------------------------------------------
+
+mysql workbench
+
+USE sistema_fichajes;
+
+detalle_solicitud_horario:
+
+id_detalle	    int(11)	NO	PRI		auto_increment
+id_solicitud	int(11)	NO	MUL		
+fecha	        date	NO	MUL		
+orden_dia	    tinyint(4)	YES		1	
+tipo_jornada	enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO')	YES		TRABAJO	
+hora_inicio	    time	YES			
+hora_fin	    time	YES			
+horas_totales	decimal(4,2)	YES			
+observaciones	text	YES			
+
+empresa:
+
+id_empresa	int(11)	        NO	PRI		auto_increment
+nombre	    varchar(255)	NO			
+direccion	varchar(255)	YES			
+telefono	varchar(20)	    YES			
+CIF	        varchar(20)	    YES UNI		
+CCC 	    varchar(30)	    YES			
+panel_destino	varchar(50)	NO			
+
+
+empresa_usuario:
+
+id_empresa	int(11)	    NO	    PRI		
+id_usuario	int(11) 	NO	    PRI		
+admin	    tinyint(1)	YES		0	
+activo	    tinyint(1)	YES		1	
+
+
+
+fichaje:
+
+id_fichaje	        int(11)	    NO	PRI		auto_increment
+id_usuario	        int(11)	    NO	MUL		
+fecha	            date	    NO			
+hora_entrada	    time	    YES			
+hora_pausa	        time	    YES			
+hora_reanudacion	time	    YES			
+hora_salida	        time	    YES			
+tipo	            varchar(50)	YES			
+observaciones	    text	    YES			
+
+
+historial_validaciones:
+
+id_historial	int(11)                                    	NO	PRI		auto_increment
+id_solicitud	int(11)	                                    NO	MUL		
+accion	        enum('APROBADO','RECHAZADO','MODIFICADO')	NO			
+motivo	        text	                                    YES			
+validado_por	int(11) 	                                NO	MUL		
+validado_en	    timestamp	                                NO		current_timestamp()	
+
+
+horarios:
+
+id_horario	    int(11)                                             	NO	PRI		auto_increment
+id_usuario	    int(11)	                                                NO	MUL		
+id_empresa	    int(11)	                                                NO	MUL		
+fecha	        date	                                                NO	MUL		
+orden_dia	    tinyint(4)	                                            YES		1	
+tipo_jornada	enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO')	YES		TRABAJO	
+hora_inicio	    time	                                                YES			
+hora_fin	    time	                                                YES			
+horas_totales	decimal(4,2)	                                        YES			
+observaciones	text	                                                YES			
+creado_en	    timestamp	                                            NO		current_timestamp()	
+actualizado_en	timestamp	                                            NO		current_timestamp()	on update current_timestamp()
+
+
+solicitudes_horario:
+
+id_solicitud	int(11)	NO	PRI		auto_increment
+id_usuario  	int(11)	NO	MUL		
+id_empresa	    int(11)	NO	MUL		
+tipo_solicitud	enum('HORARIO_MES','VACACIONES','MEDICO')	NO			
+fecha_inicio	date	NO	MUL		
+fecha_fin	    date	YES			
+estado	        enum('PENDIENTE','APROBADO','RECHAZADO')	YES	MUL	PENDIENTE	
+motivo_rechazo	text	YES			
+observaciones	text	YES			
+validado_por	int(11)	YES	MUL		
+validado_en	    timestamp	YES			
+creado_en	    timestamp	NO		current_timestamp()	
+
+usuario:
+
+id_usuario	        int(11)	        NO	    PRI		auto_increment
+nombre	            varchar(100)	NO			
+apellidos	        varchar(150)	NO			
+NIF	                varchar(20)	    YES 	UNI		
+Numero_Afiliciacion	varchar(30) 	YES			
+email	            varchar(150)	NO  	UNI		
+password_hash	    varchar(255)	NO			
+activo	            tinyint(1)	    YES		1	
+foto_perfil	        varchar(255)	YES		uploads/perfil_default.png	
+created_at	        timestamp	    NO		current_timestamp()	
+
+
+
+vacaciones:
+
+id_vacacion	        int(11)	NO	PRI		auto_increment
+id_solicitud	    int(11)	YES	MUL		
+id_usuario	        int(11)	NO	MUL		
+fecha_inicio    	date	NO			
+fecha_fin	        date	NO			
+dias_totales    	int(11)	NO			
+estado	            enum('pendiente','aprobado','rechazado')	YES		pendiente	
+comentario	        text	YES			
+fecha_solicitud	    date	NO			
+fecha_resolucion	date	YES			
+
+
+vacaciones_acumulado:
+
+id_vacaciones_acum	int(11)	NO	PRI		auto_increment
+id_usuario	        int(11)	NO	MUL		
+año	                year(4)	NO			
+dias_totales	    int(11)	NO			
+dias_utilizados 	int(11)	NO		0	
+dias_restantes	    int(11)	NO			
+
+
+vista_horarios_dia:
+
+id_horario	    int(11)	NO		0	
+id_usuario	    int(11)	NO			
+id_empresa	    int(11)	NO			
+fecha	        date	NO			
+orden_dia	    tinyint(4)	YES		1	
+tipo_jornada	enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO')	YES		TRABAJO	
+hora_inicio 	time	YES			
+hora_fin	    time	YES			
+horas_totales	decimal(4,2)	YES			
+observaciones	text	YES			
+nombre	        varchar(100)	NO			
+apellidos	    varchar(150)	NO			
+empresa_nombre	varchar(255)	NO			
+
+
+
+
+
+
+Desde aqui hay que modificarlo
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+ARREGLO PARA LOS HORARIOS DE LA BASE DE DATOS Y QUE NO ESTEN DUBLICADOS
+
+-------------------------------------------------------------------------------------------------------------------
+
+ALTER TABLE horarios
+ADD solo_trabajo TINYINT 
+GENERATED ALWAYS AS (
+    CASE 
+        WHEN tipo_jornada = 'TRABAJO' THEN 1 
+        ELSE NULL 
+    END
+) STORED;
+
+
+CREATE UNIQUE INDEX uq_trabajo_por_dia
+ON horarios (id_usuario, id_empresa, fecha, solo_trabajo);
+
+SELECT id_usuario, id_empresa, fecha, COUNT(*) AS total
+FROM horarios
+WHERE tipo_jornada = 'TRABAJO'
+GROUP BY id_usuario, id_empresa, fecha
+HAVING total > 1;
+
+SET SQL_SAFE_UPDATES = 0;
+
+
+DELETE h1
+FROM horarios h1
+JOIN horarios h2
+  ON h1.id_usuario = h2.id_usuario
+ AND h1.id_empresa = h2.id_empresa
+ AND h1.fecha = h2.fecha
+ AND h1.tipo_jornada = 'TRABAJO'
+ AND h2.tipo_jornada = 'TRABAJO'
+ AND h1.id_horario > h2.id_horario;
+
+ 
+DESCRIBE horarios;
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+ARREGLO PARA LOS RPORTES
+
+-------------------------------------------------------------------------------------------------------------------
+
+-- Tabla para guardar los reportes generados
+CREATE TABLE REPORTES (
+    id_reporte INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_empresa INT NOT NULL,
+    tipo_reporte VARCHAR(50) NOT NULL,
+    mes INT NOT NULL,
+    anio INT NOT NULL,
+    fecha_generacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    generado_por INT NOT NULL,
+    ruta_archivo VARCHAR(255) NULL,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_empresa) REFERENCES EMPRESA(id_empresa) ON DELETE CASCADE,
+    FOREIGN KEY (generado_por) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    INDEX idx_usuario_fecha (id_usuario, anio, mes),
+    INDEX idx_empresa (id_empresa)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Historial de reportes generados';
+
+
+----------------------------------------------------------
+----------------------------------------------------------
+----------------------------------------------------------
+----------------------------------------------------------
+----------------------------------------------------------
+----------------------------------------------------------
+----------------------------------------------------------
+----------------------------------------------------------
+_____________________________________________________
+
+
+Notificafiones
+
+_____________________________________________________
+
+
+CREATE TABLE NOTIFICACIONES (
+    id_notificacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL, -- Quién recibe la notificación
+    mensaje TEXT NOT NULL,
+    tipo VARCHAR(50), -- 'peticion', 'horario_cambiado', 'peticion_resuelta'
+    leida TINYINT(1) DEFAULT 0,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
+);
+
+
+----------------------------------------------------------
+----------------------------------------------------------
+----------------------------------------------------------
+----------------------------------------------------------
+
+
+
