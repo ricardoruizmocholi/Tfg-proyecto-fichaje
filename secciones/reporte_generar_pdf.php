@@ -48,9 +48,15 @@ try {
     
     // Obtener fichajes del mes
     $stmtFichajes = $pdo->prepare("
-        SELECT * FROM FICHAJE 
+        SELECT 
+            fecha, 
+            MIN(hora_entrada) as primera_entrada, 
+            MAX(hora_salida) as ultima_salida,
+            SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(hora_salida, hora_entrada)))) as total_horas_dia
+        FROM FICHAJE 
         WHERE id_usuario = ? AND fecha BETWEEN ? AND ?
-        ORDER BY fecha
+        GROUP BY fecha
+        ORDER BY fecha;
     ");
     $stmtFichajes->execute([$data['id_usuario'], $primerDia, $ultimoDia]);
     $fichajes = $stmtFichajes->fetchAll(PDO::FETCH_ASSOC);
