@@ -1,0 +1,82 @@
+/* Contenedor de botones del empleado (mismo estilo que filter-container) */
+.fichaje-panel {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px; /* Botones uno al lado del otro, tamaño normal */
+    flex-wrap: wrap;
+}
+
+/* Reutilizamos los botones que ya te gustaron */
+.btn-fichaje {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px; /* Tamaño estándar igual al de filtros */
+    color: white;
+    transition: background 0.2s;
+}
+
+/* Colores consistentes */
+.btn-entrada { background: #28a745; }
+.btn-salida { background: #dc3545; }
+.btn-pausa { background: #ffc107; color: #333; }
+.btn-reanudar { background: #667eea; }
+
+/* La tabla del historial: usamos la misma clase que en administración */
+/* .fichajes-table (la que ya tienes definida con border-left) */
+/* Contenedor con sombra suave */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Estilo de la tabla */
+.fichajes-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background-color: white;
+}
+
+/* Encabezado azul idéntico al de admin */
+.fichajes-table th {
+    background: #667eea;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+}
+
+/* Celdas de la tabla */
+.fichajes-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+/* El detalle del borde lateral sutil */
+/* Usamos un azul suave por defecto para el historial del empleado */
+
+
+/* Si quieres que también en esta tabla se vea verde/amarillo según el estado: */
+.fila-completo td:first-child {
+    border-left: 5px solid #28a745 !important; /* Verde si terminó */
+}
+
+.fila-proceso td:first-child {
+    border-left: 5px solid #ffc107 !important; /* Amarillo si está en curso */
+}
+
+/* Efecto al pasar el ratón */
+.fichajes-table tbody tr:hover {
+    background-color: #f8f9ff;
+}
