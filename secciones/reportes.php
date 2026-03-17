@@ -93,6 +93,7 @@ if ($vista === 'generar') {
                     <button type="button" class="btn-secondary" onclick="previsualizarReporte()">
                         👁️ Previsualizar
                     </button>
+                    <button type="button" id="btnExportExcel" class="btn-pro btn-excel">Excel Export</button>
                     <button type="submit" class="btn-primary">
                         📄 Generar PDF
                     </button>
@@ -142,6 +143,20 @@ if ($vista === 'generar') {
             alert('❌ Error de conexión');
         });
     }
+
+    document.getElementById('btnExportExcel').addEventListener('click', function() {
+        const idUsuario = document.getElementById('reporte_empleado').value;
+        const mes = document.getElementById('reporte_mes').value;
+        const anio = document.getElementById('reporte_anio').value;
+
+        if (!idUsuario || !mes || !anio) {
+            alert('Por favor, selecciona todos los campos antes de exportar.');
+            return;
+        }
+
+        // Redirigimos al archivo PHP que genera el Excel pasando los parámetros por GET
+        window.location.href = `secciones/reporte_excel.php?id_usuario=${idUsuario}&mes=${mes}&anio=${anio}`;
+    });
 
     function generarReportePDF() {
         const empleadoId = document.getElementById('reporte_empleado').value;
