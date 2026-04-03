@@ -69,7 +69,7 @@ try {
             <th>Total Horas Reales</th>
           </tr>";
 
-    $granTotalSegundos = 0;
+    $granTotalSegundos = 0; 
 
     foreach ($fichajes as $f) {
         $segundos = $f['segundos_totales'];
