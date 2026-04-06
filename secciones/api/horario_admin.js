@@ -331,9 +331,10 @@ function mostrarModalDetalle(data) {
         const numeroDia = fecha.getDate();
 
         let contenidoHorario = '';
-        if (dia.tipo_jornada === 'TRABAJO') {
-            contenidoHorario = `${dia.hora_inicio?.substr(0,5)} - ${dia.hora_fin?.substr(0,5)}<br>(${dia.horas_totales}h)`;
-        } else {
+        if (dia.tipo_jornada === 'TRABAJO' || dia.tipo_jornada === 'PARTIDA') {
+            const prefijo = dia.tipo_jornada === 'PARTIDA' ? '◑ ' : '';
+            contenidoHorario = `${prefijo}${dia.hora_inicio?.substr(0,5)} - ${dia.hora_fin?.substr(0,5)}<br>(${dia.horas_totales}h)`;
+        }else {
             contenidoHorario = dia.tipo_jornada.charAt(0) + dia.tipo_jornada.slice(1).toLowerCase();
             if (dia.hora_inicio && dia.hora_fin) {
                 contenidoHorario += `<br>${dia.hora_inicio.substr(0,5)} - ${dia.hora_fin.substr(0,5)}`;

@@ -5,7 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . "/../config.php";
 
-// Verificar que existe la sesión
 if(!isset($_SESSION['usuario']['id'])) {
     header("Location: ../login.php");
     exit();
@@ -14,65 +13,95 @@ if(!isset($_SESSION['usuario']['id'])) {
 $id_usuario = $_SESSION['usuario']['id'];
 $accion = $_POST['accion'] ?? '';
 
-// Buscar último fichaje del día
+// Obtener todos los fichajes de hoy ordenados ASC
 $sql = "SELECT * FROM FICHAJE 
         WHERE id_usuario = :id_usuario 
         AND fecha = CURDATE() 
-        ORDER BY id_fichaje DESC 
-        LIMIT 1";
-        
+        ORDER BY id_fichaje ASC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(['id_usuario' => $id_usuario]);
-$fichaje = $stmt->fetch(PDO::FETCH_ASSOC);
+$fichajesHoy = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Primer fichaje = mañana/normal  |  Segundo fichaje = tarde (partida)
+$fichaje      = $fichajesHoy[0] ?? null;
+$fichajeTarde = $fichajesHoy[1] ?? null;
 
-// ENTRADA - Crear nuevo fichaje solo si NO existe uno hoy o si el último ya tiene salida
-if($accion === 'entrada'){
-    if(!$fichaje || $fichaje['hora_salida'] !== null) {
-        
-        
-        $hora_ajustada = date("H:i:s", strtotime("-5 minute"));
-        
-        $sqlInsert = "INSERT INTO FICHAJE (id_usuario, fecha, hora_entrada, tipo) 
-                      VALUES (:id_usuario, CURDATE(), :hora_entrada, 'normal')";
-        
-        $stmtInsert = $pdo->prepare($sqlInsert);
-        $stmtInsert->execute([
-            'id_usuario' => $id_usuario,
-            'hora_entrada' => $hora_ajustada // Pasamos la hora con el minuto restado
-        ]);
+// ------------------------------------------------------------------
+// ENTRADA NORMAL o TRAMO MAÑANA
+// Crea un nuevo fichaje solo si NO hay ninguno abierto (sin salida)
+// ------------------------------------------------------------------
+if ($accion === 'entrada') {
+    $hayAbierto = false;
+    foreach ($fichajesHoy as $f) {
+        if ($f['hora_salida'] === null) { $hayAbierto = true; break; }
+    }
+    if (!$hayAbierto) {
+        $pdo->prepare("INSERT INTO FICHAJE (id_usuario, fecha, hora_entrada, tipo) VALUES (:u, CURDATE(), CURTIME(), 'normal')")
+            ->execute(['u' => $id_usuario]);
     }
 }
 
-// PAUSA - Solo si existe fichaje hoy, tiene entrada y NO tiene pausa registrada
-if($accion === "pausa" && $fichaje){
-    if($fichaje['hora_entrada'] !== null && $fichaje['hora_pausa'] === null) {
-        $sql = "UPDATE FICHAJE SET hora_pausa = CURTIME() WHERE id_fichaje = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['id' => $fichaje['id_fichaje']]);
+// ------------------------------------------------------------------
+// PAUSA
+// ------------------------------------------------------------------
+if ($accion === 'pausa' && $fichaje) {
+    if ($fichaje['hora_entrada'] !== null && $fichaje['hora_pausa'] === null && $fichaje['hora_salida'] === null) {
+        $pdo->prepare("UPDATE FICHAJE SET hora_pausa = CURTIME() WHERE id_fichaje = :id")
+            ->execute(['id' => $fichaje['id_fichaje']]);
     }
 }
 
-// REANUDAR - Solo si existe fichaje hoy, tiene pausa y NO tiene reanudación
-if($accion === "reanudar" && $fichaje){
-    if($fichaje['hora_pausa'] !== null && $fichaje['hora_reanudacion'] === null) {
-        $sql = "UPDATE FICHAJE SET hora_reanudacion = CURTIME() WHERE id_fichaje = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['id' => $fichaje['id_fichaje']]);
+// ------------------------------------------------------------------
+// REANUDAR
+// ------------------------------------------------------------------
+if ($accion === 'reanudar' && $fichaje) {
+    if ($fichaje['hora_pausa'] !== null && $fichaje['hora_reanudacion'] === null && $fichaje['hora_salida'] === null) {
+        $pdo->prepare("UPDATE FICHAJE SET hora_reanudacion = CURTIME() WHERE id_fichaje = :id")
+            ->execute(['id' => $fichaje['id_fichaje']]);
     }
 }
 
-// SALIDA - Solo si existe fichaje hoy y NO tiene salida registrada
-// PERMITE finalizar incluso si está en pausa (sin reanudar)
-if($accion === "salida" && $fichaje){
-    if($fichaje['hora_entrada'] !== null && $fichaje['hora_salida'] === null) {
-        $sql = "UPDATE FICHAJE SET hora_salida = CURTIME() WHERE id_fichaje = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['id' => $fichaje['id_fichaje']]);
+// ------------------------------------------------------------------
+// SALIDA NORMAL o CIERRE TRAMO MAÑANA
+// ------------------------------------------------------------------
+if ($accion === 'salida' && $fichaje) {
+    if ($fichaje['hora_entrada'] !== null && $fichaje['hora_salida'] === null) {
+        $pdo->prepare("UPDATE FICHAJE SET hora_salida = CURTIME() WHERE id_fichaje = :id")
+            ->execute(['id' => $fichaje['id_fichaje']]);
     }
 }
 
-// Redirección
+// ------------------------------------------------------------------
+// ENTRADA TARDE (segundo tramo jornada partida)
+// Solo si el tramo mañana está cerrado
+// ------------------------------------------------------------------
+if ($accion === 'entrada_tarde') {
+    $mananaCerrado = $fichaje && $fichaje['hora_salida'] !== null;
+    if ($mananaCerrado) {
+        // No crear si ya hay un fichaje de tarde abierto
+        $tardeAbierto = $fichajeTarde && $fichajeTarde['hora_salida'] === null;
+        if (!$tardeAbierto) {
+            $pdo->prepare("INSERT INTO FICHAJE (id_usuario, fecha, hora_entrada, tipo) VALUES (:u, CURDATE(), CURTIME(), 'partida_tarde')")
+                ->execute(['u' => $id_usuario]);
+        }
+    }
+}
+
+// ------------------------------------------------------------------
+// SALIDA TARDE
+// ------------------------------------------------------------------
+if ($accion === 'salida_tarde') {
+    // Recargar para coger el fichaje tarde aunque se haya creado justo ahora
+    $stmt2 = $pdo->prepare("SELECT * FROM FICHAJE WHERE id_usuario = :u AND fecha = CURDATE() ORDER BY id_fichaje ASC");
+    $stmt2->execute(['u' => $id_usuario]);
+    $todos = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    $tardeFichaje = $todos[1] ?? null;
+    if ($tardeFichaje && $tardeFichaje['hora_entrada'] !== null && $tardeFichaje['hora_salida'] === null) {
+        $pdo->prepare("UPDATE FICHAJE SET hora_salida = CURTIME() WHERE id_fichaje = :id")
+            ->execute(['id' => $tardeFichaje['id_fichaje']]);
+    }
+}
+
 header("Location: ../panel.php?seccion=fichaje");
 exit();
 ?>

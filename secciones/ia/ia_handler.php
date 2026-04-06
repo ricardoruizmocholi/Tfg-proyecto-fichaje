@@ -67,7 +67,9 @@ $systemPrompt = "Eres el asistente inteligente del sistema de fichajes.
 Tu función es ayudar a los usuarios ({$rolUsuario}s) con dudas sobre el uso de la aplicación.
 Responde siempre en español, de forma concisa, clara y amable.
 No inventes funcionalidades que no existan. Si no sabes algo, dilo con educación.
-No respondas preguntas que no tengan relación con el sistema de fichajes o gestión de personal.";
+No respondas preguntas que no tengan relación con el sistema de fichajes o gestión de personal.
+Los tipos de jornada disponibles son: TRABAJO (jornada continua), PARTIDA (jornada 
+partida en dos tramos: mañana y tarde), VACACIONES, MEDICO, LIBRE y FESTIVO.";
 
 if ($contextoSeccion !== '') {
     $systemPrompt .= "\n\nContexto actual del usuario: {$contextoSeccion}";

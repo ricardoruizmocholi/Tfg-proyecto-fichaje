@@ -32,7 +32,7 @@ try {
     
     // Calcular horas totales si es tipo TRABAJO
     $horasTotales = null;
-    if ($data['tipo_jornada'] === 'TRABAJO' && !empty($data['hora_inicio']) && !empty($data['hora_fin'])) {
+    if (in_array($data['tipo_jornada'], ['TRABAJO', 'PARTIDA', 'MEDICO']) && !empty($data['hora_inicio']) && !empty($data['hora_fin'])) {
         $inicio = strtotime($data['hora_inicio']);
         $fin = strtotime($data['hora_fin']);
         $horasTotales = round(($fin - $inicio) / 3600, 2);
@@ -69,29 +69,29 @@ try {
         // Insertar nuevo horario
         // Verificar si ya existe un horario para ese usuario y fecha
        
-        $sql = "INSERT INTO HORARIOS (
-                    id_usuario,
-                    id_empresa,
-                    fecha,
-                    orden_dia,
-                    tipo_jornada,
-                    hora_inicio,
-                    hora_fin,
-                    horas_totales,
-                    observaciones
-                ) VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?)";
-        
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            $data['id_usuario'],
-            $empresa,
-            $data['fecha'],
-            $data['tipo_jornada'],
-            $data['hora_inicio'],
-            $data['hora_fin'],
-            $horasTotales,
-            $data['observaciones']
-        ]);
+        if (empty($data['id_horario'])) {
+            // Calcular el siguiente orden_dia para ese usuario+empresa+fecha
+            $stmtOrden = $pdo->prepare("
+                SELECT COALESCE(MAX(orden_dia), 0) + 1 
+                FROM HORARIOS 
+                WHERE id_usuario = ? AND id_empresa = ? AND fecha = ?
+            ");
+            $stmtOrden->execute([$data['id_usuario'], $empresa, $data['fecha']]);
+            $siguienteOrden = $stmtOrden->fetchColumn();
+
+            $sql = "INSERT INTO HORARIOS (
+                        id_usuario, id_empresa, fecha, orden_dia,
+                        tipo_jornada, hora_inicio, hora_fin, horas_totales, observaciones
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                $data['id_usuario'], $empresa, $data['fecha'],
+                $siguienteOrden,  // <-- orden dinámico
+                $data['tipo_jornada'], $data['hora_inicio'],
+                $data['hora_fin'], $horasTotales, $data['observaciones']
+            ]);
+        }
 
                 // --- SISTEMA DE NOTIFICACIONES ---
         // El administrador es quien ejecuta este archivo, notificamos al empleado ($data['id_usuario'])

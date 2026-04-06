@@ -1,4 +1,5 @@
 <style>
+    /* ============ ESTILOS EXISTENTES (sin cambios) ============ */
     .horario-container {
         background: white;
         border-radius: 12px;
@@ -31,37 +32,30 @@
         overflow: hidden;
     }
 
+    .day-cell.today-highlight {
+        border: 2px solid #667eea !important;
+        background-color: #f8f9ff !important;
+        position: relative;
+        box-shadow: inset 0 0 8px rgba(102, 126, 234, 0.2);
+    }
 
+    .day-cell.today-highlight::after {
+        content: 'HOY';
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 9px;
+        font-weight: bold;
+        background: #667eea;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
 
-    /* Resaltado del día actual */
-.day-cell.today-highlight {
-    border: 2px solid #667eea !important; /* El azul de tu cabecera */
-    background-color: #f8f9ff !important; /* Un fondo azulado muy sutil */
-    position: relative;
-    box-shadow: inset 0 0 8px rgba(102, 126, 234, 0.2);
-}
-
-/* Opcional: una etiqueta que diga "Hoy" encima del número */
-.day-cell.today-highlight::after {
-    content: 'HOY';
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 9px;
-    font-weight: bold;
-    background: #667eea;
-    color: white;
-    padding: 2px 5px;
-    border-radius: 3px;
-}
-
-/* Hacer que el número del día sea más visible hoy */
-.today-highlight .day-number {
-    color: #667eea;
-    font-weight: 800;
-}
-
-    
+    .today-highlight .day-number {
+        color: #667eea;
+        font-weight: 800;
+    }
 
     .view-toggle button {
         padding: 10px 20px;
@@ -95,9 +89,7 @@
         transition: all 0.3s;
     }
 
-    .month-nav button:hover {
-        background: rgba(255,255,255,0.3);
-    }
+    .month-nav button:hover { background: rgba(255,255,255,0.3); }
 
     .month-title {
         font-size: 20px;
@@ -138,18 +130,14 @@
         border: 1px solid rgba(255,255,255,0.3);
     }
 
-    .btn-secondary:hover {
-        background: rgba(255,255,255,0.3);
-    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.3); }
 
     .btn-success {
         background: #28a745;
         color: white;
     }
 
-    .btn-success:hover {
-        background: #218838;
-    }
+    .btn-success:hover { background: #218838; }
 
     .legend {
         display: flex;
@@ -173,9 +161,7 @@
         border-radius: 4px;
     }
 
-    .calendar-container {
-        padding: 30px;
-    }
+    .calendar-container { padding: 30px; }
 
     .calendar-month {
         display: grid;
@@ -209,15 +195,7 @@
         transform: translateY(-2px);
     }
 
-    .day-cell.other-month {
-        opacity: 0.3;
-        pointer-events: none;
-    }
-
-    .day-cell.today {
-        border: 2px solid #667eea;
-        background: #f0f4ff;
-    }
+    .day-cell.other-month { opacity: 0.3; pointer-events: none; }
 
     .day-number {
         font-weight: 600;
@@ -234,6 +212,7 @@
         text-align: center;
     }
 
+    /* ============ COLORES EXISTENTES ============ */
     .schedule-trabajo {
         background: #e3f2fd;
         color: #1976d2;
@@ -264,54 +243,47 @@
         border-left: 3px solid #c62828;
     }
 
-    .schedule-pendiente {
-        background: #fff9c4;
-        color: #f57f17;
-        border-left: 3px solid #f57f17;
-        opacity: 0.7;
+    /* ============ NUEVOS: JORNADA PARTIDA ============ */
+    .schedule-partida-m {
+        background: #e8eaf6;
+        color: #283593;
+        border-left: 3px solid #3f51b5;
     }
 
-    .status-badge {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 10px;
-        font-weight: 600;
+    .schedule-partida-t {
+        background: #fce4ec;
+        color: #880e4f;
+        border-left: 3px solid #e91e63;
     }
 
-    .badge-pendiente {
-        background: #fff9c4;
-        color: #f57f17;
+    /* ============ ESTADOS ============ */
+    .status-pendiente {
+        background-color: #fef3c7 !important;
+        border-left: 4px solid #f59e0b !important;
+        color: #92400e !important;
     }
 
-    .badge-aprobado {
-        background: #e8f5e9;
-        color: #388e3c;
+    .status-temporal {
+        background-color: #ebf4ff !important;
+        border: 2px dashed #667eea !important;
+        color: #4c51bf !important;
     }
 
-    .badge-rechazado {
-        background: #ffebee;
-        color: #c62828;
-    }
+    .status-aprobado { border-left: 4px solid #10b981 !important; }
+
+    .status-pendiente::before { content: '⏳ '; font-size: 10px; }
 
     .modal-horario {
         display: none;
         position: fixed;
         z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
         background: rgba(0,0,0,0.5);
         animation: fadeIn 0.3s;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .modal-content-horario {
         background: white;
@@ -326,14 +298,8 @@
     }
 
     @keyframes slideDown {
-        from {
-            transform: translateY(-50px);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
+        from { transform: translateY(-50px); opacity: 0; }
+        to   { transform: translateY(0);     opacity: 1; }
     }
 
     .modal-header-horario {
@@ -346,9 +312,7 @@
         align-items: center;
     }
 
-    .modal-header-horario h3 {
-        margin: 0;
-    }
+    .modal-header-horario h3 { margin: 0; }
 
     .close-btn-horario {
         background: none;
@@ -359,118 +323,9 @@
         line-height: 1;
     }
 
-    .btn-delete-x {
-    position: absolute;
-    right: -5px;
-    top: -5px;
-    background: #ff4d4d;
-    color: white;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-}
-.btn-add-inline {
-    margin-top: 4px;
-    border: 1px dashed #667eea;
-    color: #667eea;
-    text-align: center;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-}
-.btn-add-inline:hover {
-    background: #f0f2ff;
-}
-.btn-add-evento:hover {
-    background-color: #667eea !important;
-    color: white !important;
-    border-style: solid !important;
-}
+    .modal-body-horario { padding: 30px; }
 
-/* Estilo para la X de eliminar */
-.btn-eliminar-temporal {
-    position: absolute;
-    top: -5px;
-    right: -2px;
-    background: #ff4d4d;
-    color: white;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    z-index: 10;
-    line-height: 1;
-}
-
-.btn-eliminar-temporal:hover {
-    background: #cc0000;
-    transform: scale(1.1);
-}
-
-/* Estilo para el botón + */
-.btn-add-inline {
-    margin-top: 5px;
-    text-align: center;
-    color: #667eea;
-    cursor: pointer;
-    border: 1px dashed #667eea;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 14px;
-    background: rgba(102, 126, 234, 0.05);
-}
-
-.btn-add-inline:hover {
-    background: #667eea;
-    color: white;
-}
-
-/* Estado: ENVIADO A VALIDAR (Naranja/Amarillo) */
-.schedule-block.status-pendiente {
-    background-color: #fef3c7 !important; /* Amarillo suave */
-    border-left: 4px solid #f59e0b !important; /* Naranja fuerte */
-    color: #92400e !important;
-    cursor: help;
-}
-
-/* Estado: BORRADOR (Azul con borde punteado) */
-.schedule-block.status-temporal {
-    background-color: #ebf4ff !important;
-    border: 2px dashed #667eea !important;
-    color: #4c51bf !important;
-}
-
-/* Estado: APROBADO (Verde o el color original) */
-.schedule-block.status-aprobado {
-    border-left: 4px solid #10b981 !important; /* Verde */
-}
-
-/* Opcional: Icono de reloj para los pendientes */
-.status-pendiente::before {
-    content: '⏳ ';
-    font-size: 10px;
-}
-
-    .modal-body-horario {
-        padding: 30px;
-    }
-
-    .form-group-horario {
-        margin-bottom: 20px;
-    }
+    .form-group-horario { margin-bottom: 20px; }
 
     .form-group-horario label {
         display: block;
@@ -499,11 +354,7 @@
         gap: 15px;
     }
 
-    .dias-checkbox {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
+    .dias-checkbox { display: flex; gap: 10px; flex-wrap: wrap; }
 
     .dias-checkbox label {
         display: inline-flex;
@@ -514,15 +365,6 @@
         border-radius: 6px;
         cursor: pointer;
         transition: all 0.2s;
-    }
-
-    .dias-checkbox label:hover {
-        background: #e9ecef;
-    }
-
-    .dias-checkbox input[type="checkbox"]:checked + span {
-        font-weight: 600;
-        color: #667eea;
     }
 
     .modal-footer-horario {
@@ -543,10 +385,6 @@
         font-weight: 500;
     }
 
-    .btn-success-horario:hover {
-        background: #218838;
-    }
-
     .btn-cancel-horario {
         background: #6c757d;
         color: white;
@@ -557,45 +395,76 @@
         font-weight: 500;
     }
 
-    .btn-cancel-horario:hover {
-        background: #5a6268;
+    /* Info box para jornada partida */
+    .partida-info-box {
+        display: none;
+        background: #e8eaf6;
+        border: 1px solid #3f51b5;
+        border-radius: 6px;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        font-size: 13px;
+        color: #283593;
     }
+
+    .partida-info-box strong { display: block; margin-bottom: 5px; }
+
+    .btn-eliminar-temporal {
+        position: absolute;
+        top: -5px;
+        right: -2px;
+        background: #ff4d4d;
+        color: white;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 10;
+        line-height: 1;
+    }
+
+    .btn-add-inline {
+        margin-top: 5px;
+        text-align: center;
+        color: #667eea;
+        cursor: pointer;
+        border: 1px dashed #667eea;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 14px;
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .btn-add-inline:hover { background: #667eea; color: white; }
 
     .loading-overlay {
         display: none;
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
         background: rgba(0,0,0,0.7);
         z-index: 9999;
         justify-content: center;
         align-items: center;
     }
 
-    .loading-overlay.active {
-        display: flex;
-    }
+    .loading-overlay.active { display: flex; }
 
     .spinner {
         border: 4px solid #f3f3f3;
         border-top: 4px solid #667eea;
         border-radius: 50%;
-        width: 50px;
-        height: 50px;
+        width: 50px; height: 50px;
         animation: spin 1s linear infinite;
     }
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 </style>
 
 <div class="horario-container">
@@ -624,7 +493,15 @@
     <div class="legend">
         <div class="legend-item">
             <div class="legend-color" style="background: #1976d2;"></div>
-            <span>Jornada laboral</span>
+            <span>Jornada continua</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #3f51b5;"></div>
+            <span>🌅 Partida mañana</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e91e63;"></div>
+            <span>🌆 Partida tarde</span>
         </div>
         <div class="legend-item">
             <div class="legend-color" style="background: #388e3c;"></div>
@@ -660,7 +537,7 @@
 <div id="modalEditarDia" class="modal-horario">
     <div class="modal-content-horario">
         <div class="modal-header-horario">
-            <h3>📝 Editar jornada</h3>
+            <h3>📝 Añadir / Editar jornada</h3>
             <button class="close-btn-horario" onclick="cerrarModal()">&times;</button>
         </div>
         <div class="modal-body-horario">
@@ -672,7 +549,9 @@
             <div class="form-group-horario">
                 <label>Tipo de jornada</label>
                 <select class="form-control-horario" id="inputTipo" onchange="cambiarTipoJornada()">
-                    <option value="TRABAJO">Jornada laboral</option>
+                    <option value="TRABAJO">Jornada continua</option>
+                    <option value="PARTIDA_M">⬆️ Jornada partida — Tramo mañana (1º)</option>
+                    <option value="PARTIDA_T">⬇️ Jornada partida — Tramo tarde (2º)</option>
                     <option value="VACACIONES">Vacaciones</option>
                     <option value="MEDICO">Médico</option>
                     <option value="LIBRE">Día libre</option>
@@ -680,15 +559,24 @@
                 </select>
             </div>
 
-            <div id="horariosContainer">
-                <div class="form-group-horario">
-                    <label>Hora inicio</label>
-                    <input type="time" class="form-control-horario" id="inputHoraInicio" value="09:00">
-                </div>
+            <!-- Info box jornada partida -->
+            <div class="partida-info-box" id="partidaInfo">
+                <strong>ℹ️ Jornada partida</strong>
+                Para registrar una jornada partida añade <strong>dos bloques separados</strong> en el mismo día:<br>
+                1. Primero selecciona "Tramo mañana" e introduce las horas de mañana (ej: 09:00 – 14:00)<br>
+                2. Luego vuelve a este día y añade "Tramo tarde" (ej: 16:00 – 19:00)
+            </div>
 
-                <div class="form-group-horario">
-                    <label>Hora fin</label>
-                    <input type="time" class="form-control-horario" id="inputHoraFin" value="17:00">
+            <div id="horariosContainer">
+                <div class="form-row">
+                    <div class="form-group-horario">
+                        <label>Hora inicio</label>
+                        <input type="time" class="form-control-horario" id="inputHoraInicio" value="09:00">
+                    </div>
+                    <div class="form-group-horario">
+                        <label>Hora fin</label>
+                        <input type="time" class="form-control-horario" id="inputHoraFin" value="17:00">
+                    </div>
                 </div>
             </div>
 
@@ -726,41 +614,22 @@
             <div class="form-group-horario">
                 <label>Días de la semana:</label>
                 <div class="dias-checkbox">
-                    <label>
-                        <input type="checkbox" value="1" checked class="dia-cb">
-                        <span>Lun</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="2" checked class="dia-cb">
-                        <span>Mar</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="3" checked class="dia-cb">
-                        <span>Mié</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="4" checked class="dia-cb">
-                        <span>Jue</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="5" checked class="dia-cb">
-                        <span>Vie</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="6" class="dia-cb">
-                        <span>Sáb</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="7" class="dia-cb">
-                        <span>Dom</span>
-                    </label>
+                    <label><input type="checkbox" value="1" checked class="dia-cb"> <span>Lun</span></label>
+                    <label><input type="checkbox" value="2" checked class="dia-cb"> <span>Mar</span></label>
+                    <label><input type="checkbox" value="3" checked class="dia-cb"> <span>Mié</span></label>
+                    <label><input type="checkbox" value="4" checked class="dia-cb"> <span>Jue</span></label>
+                    <label><input type="checkbox" value="5" checked class="dia-cb"> <span>Vie</span></label>
+                    <label><input type="checkbox" value="6" class="dia-cb"> <span>Sáb</span></label>
+                    <label><input type="checkbox" value="7" class="dia-cb"> <span>Dom</span></label>
                 </div>
             </div>
             
             <div class="form-group-horario">
                 <label>Tipo:*</label>
                 <select class="form-control-horario" id="masivo_tipo" onchange="toggleHorasMasivo()">
-                    <option value="TRABAJO">Jornada laboral</option>
+                    <option value="TRABAJO">Jornada continua</option>
+                    <option value="PARTIDA_M">⬆️ Jornada partida — Tramo mañana</option>
+                    <option value="PARTIDA_T">⬇️ Jornada partida — Tramo tarde</option>
                     <option value="VACACIONES">Vacaciones</option>
                     <option value="MEDICO">Médico</option>
                     <option value="LIBRE">Día libre</option>

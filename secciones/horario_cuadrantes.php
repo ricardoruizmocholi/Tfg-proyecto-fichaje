@@ -1,16 +1,12 @@
 <link rel="stylesheet" href="css/horario_cuadrante.css">
 
 <?php
-// Cuadrante de horarios - Vista tipo Excel para administrador
-
-// Obtener parámetros de filtro
-$empleado_filtro = $_GET['empleado'] ?? '';
-$vista_periodo = $_GET['periodo'] ?? 'semana';
+$empleado_filtro    = $_GET['empleado']     ?? '';
+$vista_periodo      = $_GET['periodo']      ?? 'semana';
 $fecha_inicio_filtro = $_GET['fecha_inicio'] ?? date('Y-m-d');
 
-// Calcular fechas según el período seleccionado
 $fecha_inicio = new DateTime($fecha_inicio_filtro);
-$fecha_fin = clone $fecha_inicio;
+$fecha_fin    = clone $fecha_inicio;
 
 switch ($vista_periodo) {
     case 'semana':
@@ -30,86 +26,90 @@ switch ($vista_periodo) {
         break;
     case 'mes':
         $fecha_inicio = new DateTime($fecha_inicio->format('Y-m-01'));
-        $fecha_fin = new DateTime($fecha_inicio->format('Y-m-t'));
+        $fecha_fin    = new DateTime($fecha_inicio->format('Y-m-t'));
         break;
 }
 
-// Generar array de fechas
 $fechas = [];
-$fecha_actual = clone $fecha_inicio;
-while ($fecha_actual <= $fecha_fin) {
-    $fechas[] = $fecha_actual->format('Y-m-d');
-    $fecha_actual->modify('+1 day');
+$fc = clone $fecha_inicio;
+while ($fc <= $fecha_fin) {
+    $fechas[] = $fc->format('Y-m-d');
+    $fc->modify('+1 day');
 }
 
-// Obtener empleados
+// Empleados
 $sqlEmpleados = "SELECT U.id_usuario, U.nombre, U.apellidos 
-                 FROM USUARIO U
-                 JOIN EMPRESA_USUARIO EU ON U.id_usuario = EU.id_usuario
+                 FROM USUARIO U JOIN EMPRESA_USUARIO EU ON U.id_usuario = EU.id_usuario
                  WHERE EU.id_empresa = ? AND EU.activo = 1";
-$paramsEmpleados = [$empresa];
-
-if ($empleado_filtro) {
-    $sqlEmpleados .= " AND U.id_usuario = ?";
-    $paramsEmpleados[] = $empleado_filtro;
-}
-
+$paramsEmp = [$empresa];
+if ($empleado_filtro) { $sqlEmpleados .= " AND U.id_usuario = ?"; $paramsEmp[] = $empleado_filtro; }
 $sqlEmpleados .= " ORDER BY U.nombre, U.apellidos";
-$stmtEmpleados = $pdo->prepare($sqlEmpleados);
-$stmtEmpleados->execute($paramsEmpleados);
-$empleados = $stmtEmpleados->fetchAll(PDO::FETCH_ASSOC);
+$stmtEmp = $pdo->prepare($sqlEmpleados);
+$stmtEmp->execute($paramsEmp);
+$empleados = $stmtEmp->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener todos los horarios del período
-$sqlHorarios = "SELECT * FROM HORARIOS WHERE id_empresa = ? AND fecha BETWEEN ? AND ?";
-$paramsHorarios = [$empresa, $fecha_inicio->format('Y-m-d'), $fecha_fin->format('Y-m-d')];
+// Horarios del período — TODOS los registros (incluye múltiples por día para jornada partida)
+$sqlH = "SELECT * FROM HORARIOS WHERE id_empresa = :ide AND fecha BETWEEN :ini AND :fin";
+$paramsH = ['ide' => $empresa, 'ini' => $fecha_inicio->format('Y-m-d'), 'fin' => $fecha_fin->format('Y-m-d')];
+if ($empleado_filtro) { $sqlH .= " AND id_usuario = :idu"; $paramsH['idu'] = $empleado_filtro; }
+$sqlH .= " ORDER BY id_usuario, fecha, orden_dia ASC";
+$stmtH = $pdo->prepare($sqlH);
+$stmtH->execute($paramsH);
 
-if ($empleado_filtro) {
-    $sqlHorarios .= " AND id_usuario = ?";
-    $paramsHorarios[] = $empleado_filtro;
-}
-
-$stmtHorarios = $pdo->prepare($sqlHorarios);
-$stmtHorarios->execute($paramsHorarios);
-$horariosData = $stmtHorarios->fetchAll(PDO::FETCH_ASSOC);
-
-// Organizar horarios por empleado y fecha
-// ... (código anterior de empleados) ...
-
-// PREPARA LA CONSULTA PARA OBTENER LOS HORARIOS
-$sql_horarios = "SELECT * FROM HORARIOS 
-                 WHERE id_empresa = :id_empresa 
-                 AND fecha BETWEEN :inicio AND :fin";
-
-$stmt_h = $pdo->prepare($sql_horarios); // AQUÍ SE CREA LA VARIABLE $stmt_h
-$stmt_h->execute([
-    'id_empresa' => $empresa,
-    'inicio' => $fecha_inicio->format('Y-m-d'),
-    'fin' => $fecha_fin->format('Y-m-d')
-]);
-
+// Organizar: $horarios[id_usuario][fecha] = array de eventos
 $horarios = [];
-// Ahora ya no dará error porque $stmt_h ya existe y tiene los resultados
-while ($h = $stmt_h->fetch(PDO::FETCH_ASSOC)) {
+while ($h = $stmtH->fetch(PDO::FETCH_ASSOC)) {
     $horarios[$h['id_usuario']][$h['fecha']][] = $h;
 }
 
-// Obtener lista de todos los empleados para el selector
-$stmtTodosEmpleados = $pdo->prepare("SELECT U.id_usuario, U.nombre, U.apellidos FROM USUARIO U JOIN EMPRESA_USUARIO EU ON U.id_usuario = EU.id_usuario WHERE EU.id_empresa = ? AND EU.activo = 1 ORDER BY U.nombre, U.apellidos");
-$stmtTodosEmpleados->execute([$empresa]);
-$todosEmpleados = $stmtTodosEmpleados->fetchAll(PDO::FETCH_ASSOC);
+// Todos los empleados para el selector
+$stmtTodos = $pdo->prepare("SELECT U.id_usuario, U.nombre, U.apellidos FROM USUARIO U JOIN EMPRESA_USUARIO EU ON U.id_usuario = EU.id_usuario WHERE EU.id_empresa = ? AND EU.activo = 1 ORDER BY U.nombre, U.apellidos");
+$stmtTodos->execute([$empresa]);
+$todosEmpleados = $stmtTodos->fetchAll(PDO::FETCH_ASSOC);
 
 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
+
+// Helper: clase CSS según tipo
+function claseTipoCuadrante($tipo) {
+    return match(strtoupper($tipo)) {
+        'VACACIONES' => 'horario-vacaciones',
+        'MEDICO'     => 'horario-medico',
+        'LIBRE'      => 'horario-libre',
+        'FESTIVO'    => 'horario-festivo',
+        'PARTIDA_M'  => 'horario-partida-m',
+        'PARTIDA_T'  => 'horario-partida-t',
+        default      => 'horario-trabajo',
+    };
+}
+
+// Helper: etiqueta corta
+function etiquetaTipo($tipo) {
+    return match(strtoupper($tipo)) {
+        'VACACIONES' => 'VACAC.',
+        'MEDICO'     => 'MÉDICO',
+        'LIBRE'      => 'LIBRE',
+        'FESTIVO'    => 'FESTIVO',
+        'PARTIDA_M'  => '🌅 MAÑANA',
+        'PARTIDA_T'  => '🌆 TARDE',
+        default      => 'TRABAJO',
+    };
+}
+
+// Helper: mostrar horas solo en tipos que las tienen
+function mostrarHoras($tipo) {
+    return in_array(strtoupper($tipo), ['TRABAJO','MEDICO','PARTIDA_M','PARTIDA_T']);
+}
 ?>
 
 <div class="section-header">
-    <h2> Cuadrante de Horarios</h2>
+    <h2>📅 Cuadrante de Horarios</h2>
     <p>Doble clic en cualquier celda para editar</p>
 </div>
 
 <div class="filter-container">
     <form method="GET" action="panel.php" class="filter-form">
         <input type="hidden" name="seccion" value="horario">
-        <input type="hidden" name="vista" value="cuadrantes">
+        <input type="hidden" name="vista"   value="cuadrantes">
         
         <div class="filter-group">
             <label>Empleado:</label>
@@ -117,7 +117,7 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
                 <option value="">Todos</option>
                 <?php foreach ($todosEmpleados as $emp): ?>
                     <option value="<?= $emp['id_usuario'] ?>" <?= $empleado_filtro == $emp['id_usuario'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($emp['nombre'] . ' ' . $emp['apellidos']) ?>
+                        <?= htmlspecialchars($emp['nombre'].' '.$emp['apellidos']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -126,10 +126,10 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
         <div class="filter-group">
             <label>Período:</label>
             <select name="periodo" onchange="this.form.submit()">
-                <option value="semana" <?= $vista_periodo === 'semana' ? 'selected' : '' ?>>1 Semana</option>
-                <option value="2semanas" <?= $vista_periodo === '2semanas' ? 'selected' : '' ?>>2 Semanas</option>
-                <option value="3semanas" <?= $vista_periodo === '3semanas' ? 'selected' : '' ?>>3 Semanas</option>
-                <option value="mes" <?= $vista_periodo === 'mes' ? 'selected' : '' ?>>Mes completo</option>
+                <option value="semana"   <?= $vista_periodo==='semana'   ? 'selected':'' ?>>1 Semana</option>
+                <option value="2semanas" <?= $vista_periodo==='2semanas' ? 'selected':'' ?>>2 Semanas</option>
+                <option value="3semanas" <?= $vista_periodo==='3semanas' ? 'selected':'' ?>>3 Semanas</option>
+                <option value="mes"      <?= $vista_periodo==='mes'      ? 'selected':'' ?>>Mes completo</option>
             </select>
         </div>
         
@@ -143,7 +143,7 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
 </div>
 
 <div class="periodo-info">
-    <strong> Período:</strong> <?= $fecha_inicio->format('d/m/Y') ?> - <?= $fecha_fin->format('d/m/Y') ?> (<?= count($fechas) ?> días)
+    <strong>📆 Período:</strong> <?= $fecha_inicio->format('d/m/Y') ?> - <?= $fecha_fin->format('d/m/Y') ?> (<?= count($fechas) ?> días)
 </div>
 
 <?php if (count($empleados) === 0): ?>
@@ -154,82 +154,70 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
             <thead>
                 <tr>
                     <th class="columna-empleado">Empleado</th>
-                    <?php foreach ($fechas as $fecha): 
+                    <?php foreach ($fechas as $fecha):
                         $diaSemana = strftime('%a', strtotime($fecha));
-                        $diaNumero = date('d', strtotime($fecha));
-                        $mes = strftime('%b', strtotime($fecha));
-                        $esFinSemana = date('N', strtotime($fecha)) >= 6;
+                        $diaNum    = date('d', strtotime($fecha));
+                        $mes       = strftime('%b', strtotime($fecha));
+                        $esFinde   = date('N', strtotime($fecha)) >= 6;
                     ?>
-                        <th class="columna-dia <?= $esFinSemana ? 'fin-semana' : '' ?>">
+                        <th class="columna-dia <?= $esFinde ? 'fin-semana' : '' ?>">
                             <div><?= ucfirst($diaSemana) ?></div>
-                            <div style="font-size:11px;opacity:0.9;"><?= $diaNumero ?> <?= $mes ?></div>
+                            <div style="font-size:11px;opacity:0.9;"><?= $diaNum ?> <?= $mes ?></div>
                         </th>
                     <?php endforeach; ?>
                     <th class="columna-total">Total</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($empleados as $emp): 
+                <?php foreach ($empleados as $emp):
                     $totalHoras = 0;
                 ?>
                     <tr>
                         <td class="celda-empleado">
-                            <strong><?= htmlspecialchars($emp['nombre'] . ' ' . $emp['apellidos']) ?></strong>
+                            <strong><?= htmlspecialchars($emp['nombre'].' '.$emp['apellidos']) ?></strong>
                         </td>
                         
-                        <?php foreach ($fechas as $fecha): 
-                            $eventos_dia = $horarios[$emp['id_usuario']][$fecha] ?? [];
-                            $esFinSemana = date('N', strtotime($fecha)) >= 6;
-                            $horasDia = 0;
+                        <?php foreach ($fechas as $fecha):
+                            $eventosDia = $horarios[$emp['id_usuario']][$fecha] ?? [];
+                            $esFinde    = date('N', strtotime($fecha)) >= 6;
 
-                            // 1. Cálculo de horas del día
-                            foreach ($eventos_dia as $h) {
-                                if (!empty($h['horas_totales'])) {
-                                    $horasDia += floatval($h['horas_totales']);
+                            // Sumar horas del día (todos los tramos)
+                            $horasDia = 0;
+                            foreach ($eventosDia as $ev) {
+                                if (!empty($ev['horas_totales'])) {
+                                    $horasDia += floatval($ev['horas_totales']);
                                 }
                             }
                             $totalHoras += $horasDia;
                         ?>
-                            <td class="td-horario <?= $esFinSemana ? 'finde' : '' ?>">
+                            <td class="td-horario <?= $esFinde ? 'finde' : '' ?>">
                                 <div class="celda-contenido">
-                                    <?php if (!empty($eventos_dia)): ?>
-                                        <?php foreach ($eventos_dia as $h): 
-                                            $tipo = strtoupper($h['tipo_jornada']);
-                                            // Definición de Iconos y Clases
-                                            switch ($tipo) {
-                                                case 'VACACIONES': $clase_tipo = 'horario-vacaciones';  break;
-                                                case 'MEDICO':     $clase_tipo = 'horario-medico';      break;
-                                                case 'LIBRE':      $clase_tipo = 'horario-libre';       break;
-                                                case 'FESTIVO':    $clase_tipo = 'horario-festivo';     break;
-                                                default:           $clase_tipo = 'horario-trabajo';     break;
-                                            }
-                                        ?>
-                                            <div class="horario-item <?= $clase_tipo ?>" 
-                                                onclick="editarCelda(this)" 
-                                                data-id-horario="<?= $h['id_horario'] ?>"
-                                                data-id-usuario="<?= $emp['id_usuario'] ?>"
-                                                data-fecha="<?= $fecha ?>">
-                                                
-                                                <span class="tipo-label"> <?= $tipo ?></span>
-                                                
+                                    <?php foreach ($eventosDia as $ev):
+                                        $tipo   = strtoupper($ev['tipo_jornada']);
+                                        $clase  = claseTipoCuadrante($tipo);
+                                        $label  = etiquetaTipo($tipo);
+                                        $tieneH = mostrarHoras($tipo);
+                                    ?>
+                                        <div class="horario-item <?= $clase ?>"
+                                             onclick="editarCelda(this)"
+                                             data-id-horario="<?= $ev['id_horario'] ?>"
+                                             data-id-usuario="<?= $emp['id_usuario'] ?>"
+                                             data-fecha="<?= $fecha ?>">
+                                            <span class="tipo-label"><?= $label ?></span>
+                                            <?php if ($tieneH && $ev['hora_inicio'] && $ev['hora_fin']): ?>
                                                 <div class="horario-horas">
-                                                    <?php if (!in_array($tipo, ['VACACIONES', 'LIBRE', 'FESTIVO'])): ?>
-                                                        <?= substr($h['hora_inicio'] ?? '', 0, 5) ?> - <?= substr($h['hora_fin'] ?? '', 0, 5) ?>
-                                                    <?php endif; ?>
+                                                    <?= substr($ev['hora_inicio'],0,5) ?> - <?= substr($ev['hora_fin'],0,5) ?>
                                                 </div>
+                                            <?php endif; ?>
+                                            <button class="btn-eliminar" onclick="eliminarHorario(event, <?= $ev['id_horario'] ?>)">×</button>
+                                        </div>
+                                    <?php endforeach; ?>
 
-                                                <button class="btn-eliminar" onclick="eliminarHorario(event, <?= $h['id_horario'] ?>)">×</button>
-                                            </div>
-                                        <?php endforeach; ?>
-                                   
-                                    <?php endif; ?>
-                                    <div class="btn-add-siempre" 
-                                            onclick="editarCelda(this)" 
-                                            data-id-usuario="<?= $emp['id_usuario'] ?>" 
-                                            data-fecha="<?= $fecha ?>"
-                                            title="Añadir otro registro">
-                                            +
-                                    </div>
+                                    <div class="btn-add-siempre"
+                                         onclick="editarCelda(this)"
+                                         data-id-usuario="<?= $emp['id_usuario'] ?>"
+                                         data-fecha="<?= $fecha ?>"
+                                         title="Añadir registro">+</div>
                                 </div>
                             </td>
                         <?php endforeach; ?>
@@ -241,7 +229,10 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
         </table>
     </div>
 <?php endif; ?>
-<!-- Modal Editar -->
+
+<!-- ============================================================
+     MODAL EDITAR (celda individual)
+============================================================= -->
 <div id="modalEditar" class="modal">
     <div class="modal-content modal-small">
         <span class="close" onclick="cerrarModal()">&times;</span>
@@ -254,7 +245,9 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
             <div class="form-group">
                 <label>Tipo:</label>
                 <select id="edit_tipo" onchange="toggleHoras()">
-                    <option value="TRABAJO">Trabajo</option>
+                    <option value="TRABAJO">Trabajo (jornada continua)</option>
+                    <option value="PARTIDA_M">🌅 Jornada partida — Tramo mañana</option>
+                    <option value="PARTIDA_T">🌆 Jornada partida — Tramo tarde</option>
                     <option value="VACACIONES">Vacaciones</option>
                     <option value="MEDICO">Médico</option>
                     <option value="LIBRE">Libre</option>
@@ -281,25 +274,27 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
             </div>
             
             <div class="form-actions">
-                <button type="submit" class="btn-primary"> Guardar</button>
+                <button type="submit" class="btn-primary">💾 Guardar</button>
                 <button type="button" class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Modal Masivo -->
+<!-- ============================================================
+     MODAL MASIVO
+============================================================= -->
 <div id="modalMasivo" class="modal">
     <div class="modal-content">
         <span class="close" onclick="cerrarModalMasivo()">&times;</span>
-        <h3>➕ Añadir Horarios </h3>
+        <h3>➕ Añadir Horarios en bloque</h3>
         <form id="formMasivo" onsubmit="return guardarMasivos(event)">
             <div class="form-group">
                 <label>Empleados:*</label>
                 <select id="masivo_emps" multiple size="5" style="height:120px;">
                     <option value="todos">TODOS</option>
                     <?php foreach ($todosEmpleados as $emp): ?>
-                        <option value="<?= $emp['id_usuario'] ?>"><?= htmlspecialchars($emp['nombre'] . ' ' . $emp['apellidos']) ?></option>
+                        <option value="<?= $emp['id_usuario'] ?>"><?= htmlspecialchars($emp['nombre'].' '.$emp['apellidos']) ?></option>
                     <?php endforeach; ?>
                 </select>
                 <small>Ctrl/Cmd para seleccionar varios</small>
@@ -332,7 +327,9 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
             <div class="form-group">
                 <label>Tipo:*</label>
                 <select id="masivo_tipo" onchange="toggleHorasMasivo()">
-                    <option value="TRABAJO">Trabajo</option>
+                    <option value="TRABAJO">Trabajo (jornada continua)</option>
+                    <option value="PARTIDA_M">🌅 Jornada partida — Tramo mañana</option>
+                    <option value="PARTIDA_T">🌆 Jornada partida — Tramo tarde</option>
                     <option value="VACACIONES">Vacaciones</option>
                     <option value="MEDICO">Médico</option>
                     <option value="LIBRE">Libre</option>
@@ -359,12 +356,11 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
             </div>
             
             <div class="form-actions">
-                <button type="submit" class="btn-primary"> Guardar</button>
+                <button type="submit" class="btn-primary">💾 Guardar</button>
                 <button type="button" class="btn-secondary" onclick="cerrarModalMasivo()">Cancelar</button>
             </div>
         </form>
     </div>
 </div>
-
 
 <?php include 'horario_cuadrantes_scripts.php'; ?>
