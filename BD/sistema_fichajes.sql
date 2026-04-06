@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-02-2026 a las 12:10:34
+-- Tiempo de generación: 06-04-2026 a las 12:00:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -221,7 +221,8 @@ INSERT INTO `fichaje` (`id_fichaje`, `id_usuario`, `fecha`, `hora_entrada`, `hor
 (15, 1, '2026-02-04', '19:38:48', '19:43:53', '19:43:56', '19:44:00', 'normal', NULL),
 (16, 6, '2026-02-04', '20:42:00', NULL, NULL, '23:58:00', 'normal', NULL),
 (17, 6, '2026-02-04', '19:57:57', NULL, NULL, NULL, 'normal', NULL),
-(18, 1, '2026-02-09', '19:04:37', '19:09:38', NULL, '19:09:38', 'normal', NULL);
+(18, 1, '2026-02-09', '19:04:37', '19:09:38', NULL, '19:09:38', 'normal', NULL),
+(19, 2, '2026-02-26', '12:48:00', NULL, NULL, '14:48:00', 'normal', '');
 
 -- --------------------------------------------------------
 
@@ -376,7 +377,9 @@ INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `mensaje`, `tipo`
 (45, 4, '❌ Tu solicitud de MEDICO ha sido RECHAZADA. Motivo: necesito justificante cita médica', 'resultado_peticion', 0, '2026-02-04 18:53:05'),
 (46, 6, '📝 El administrador ha modificado tu fichaje del día 04/02/2026.', 'cambio_fichaje', 1, '2026-02-04 18:58:29'),
 (47, 1, 'Nueva solicitud de HORARIO_MES de Perico Palote', 'nueva_peticion', 1, '2026-02-04 19:04:07'),
-(48, 2, 'Nueva solicitud de HORARIO_MES de Perico Palote', 'nueva_peticion', 0, '2026-02-04 19:04:07');
+(48, 2, 'Nueva solicitud de HORARIO_MES de Perico Palote', 'nueva_peticion', 0, '2026-02-04 19:04:07'),
+(49, 2, '➕ El administrador ha añadido un nuevo fichaje a tu registro del día 26/02/2026.', 'fichaje_anadido', 0, '2026-02-26 11:47:58'),
+(50, 2, '📝 El administrador ha modificado tu fichaje del día 26/02/2026.', 'cambio_fichaje', 0, '2026-02-26 11:48:17');
 
 -- --------------------------------------------------------
 
@@ -395,6 +398,13 @@ CREATE TABLE `reportes` (
   `generado_por` int(11) NOT NULL,
   `ruta_archivo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Historial de reportes generados';
+
+--
+-- Volcado de datos para la tabla `reportes`
+--
+
+INSERT INTO `reportes` (`id_reporte`, `id_usuario`, `id_empresa`, `tipo_reporte`, `mes`, `anio`, `fecha_generacion`, `generado_por`, `ruta_archivo`) VALUES
+(3, 2, 1, 'registro_jornada', 3, 2026, '2026-02-26 11:45:34', 1, 'reportes_pdf/reporte_2_3_2026_1772106334.pdf');
 
 -- --------------------------------------------------------
 
@@ -654,7 +664,7 @@ ALTER TABLE `empresa`
 -- AUTO_INCREMENT de la tabla `fichaje`
 --
 ALTER TABLE `fichaje`
-  MODIFY `id_fichaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_fichaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_validaciones`
@@ -672,13 +682,13 @@ ALTER TABLE `horarios`
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT de la tabla `reportes`
 --
 ALTER TABLE `reportes`
-  MODIFY `id_reporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_reporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitudes_horario`
