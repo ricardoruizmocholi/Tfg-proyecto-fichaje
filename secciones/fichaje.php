@@ -72,37 +72,37 @@ $acceso_permitido = (
 );
 ?>
 
-<h2>⏱️ Fichaje</h2>
+<h2> Fichaje</h2>
 
 <?php if ($esPartida): ?>
     <!-- ======================================
          JORNADA PARTIDA
     ======================================= -->
     <div style="background:#e8eaf6;border-left:4px solid #3f51b5;padding:15px;border-radius:5px;margin-bottom:15px;">
-        <p><strong>📋 Hoy tienes una <u>jornada partida</u></strong></p>
+        <p><strong> Hoy tienes una <u>jornada partida</u></strong></p>
         <?php if ($tienePartidaM): ?>
-            <p>🌅 Mañana: <strong><?= substr($hiM,0,5) ?> – <?= substr($hfM,0,5) ?></strong></p>
+            <p> Primer Tramo: <strong><?= substr($hiM,0,5) ?> – <?= substr($hfM,0,5) ?></strong></p>
         <?php endif; ?>
         <?php if ($tienePartidaT): ?>
-            <p>🌆 Tarde: <strong><?= substr($hiT,0,5) ?> – <?= substr($hfT,0,5) ?></strong></p>
+            <p> Segundo Tramo: <strong><?= substr($hiT,0,5) ?> – <?= substr($hfT,0,5) ?></strong></p>
         <?php endif; ?>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
         <div style="background:#f0f4ff;padding:15px;border-radius:5px;">
-            <p><strong>🌅 Tramo Mañana</strong></p>
+            <p><strong> Primer tramo</strong></p>
             <?php if ($fichajeHoy): ?>
-                <p>▶️ Entrada: <strong><?= substr($fichajeHoy['hora_entrada'],0,5) ?? '-' ?></strong></p>
-                <p>🏁 Salida: <strong><?= $fichajeHoy['hora_salida'] ? substr($fichajeHoy['hora_salida'],0,5) : '—' ?></strong></p>
+                <p> Entrada: <strong><?= substr($fichajeHoy['hora_entrada'],0,5) ?? '-' ?></strong></p>
+                <p> Salida: <strong><?= $fichajeHoy['hora_salida'] ? substr($fichajeHoy['hora_salida'],0,5) : '—' ?></strong></p>
             <?php else: ?>
                 <p style="color:#888;">Sin fichar</p>
             <?php endif; ?>
         </div>
         <div style="background:#fce4ec;padding:15px;border-radius:5px;">
-            <p><strong>🌆 Tramo Tarde</strong></p>
+            <p><strong> Segundo Tramo</strong></p>
             <?php if ($fichajeTarde): ?>
-                <p>▶️ Entrada: <strong><?= substr($fichajeTarde['hora_entrada'],0,5) ?? '-' ?></strong></p>
-                <p>🏁 Salida: <strong><?= $fichajeTarde['hora_salida'] ? substr($fichajeTarde['hora_salida'],0,5) : '—' ?></strong></p>
+                <p> Entrada: <strong><?= substr($fichajeTarde['hora_entrada'],0,5) ?? '-' ?></strong></p>
+                <p> Salida: <strong><?= $fichajeTarde['hora_salida'] ? substr($fichajeTarde['hora_salida'],0,5) : '—' ?></strong></p>
             <?php else: ?>
                 <p style="color:#888;">Sin fichar</p>
             <?php endif; ?>
@@ -145,14 +145,14 @@ $acceso_permitido = (
     <?php if($fichajeHoy): ?>
         <div style="background:#cacacaa8;padding:15px;border-radius:5px;margin-bottom:20px;">
             <p><strong>Estado del fichaje de hoy:</strong></p>
-            <p>🕐 Entrada: <strong><?= $fichajeHoy['hora_entrada'] ?? '-' ?></strong></p>
-            <p>⏸️ Pausa: <strong><?= $fichajeHoy['hora_pausa'] ?? '-' ?></strong></p>
-            <p>▶️ Reanudación: <strong><?= $fichajeHoy['hora_reanudacion'] ?? '-' ?></strong></p>
-            <p>🏁 Salida: <strong><?= $fichajeHoy['hora_salida'] ?? '-' ?></strong></p>
+            <p> Entrada: <strong><?= $fichajeHoy['hora_entrada'] ?? '-' ?></strong></p>
+            <p> Pausa: <strong><?= $fichajeHoy['hora_pausa'] ?? '-' ?></strong></p>
+            <p> Reanudación: <strong><?= $fichajeHoy['hora_reanudacion'] ?? '-' ?></strong></p>
+            <p> Salida: <strong><?= $fichajeHoy['hora_salida'] ?? '-' ?></strong></p>
         </div>
     <?php else: ?>
         <div style="background:#fff3cd;padding:15px;border-radius:5px;margin-bottom:20px;">
-            <p>⚠️ No has fichado hoy todavía.</p>
+            <p> No has fichado hoy todavía.</p>
         </div>
     <?php endif; ?>
 
@@ -177,7 +177,7 @@ $acceso_permitido = (
             </form>
         <?php else: ?>
             <div style="background:#fff3f3;color:#d32f2f;padding:20px;border-radius:8px;border:1px solid #ffcdd2;text-align:center;">
-                <strong>🚫 Acceso Restringido</strong>
+                <strong> Acceso Restringido</strong>
                 <p style="margin:10px 0 0;">Solo puedes fichar desde la red del despacho.</p>
                 <small>Tu IP: <?= $ip_usuario ?></small>
             </div>
@@ -186,7 +186,7 @@ $acceso_permitido = (
 <?php endif; ?>
 
 <hr style="margin:30px 0;">
-<h3>📋 Últimos fichajes</h3>
+<h3> Últimos fichajes</h3>
 <?php
 $sqlH = "SELECT * FROM FICHAJE WHERE id_usuario = :idu ORDER BY fecha DESC, id_fichaje DESC LIMIT 10";
 $stmtHL = $pdo->prepare($sqlH);
@@ -206,8 +206,8 @@ if(count($historial) > 0):
                 $tipo_f = $f['tipo'] ?? 'normal';
                 $claseF = $f['hora_salida'] ? 'fila-completo' : 'fila-proceso';
                 $tramoLabel = match($tipo_f) {
-                    'partida_tarde'  => '🌆 Tarde',
-                    default          => '☀️ Normal'
+                    'partida_tarde'  => ' Tarde',
+                    default          => ' Completa'
                 };
             ?>
             <tr class="<?= $claseF ?>">

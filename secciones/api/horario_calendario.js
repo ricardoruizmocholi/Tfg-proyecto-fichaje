@@ -78,12 +78,12 @@ function actualizarContadorTemporales() {
     const btnEnviar = document.querySelector('.btn-primary');
     if (btnEnviar) {
         if (totalTemporales > 0) {
-            btnEnviar.textContent = `✅ Enviar a validar (${totalTemporales} eventos)`;
+            btnEnviar.textContent = ` Enviar a validar (${totalTemporales} eventos)`;
             btnEnviar.style.background = '#28a745';
             btnEnviar.style.color = 'white';
             btnEnviar.style.animation = 'pulse 2s infinite';
         } else {
-            btnEnviar.textContent = '✅ Enviar a validar';
+            btnEnviar.textContent = ' Enviar a validar';
             btnEnviar.style.background = 'white';
             btnEnviar.style.color = '#667eea';
             btnEnviar.style.animation = 'none';
@@ -160,17 +160,17 @@ function obtenerTextoBloque(evento) {
         const inicio = formatearHora(evento.hora_inicio);
         const fin    = formatearHora(evento.hora_fin);
         
-        if (tipo === 'PARTIDA_M') return `🌅 ${inicio}-${fin}`;
-        if (tipo === 'PARTIDA_T') return `🌆 ${inicio}-${fin}`;
-        if (tipo === 'MEDICO')    return `🏥 ${inicio}-${fin}`;
+        if (tipo === 'PARTIDA_M') return ` ${inicio}-${fin}`;
+        if (tipo === 'PARTIDA_T') return ` ${inicio}-${fin}`;
+        if (tipo === 'MEDICO')    return ` ${inicio}-${fin}`;
         return `${inicio}-${fin}`;
     }
     
     // Tipos sin horas
     const etiquetas = {
-        'VACACIONES': '🏖️ Vacaciones',
-        'LIBRE':      '💤 Libre',
-        'FESTIVO':    '🎉 Festivo'
+        'VACACIONES': ' Vacaciones',
+        'LIBRE':      ' Libre',
+        'FESTIVO':    ' Festivo'
     };
     return etiquetas[tipo] || tipo.charAt(0) + tipo.slice(1).toLowerCase();
 }

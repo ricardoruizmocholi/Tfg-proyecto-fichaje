@@ -132,7 +132,7 @@ function formatearDuracion($seg) {
 
 <div class="fichaje-wrapper">
     <div class="section-header">
-        <h2>📋 Registros de Fichaje</h2>
+        <h2> Registros de Fichaje</h2>
         <p>Filtrado inteligente por empleado y periodos</p>
     </div>
 
@@ -190,7 +190,7 @@ function formatearDuracion($seg) {
             </div>
 
             <div class="f-actions">
-                <button type="submit" class="btn-search">🔎 Filtrar</button>
+                <button type="submit" class="btn-search"> Filtrar</button>
                 <a href="panel.php?seccion=fichaje&vista=ver" class="btn-reset">Limpiar</a>
             </div>
         </form>
@@ -215,7 +215,7 @@ function formatearDuracion($seg) {
         ?>
             <div class="day-container">
                 <div class="day-header">
-                    📅 <?= date('d/m/Y', strtotime($fecha)) ?> — <?= ucfirst(strftime('%A', strtotime($fecha))) ?>
+                     <?= date('d/m/Y', strtotime($fecha)) ?> — <?= ucfirst(strftime('%A', strtotime($fecha))) ?>
                 </div>
                 <div class="table-responsive">
                     <table class="f-table">
@@ -261,7 +261,7 @@ function formatearDuracion($seg) {
                                 }
 
                                 // Etiqueta tipo jornada
-                                $tipoJornada = $esPartida ? '🌅🌆 Partida' : '☀️ Continua';
+                                $tipoJornada = $esPartida ? ' Partida' : ' Continua';
                             ?>
                                 <tr>
                                     <td class="name-td">

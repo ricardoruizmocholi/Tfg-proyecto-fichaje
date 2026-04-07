@@ -3,7 +3,7 @@
 <div class="admin-container">
     <!-- HEADER -->
     <div class="admin-header">
-        <h2>👨‍💼 Panel de Administrador - Gestión de Horarios</h2>
+        <h2> Panel de Administrador - Gestión de Horarios</h2>
         <p>Revisa y valida las solicitudes de horarios de tus empleados</p>
     </div>
 
@@ -54,7 +54,7 @@
         </div>
 
         <button class="btn-action btn-ver" onclick="cargarSolicitudes()" style="margin-left: auto;">
-            🔄 Actualizar
+             Actualizar
         </button>
     </div>
 
@@ -102,7 +102,7 @@
 
             <!-- Calendario con los días solicitados -->
             <div class="calendario-detalle">
-                <h4>📅 Detalle del horario solicitado</h4>
+                <h4> Detalle del horario solicitado</h4>
                 <div class="dias-grid" id="modalCalendario">
                     <!-- Se llena dinámicamente -->
                 </div>

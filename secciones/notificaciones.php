@@ -23,11 +23,11 @@ $pdo->prepare("UPDATE NOTIFICACIONES SET leida = 1 WHERE id_usuario = ? AND leid
 <div class="notif-page-container">
     <div class="notif-header-banner">
         <div class="header-content">
-            <h2>🔔 Mis Notificaciones</h2>
+            <h2> Notificaciones</h2>
             <p>Gestiona tus avisos y actualizaciones del sistema</p>
         </div>
         <button class="btn-clear-all" onclick="eliminarTodas()">
-            <span class="icon">🗑️</span> Limpiar todo
+           Limpiar todo
         </button>
     </div>
     <div class="notif-list-container">
@@ -57,7 +57,7 @@ $pdo->prepare("UPDATE NOTIFICACIONES SET leida = 1 WHERE id_usuario = ? AND leid
                         <div class="notif-content">
                             <p class="notif-message"><?= htmlspecialchars($msg) ?></p>
                             <span class="notif-date">
-                                🕒 <?= date('d/m/Y - H:i', strtotime($n['fecha_creacion'])) ?>
+                                 <?= date('d/m/Y - H:i', strtotime($n['fecha_creacion'])) ?>
                             </span>
                         </div>
                         <button class="btn-delete-single" onclick="eliminarNotificacion(<?= $n['id_notificacion'] ?>)" title="Eliminar">

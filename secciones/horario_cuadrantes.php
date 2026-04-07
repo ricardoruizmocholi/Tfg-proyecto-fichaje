@@ -89,8 +89,8 @@ function etiquetaTipo($tipo) {
         'MEDICO'     => 'MÉDICO',
         'LIBRE'      => 'LIBRE',
         'FESTIVO'    => 'FESTIVO',
-        'PARTIDA_M'  => '🌅 MAÑANA',
-        'PARTIDA_T'  => '🌆 TARDE',
+        'PARTIDA_M'  => ' 1º TRAMO',
+        'PARTIDA_T'  => ' 2º TRAMO',
         default      => 'TRABAJO',
     };
 }
@@ -102,7 +102,7 @@ function mostrarHoras($tipo) {
 ?>
 
 <div class="section-header">
-    <h2>📅 Cuadrante de Horarios</h2>
+    <h2> Cuadrante de Horarios</h2>
     <p>Doble clic en cualquier celda para editar</p>
 </div>
 
@@ -138,12 +138,12 @@ function mostrarHoras($tipo) {
             <input type="date" name="fecha_inicio" value="<?= $fecha_inicio_filtro ?>" onchange="this.form.submit()">
         </div>
         
-        <button type="button" class="btn-success" onclick="abrirModalMasivo()">➕ Añadir Horarios</button>
+        <button type="button" class="btn-success" onclick="abrirModalMasivo()"> Añadir Horarios</button>
     </form>
 </div>
 
 <div class="periodo-info">
-    <strong>📆 Período:</strong> <?= $fecha_inicio->format('d/m/Y') ?> - <?= $fecha_fin->format('d/m/Y') ?> (<?= count($fechas) ?> días)
+    <strong> Período:</strong> <?= $fecha_inicio->format('d/m/Y') ?> - <?= $fecha_fin->format('d/m/Y') ?> (<?= count($fechas) ?> días)
 </div>
 
 <?php if (count($empleados) === 0): ?>
@@ -246,8 +246,8 @@ function mostrarHoras($tipo) {
                 <label>Tipo:</label>
                 <select id="edit_tipo" onchange="toggleHoras()">
                     <option value="TRABAJO">Trabajo (jornada continua)</option>
-                    <option value="PARTIDA_M">🌅 Jornada partida — Tramo mañana</option>
-                    <option value="PARTIDA_T">🌆 Jornada partida — Tramo tarde</option>
+                    <option value="PARTIDA_M"> Jornada partida — 1º Tramo </option>
+                    <option value="PARTIDA_T"> Jornada partida —2º Tramo </option>
                     <option value="VACACIONES">Vacaciones</option>
                     <option value="MEDICO">Médico</option>
                     <option value="LIBRE">Libre</option>
@@ -287,7 +287,7 @@ function mostrarHoras($tipo) {
 <div id="modalMasivo" class="modal">
     <div class="modal-content">
         <span class="close" onclick="cerrarModalMasivo()">&times;</span>
-        <h3>➕ Añadir Horarios en bloque</h3>
+        <h3> Añadir Horarios en bloque</h3>
         <form id="formMasivo" onsubmit="return guardarMasivos(event)">
             <div class="form-group">
                 <label>Empleados:*</label>
@@ -328,8 +328,8 @@ function mostrarHoras($tipo) {
                 <label>Tipo:*</label>
                 <select id="masivo_tipo" onchange="toggleHorasMasivo()">
                     <option value="TRABAJO">Trabajo (jornada continua)</option>
-                    <option value="PARTIDA_M">🌅 Jornada partida — Tramo mañana</option>
-                    <option value="PARTIDA_T">🌆 Jornada partida — Tramo tarde</option>
+                    <option value="PARTIDA_M"> Jornada partida — 1º Tramo </option>
+                    <option value="PARTIDA_T"> Jornada partida — 2º Tramo </option>
                     <option value="VACACIONES">Vacaciones</option>
                     <option value="MEDICO">Médico</option>
                     <option value="LIBRE">Libre</option>

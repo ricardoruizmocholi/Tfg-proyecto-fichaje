@@ -167,7 +167,7 @@ function crearTarjetaSolicitud(solicitud) {
             </div>
             <div class="btn-group">
                 <button class="btn-action btn-ver" onclick="verDetalleSolicitud(${solicitud.id_solicitud})">
-                    👁️ Ver detalle
+                     Ver detalle
                 </button>
                 ${solicitud.estado === 'PENDIENTE' ? `
                     <button class="btn-action btn-aprobar" onclick="aprobarDirecto(${solicitud.id_solicitud})">

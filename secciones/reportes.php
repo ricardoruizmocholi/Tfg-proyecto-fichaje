@@ -1,3 +1,5 @@
+
+<link rel="stylesheet" href="css/reportes.css">
 <?php
 // Sección de reportes - Generar y ver historial
 
@@ -18,7 +20,7 @@ if ($vista === 'generar') {
     // Vista para generar nuevo reporte
     ?>
     <div class="section-header">
-        <h2>📊 Generar Reporte</h2>
+        <h2> Generar Reporte</h2>
         <p>Genera el listado resumen mensual del registro de jornada</p>
     </div>
 
@@ -26,7 +28,7 @@ if ($vista === 'generar') {
         <div class="form-container">
             <form id="formGenerarReporte">
                 <div class="form-section">
-                    <h3>📋 Datos del Reporte</h3>
+                    <h3> Datos del Reporte</h3>
                     
                     <div class="form-group">
                         <label>Empleado: *</label>
@@ -85,17 +87,17 @@ if ($vista === 'generar') {
                 </div>
                 
                 <div class="preview-section" id="previewSection" style="display:none;">
-                    <h3>👁️ Vista Previa</h3>
+                    <h3> Vista Previa</h3>
                     <div id="previewContent"></div>
                 </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="previsualizarReporte()">
-                        👁️ Previsualizar
+                         Previsualizar
                     </button>
                     <button type="button" id="btnExportExcel" class="btn-pro btn-excel">Excel Export</button>
                     <button type="submit" class="btn-primary">
-                        📄 Generar PDF
+                         Generar PDF
                     </button>
                 </div>
             </form>
@@ -196,14 +198,14 @@ if ($vista === 'generar') {
             } else {
                 alert('❌ Error: ' + data.message);
                 btn.disabled = false;
-                btn.textContent = '📄 Generar PDF';
+                btn.textContent = ' Generar PDF';
             }
         })
         .catch(err => {
             console.error(err);
             alert('❌ Error de conexión');
             btn.disabled = false;
-            btn.textContent = '📄 Generar PDF';
+            btn.textContent = ' Generar PDF';
         });
     }
     </script>
@@ -242,13 +244,13 @@ if ($vista === 'generar') {
                 <select name="tipo" onchange="this.form.submit()">
                     <option value="">Todos los tipos</option>
                     <option value="registro_jornada" <?= ($_GET['tipo'] ?? '') == 'registro_jornada' ? 'selected' : '' ?>>
-                        📋 Registro de Jornada
+                         Registro de Jornada
                     </option>
                     <option value="horas_trabajadas" <?= ($_GET['tipo'] ?? '') == 'horas_trabajadas' ? 'selected' : '' ?>>
-                        ⏰ Horas Trabajadas
+                         Horas Trabajadas
                     </option>
                     <option value="ausencias" <?= ($_GET['tipo'] ?? '') == 'ausencias' ? 'selected' : '' ?>>
-                        🚫 Ausencias
+                         Ausencias
                     </option>
                 </select>
             </div>
@@ -331,23 +333,23 @@ if ($vista === 'generar') {
     $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
               'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     $tipos = [
-        'registro_jornada' => '📋 Registro de Jornada',
-        'horas_trabajadas' => '⏰ Horas Trabajadas',
-        'ausencias' => '🚫 Ausencias'
+        'registro_jornada' => ' Registro de Jornada',
+        'horas_trabajadas' => ' Horas Trabajadas',
+        'ausencias' => ' Ausencias'
     ];
     ?>
 
     <!-- Estadísticas -->
     <div class="stats-reportes">
         <div class="stat-reporte">
-            <div class="stat-icon">📊</div>
+            <div class="stat-icon"></div>
             <div class="stat-info">
                 <div class="stat-label">Total Reportes</div>
                 <div class="stat-value"><?= count($reportes) ?></div>
             </div>
         </div>
         <div class="stat-reporte">
-            <div class="stat-icon">📅</div>
+            <div class="stat-icon"></div>
             <div class="stat-info">
                 <div class="stat-label">Este Mes</div>
                 <div class="stat-value">
@@ -356,7 +358,7 @@ if ($vista === 'generar') {
             </div>
         </div>
         <div class="stat-reporte">
-            <div class="stat-icon">👥</div>
+            <div class="stat-icon"></div>
             <div class="stat-info">
                 <div class="stat-label">Empleados</div>
                 <div class="stat-value">
@@ -372,7 +374,7 @@ if ($vista === 'generar') {
             <h3>No hay reportes generados</h3>
             <p>No se encontraron reportes con los filtros aplicados</p>
             <a href="panel.php?seccion=reportes&vista=generar" class="btn-primary" style="margin-top:20px;display:inline-block;text-decoration:none;">
-                ➕ Generar Primer Reporte
+                 Generar Primer Reporte
             </a>
         </div>
     <?php else: ?>
@@ -401,7 +403,7 @@ if ($vista === 'generar') {
                                 <?= htmlspecialchars($rep['nombre'] . ' ' . $rep['apellidos']) ?>
                             </div>
                             <div class="reporte-periodo">
-                                📅 <?= $meses[$rep['mes']] ?> <?= $rep['anio'] ?>
+                                 <?= $meses[$rep['mes']] ?> <?= $rep['anio'] ?>
                             </div>
                         </div>
                     </div>
@@ -422,13 +424,13 @@ if ($vista === 'generar') {
                             <button class="btn-reporte btn-abrir" 
                                     onclick="abrirReporte(<?= $rep['id_reporte'] ?>)" 
                                     title="Abrir PDF en nueva pestaña">
-                                <span class="btn-icon">👁️</span>
+                                <span class="btn-icon"></span>
                                 <span class="btn-text">Abrir</span>
                             </button>
                             <button class="btn-reporte btn-descargar" 
                                     onclick="descargarReporte(<?= $rep['id_reporte'] ?>)" 
                                     title="Descargar PDF">
-                                <span class="btn-icon">📥</span>
+                                <span class="btn-icon"></span>
                                 <span class="btn-text">Descargar</span>
                             </button>
                         <?php else: ?>
@@ -448,225 +450,7 @@ if ($vista === 'generar') {
         </div>
     <?php endif; ?>
 
-    <style>
-    .stats-reportes {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-
-    .stat-reporte {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .stat-icon {
-        font-size: 32px;
-    }
-
-    .stat-info {
-        flex: 1;
-    }
-
-    .stat-label {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 5px;
-    }
-
-    .stat-value {
-        font-size: 28px;
-        font-weight: bold;
-        color: #667eea;
-    }
-
-    .reportes-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 20px;
-    }
-
-    .reporte-card {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        overflow: hidden;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .reporte-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .reporte-missing {
-        opacity: 0.7;
-        border: 2px dashed #dc3545;
-    }
-
-    .reporte-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 15px;
-        font-weight: 600;
-        font-size: 14px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .badge-error {
-        background: #dc3545;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 11px;
-    }
-
-    .reporte-empleado {
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .reporte-foto {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #667eea;
-    }
-
-    .reporte-empleado-nombre {
-        font-weight: 600;
-        color: #333;
-        font-size: 15px;
-    }
-
-    .reporte-periodo {
-        font-size: 13px;
-        color: #666;
-        margin-top: 4px;
-    }
-
-    .reporte-meta {
-        padding: 15px;
-        background: #f8f9fa;
-        font-size: 12px;
-    }
-
-    .reporte-meta-item {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 8px;
-    }
-
-    .reporte-meta-item:last-child {
-        margin-bottom: 0;
-    }
-
-    .meta-label {
-        color: #666;
-        font-weight: 500;
-    }
-
-    .meta-value {
-        color: #333;
-        font-weight: 600;
-    }
-
-    .reporte-actions {
-        padding: 15px;
-        display: flex;
-        gap: 8px;
-    }
-
-    .btn-reporte {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: all 0.2s;
-    }
-
-    .btn-abrir {
-        background: #667eea;
-        color: white;
-    }
-
-    .btn-abrir:hover {
-        background: #5568d3;
-        transform: translateY(-2px);
-    }
-
-    .btn-descargar {
-        background: #28a745;
-        color: white;
-    }
-
-    .btn-descargar:hover {
-        background: #218838;
-        transform: translateY(-2px);
-    }
-
-    .btn-eliminar {
-        flex: 0 0 45px;
-        background: #dc3545;
-        color: white;
-    }
-
-    .btn-eliminar:hover {
-        background: #c82333;
-        transform: scale(1.05);
-    }
-
-    .btn-disabled {
-        background: #ccc;
-        color: #666;
-        cursor: not-allowed;
-    }
-
-    .btn-icon {
-        font-size: 16px;
-    }
-
-    .no-results {
-        background: white;
-        padding: 60px 40px;
-        text-align: center;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .no-results-icon {
-        font-size: 64px;
-        margin-bottom: 20px;
-    }
-
-    .no-results h3 {
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .no-results p {
-        color: #666;
-        margin-bottom: 20px;
-    }
-    </style>
+    
 
     <script>
     function abrirReporte(idReporte) {
@@ -709,190 +493,3 @@ if ($vista === 'generar') {
 }
 ?>
 
-<style>
-.reportes-container {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.form-container {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.form-section {
-    margin-bottom: 25px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.form-section h3 {
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #333;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.preview-section {
-    margin: 30px 0;
-    padding: 20px;
-    background: white;
-    border: 2px dashed #667eea;
-    border-radius: 8px;
-}
-
-.preview-section h3 {
-    margin-bottom: 15px;
-    color: #667eea;
-}
-
-#previewContent {
-    max-height: 600px;
-    overflow-y: auto;
-}
-
-.form-actions {
-    display: flex;
-    gap: 15px;
-    justify-content: flex-end;
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 2px solid #eee;
-}
-
-.filter-container {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.filter-form {
-    display: flex;
-    gap: 15px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-}
-
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.filter-group label {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.filter-group input,
-.filter-group select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    min-width: 150px;
-}
-
-.table-container {
-    background: white;
-    border-radius: 8px;
-    overflow-x: auto;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.reportes-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.reportes-table th {
-    background: #667eea;
-    color: white;
-    padding: 12px 10px;
-    text-align: left;
-    font-weight: 600;
-}
-
-.reportes-table td {
-    padding: 12px 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.reportes-table tbody tr:hover {
-    background: #f8f9fa;
-}
-
-.btn-action {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    padding: 5px;
-}
-
-.btn-action:hover {
-    transform: scale(1.2);
-}
-
-.btn-primary, .btn-secondary, .btn-success {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.btn-primary {
-    background: #667eea;
-    color: white;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-success {
-    background: #28a745;
-    color: white;
-}
-
-.no-results {
-    background: white;
-    padding: 60px 40px;
-    text-align: center;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-</style>

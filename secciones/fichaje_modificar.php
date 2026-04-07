@@ -82,7 +82,7 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
 ?>
 
 <div class="section-header">
-    <h2>✏️ Modificar Fichajes</h2>
+    <h2> Modificar Fichajes</h2>
     <p>Edita o añade fichajes — incluye soporte para jornada partida (2 tramos por día)</p>
 </div>
 
@@ -114,8 +114,8 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
             <input type="date" name="fecha_hasta" value="<?= $filtroHasta ?>">
         </div>
         
-        <button type="submit" class="btn-primary">🔍 Buscar</button>
-        <button type="button" class="btn-success" onclick="abrirModalAnadir()">➕ Añadir Fichaje</button>
+        <button type="submit" class="btn-primary"> Buscar</button>
+        <button type="button" class="btn-success" onclick="abrirModalAnadir()"> Añadir Fichaje</button>
     </form>
 </div>
 
@@ -125,9 +125,9 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
 
 <?php if (empty($grupos)): ?>
     <div class="no-results">
-        <p>📭 No se encontraron fichajes con los filtros aplicados</p>
+        <p> No se encontraron fichajes con los filtros aplicados</p>
         <p style="margin-top:15px;">
-            <button class="btn-success" onclick="abrirModalAnadir()">➕ Añadir Nuevo Fichaje</button>
+            <button class="btn-success" onclick="abrirModalAnadir()"> Añadir Nuevo Fichaje</button>
         </p>
     </div>
 <?php else: ?>
@@ -136,7 +136,7 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
         <!-- ── BLOQUE DÍA ── -->
         <div style="margin-bottom:25px;">
             <div style="background:#667eea;color:white;padding:10px 20px;border-radius:8px 8px 0 0;font-weight:700;font-size:15px;">
-                📅 <?= date('d/m/Y', strtotime($fecha)) ?> — <?= ucfirst(strftime('%A', strtotime($fecha))) ?>
+                 <?= date('d/m/Y', strtotime($fecha)) ?> — <?= ucfirst(strftime('%A', strtotime($fecha))) ?>
             </div>
 
             <?php foreach ($usuariosDelDia as $idUsuario => $tramosUsuario): 
@@ -152,9 +152,9 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
                         <div>
                             <strong style="font-size:15px;"><?= htmlspecialchars($nombre) ?></strong>
                             <?php if ($esPartida): ?>
-                                <span style="margin-left:10px;background:#e8eaf6;color:#283593;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:600;">🌅🌆 Jornada Partida</span>
+                                <span style="margin-left:10px;background:#e8eaf6;color:#283593;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:600;"> Jornada Partida</span>
                             <?php else: ?>
-                                <span style="margin-left:10px;background:#e3f2fd;color:#1976d2;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:600;">☀️ Jornada Continua</span>
+                                <span style="margin-left:10px;background:#e3f2fd;color:#1976d2;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:600;"> Jornada Continua</span>
                             <?php endif; ?>
                         </div>
                         <?php
@@ -172,7 +172,7 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
                         ?>
                         <?php if ($segTotal > 0): ?>
                             <span style="font-weight:700;color:#28a745;font-size:14px;">
-                                ⏱ Total: <?= sprintf('%d:%02d', floor($segTotal/3600), floor(($segTotal%3600)/60)) ?>h
+                                 Total: <?= sprintf('%d:%02d', floor($segTotal/3600), floor(($segTotal%3600)/60)) ?>h
                             </span>
                         <?php endif; ?>
                     </div>
@@ -198,8 +198,8 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
                                     $horas = horasTrabajadas($tr);
                                     $estadoFila = $tr['hora_salida'] ? 'fila-completo' : 'fila-proceso';
                                     $etiquetaTramo = $esPartida
-                                        ? ($idx === 0 ? '🌅 Mañana' : '🌆 Tarde')
-                                        : '☀️ Normal';
+                                        ? ($idx === 0 ? ' 1º Tramo' : ' 2º Tramo')
+                                        : ' Continua';
                                 ?>
                                     <tr id="fila-<?= $tr['id_fichaje'] ?>" class="<?= $estadoFila ?>">
                                         <td style="font-weight:600;font-size:12px;white-space:nowrap;">
@@ -270,7 +270,7 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
                         <button class="btn-success"
                                 style="font-size:12px;padding:6px 14px;"
                                 onclick="abrirModalAnadirTramo(<?= $idUsuario ?>, '<?= $fecha ?>')">
-                            ➕ Añadir tramo tarde (jornada partida)
+                             Añadir 2º tramo  (jornada partida)
                         </button>
                     <?php endif; ?>
                 </div>
@@ -287,7 +287,7 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
 <div id="modalAnadirFichaje" class="modal" style="display:none;">
     <div class="modal-content">
         <span class="close" onclick="cerrarModal()">&times;</span>
-        <h3 id="modalAnadirTitulo">➕ Añadir Fichaje</h3>
+        <h3 id="modalAnadirTitulo"> Añadir Fichaje</h3>
 
         <form id="formAnadirFichaje" onsubmit="return anadirFichaje(event)">
             <input type="hidden" id="modal_tipo_tramo" value="normal">
@@ -416,7 +416,7 @@ function eliminarFichaje(idFichaje) {
 // ABRIR MODAL — Añadir fichaje nuevo (día libre)
 // ============================================================
 function abrirModalAnadir() {
-    document.getElementById('modalAnadirTitulo').textContent = '➕ Añadir Fichaje';
+    document.getElementById('modalAnadirTitulo').textContent = ' Añadir Fichaje';
     document.getElementById('modal_empleado').disabled = false;
     document.getElementById('modal_fecha').readOnly = false;
     document.getElementById('modal_tipo').value = 'normal';
@@ -435,7 +435,7 @@ function abrirModalAnadir() {
 // ABRIR MODAL — Añadir tramo tarde (jornada partida)
 // ============================================================
 function abrirModalAnadirTramo(idUsuario, fecha) {
-    document.getElementById('modalAnadirTitulo').textContent = '🌆 Añadir Tramo Tarde (Jornada Partida)';
+    document.getElementById('modalAnadirTitulo').textContent = ' Añadir 2º Tramo  (Jornada Partida)';
     
     // Pre-seleccionar empleado y bloquear cambio
     const sel = document.getElementById('modal_empleado');
