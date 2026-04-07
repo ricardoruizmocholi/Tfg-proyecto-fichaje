@@ -19,6 +19,7 @@ $pdo->prepare("UPDATE NOTIFICACIONES SET leida = 1 WHERE id_usuario = ? AND leid
 
 <link rel="stylesheet" href="css/notificaciones.css">
 
+
 <div class="notif-page-container">
     <div class="notif-header-banner">
         <div class="header-content">
@@ -29,7 +30,6 @@ $pdo->prepare("UPDATE NOTIFICACIONES SET leida = 1 WHERE id_usuario = ? AND leid
             <span class="icon">🗑️</span> Limpiar todo
         </button>
     </div>
-
     <div class="notif-list-container">
         <?php if (empty($notificaciones)): ?>
             <div class="notif-empty-state">
@@ -69,6 +69,7 @@ $pdo->prepare("UPDATE NOTIFICACIONES SET leida = 1 WHERE id_usuario = ? AND leid
         <?php endif; ?>
     </div>
 </div>
+
 
 <script>
 function eliminarNotificacion(id) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-04-2026 a las 12:00:33
+-- Tiempo de generación: 06-04-2026 a las 18:24:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -32,7 +32,7 @@ CREATE TABLE `detalle_solicitud_horario` (
   `id_solicitud` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `orden_dia` tinyint(4) DEFAULT 1,
-  `tipo_jornada` enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO') DEFAULT 'TRABAJO',
+  `tipo_jornada` enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO','PARTIDA_M','PARTIDA_T') DEFAULT 'TRABAJO',
   `hora_inicio` time DEFAULT NULL,
   `hora_fin` time DEFAULT NULL,
   `horas_totales` decimal(4,2) DEFAULT NULL,
@@ -129,7 +129,13 @@ INSERT INTO `detalle_solicitud_horario` (`id_detalle`, `id_solicitud`, `fecha`, 
 (173, 19, '2026-03-12', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Copiado del mes anterior'),
 (174, 19, '2026-03-13', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, 'Copiado del mes anterior'),
 (175, 19, '2026-03-14', 1, 'LIBRE', NULL, NULL, NULL, 'Copiado del mes anterior'),
-(176, 19, '2026-03-15', 1, 'LIBRE', NULL, NULL, NULL, 'Copiado del mes anterior');
+(176, 19, '2026-03-15', 1, 'LIBRE', NULL, NULL, NULL, 'Copiado del mes anterior'),
+(177, 20, '2026-05-08', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, ''),
+(178, 20, '2026-04-07', 1, 'PARTIDA_M', '09:00:00', '14:00:00', 5.00, ''),
+(179, 20, '2026-04-07', 1, 'PARTIDA_T', '16:00:00', '19:00:00', 3.00, ''),
+(180, 21, '2026-04-08', 1, 'PARTIDA_M', '09:00:00', '14:00:00', 5.00, ''),
+(181, 21, '2026-04-08', 1, 'PARTIDA_T', '16:00:00', '19:00:00', 3.00, ''),
+(182, 21, '2026-04-08', 1, 'MEDICO', '08:00:00', '09:00:00', 1.00, '');
 
 -- --------------------------------------------------------
 
@@ -152,8 +158,8 @@ CREATE TABLE `empresa` (
 --
 
 INSERT INTO `empresa` (`id_empresa`, `nombre`, `direccion`, `telefono`, `CIF`, `CCC`, `panel_destino`) VALUES
-(1, 'ensenyem', 'Dirección 1', '123456789', 'CIF123456', 'CCC123456', 'panel_ensenyem'),
-(2, 'sm', 'Dirección 2', '987654321', 'CIF654321', 'CCC654321', 'panel_sm');
+(1, 'empresa 1', 'Dirección 1', '123456789', 'CIF123456', 'CCC123456', 'panel_ensenyem'),
+(2, 'empresa 2', 'Dirección 2', '987654321', 'CIF654321', 'CCC654321', 'panel_sm');
 
 -- --------------------------------------------------------
 
@@ -222,7 +228,12 @@ INSERT INTO `fichaje` (`id_fichaje`, `id_usuario`, `fecha`, `hora_entrada`, `hor
 (16, 6, '2026-02-04', '20:42:00', NULL, NULL, '23:58:00', 'normal', NULL),
 (17, 6, '2026-02-04', '19:57:57', NULL, NULL, NULL, 'normal', NULL),
 (18, 1, '2026-02-09', '19:04:37', '19:09:38', NULL, '19:09:38', 'normal', NULL),
-(19, 2, '2026-02-26', '12:48:00', NULL, NULL, '14:48:00', 'normal', '');
+(19, 2, '2026-02-26', '12:48:00', NULL, NULL, '14:48:00', 'normal', ''),
+(20, 4, '2026-04-06', '12:59:46', '13:04:47', '13:04:47', '13:04:48', 'normal', NULL),
+(21, 4, '2026-04-06', '13:25:57', NULL, NULL, '17:44:24', 'normal', NULL),
+(24, 4, '2026-04-06', '13:31:57', NULL, NULL, NULL, 'normal', NULL),
+(25, 4, '2026-04-06', '13:31:57', NULL, NULL, NULL, 'normal', NULL),
+(26, 1, '2026-04-06', '17:41:07', '17:41:08', '17:41:09', '17:41:10', 'normal', NULL);
 
 -- --------------------------------------------------------
 
@@ -252,7 +263,10 @@ INSERT INTO `historial_validaciones` (`id_historial`, `id_solicitud`, `accion`, 
 (6, 12, 'APROBADO', NULL, 1, '2026-02-03 08:23:23'),
 (7, 13, 'RECHAZADO', 'no te lo digo mas veces', 1, '2026-02-03 08:25:24'),
 (8, 18, 'APROBADO', NULL, 1, '2026-02-04 18:52:26'),
-(9, 16, 'RECHAZADO', 'necesito justificante cita médica', 1, '2026-02-04 18:53:05');
+(9, 16, 'RECHAZADO', 'necesito justificante cita médica', 1, '2026-02-04 18:53:05'),
+(10, 20, 'APROBADO', NULL, 1, '2026-04-06 11:28:12'),
+(11, 19, 'RECHAZADO', 'xg', 1, '2026-04-06 11:28:21'),
+(12, 21, 'APROBADO', NULL, 1, '2026-04-06 14:45:44');
 
 -- --------------------------------------------------------
 
@@ -266,14 +280,13 @@ CREATE TABLE `horarios` (
   `id_empresa` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `orden_dia` tinyint(4) DEFAULT 1,
-  `tipo_jornada` enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO') DEFAULT 'TRABAJO',
+  `tipo_jornada` enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO','PARTIDA_M','PARTIDA_T') DEFAULT 'TRABAJO',
   `hora_inicio` time DEFAULT NULL,
   `hora_fin` time DEFAULT NULL,
   `horas_totales` decimal(4,2) DEFAULT NULL,
   `observaciones` text DEFAULT NULL,
   `creado_en` timestamp NOT NULL DEFAULT current_timestamp(),
-  `actualizado_en` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `solo_trabajo` tinyint(4) GENERATED ALWAYS AS (case when `tipo_jornada` = 'TRABAJO' then 1 else NULL end) STORED
+  `actualizado_en` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
@@ -286,7 +299,7 @@ INSERT INTO `horarios` (`id_horario`, `id_usuario`, `id_empresa`, `fecha`, `orde
 (6, 4, 1, '2026-02-06', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-02 09:01:48', '2026-02-02 12:44:14'),
 (7, 2, 1, '2026-02-06', 1, 'TRABAJO', '09:00:00', '16:00:00', 7.00, NULL, '2026-02-02 09:02:20', '2026-02-02 12:46:40'),
 (12, 4, 1, '2026-02-12', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
-(13, 4, 1, '2026-02-12', 1, 'MEDICO', '09:00:00', '10:00:00', 1.00, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
+(13, 4, 1, '2026-02-12', 2, 'MEDICO', '09:00:00', '10:00:00', 1.00, '', '2026-02-02 12:44:14', '2026-04-06 10:22:53'),
 (15, 4, 1, '2026-02-03', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
 (18, 4, 1, '2026-02-09', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
 (20, 4, 1, '2026-02-13', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
@@ -297,7 +310,7 @@ INSERT INTO `horarios` (`id_horario`, `id_usuario`, `id_empresa`, `fecha`, `orde
 (25, 4, 1, '2026-02-20', 1, 'VACACIONES', NULL, NULL, NULL, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
 (26, 4, 1, '2026-02-11', 1, 'FESTIVO', NULL, NULL, NULL, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
 (27, 4, 1, '2026-02-10', 1, 'LIBRE', NULL, NULL, NULL, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
-(28, 4, 1, '2026-02-13', 1, 'MEDICO', '09:00:00', '10:00:00', 1.00, '', '2026-02-02 12:44:14', '2026-02-02 12:44:14'),
+(28, 4, 1, '2026-02-13', 2, 'MEDICO', '09:00:00', '10:00:00', 1.00, '', '2026-02-02 12:44:14', '2026-04-06 10:22:53'),
 (29, 1, 1, '2026-02-02', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, NULL, '2026-02-02 12:45:35', '2026-02-02 12:45:35'),
 (30, 1, 1, '2026-02-04', 1, 'VACACIONES', '09:00:00', '17:00:00', NULL, NULL, '2026-02-02 12:45:41', '2026-02-02 12:45:41'),
 (31, 2, 1, '2026-02-04', 1, 'MEDICO', '09:00:00', '17:00:00', NULL, 'malito :(', '2026-02-02 12:45:52', '2026-02-02 12:45:52'),
@@ -309,7 +322,7 @@ INSERT INTO `horarios` (`id_horario`, `id_usuario`, `id_empresa`, `fecha`, `orde
 (37, 4, 1, '2026-02-27', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-03 08:23:23', '2026-02-03 08:23:23'),
 (38, 4, 1, '2026-02-02', 1, 'LIBRE', '09:00:00', '17:00:00', NULL, NULL, '2026-02-04 08:32:51', '2026-02-04 08:32:51'),
 (39, 2, 1, '2026-02-02', 1, 'TRABAJO', '09:00:00', '15:00:00', 6.00, NULL, '2026-02-04 11:00:06', '2026-02-04 11:06:36'),
-(42, 2, 1, '2026-02-02', 1, 'VACACIONES', '09:00:00', '17:00:00', NULL, NULL, '2026-02-04 11:06:08', '2026-02-04 11:06:28'),
+(42, 2, 1, '2026-02-02', 2, 'VACACIONES', '09:00:00', '17:00:00', NULL, NULL, '2026-02-04 11:06:08', '2026-04-06 10:22:53'),
 (44, 6, 1, '2026-02-08', 1, 'LIBRE', NULL, NULL, NULL, '', '2026-02-04 18:52:26', '2026-02-04 18:52:26'),
 (45, 6, 1, '2026-02-15', 1, 'LIBRE', NULL, NULL, NULL, '', '2026-02-04 18:52:26', '2026-02-04 18:52:26'),
 (46, 6, 1, '2026-02-09', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-04 18:52:26', '2026-02-04 18:52:26'),
@@ -317,7 +330,18 @@ INSERT INTO `horarios` (`id_horario`, `id_usuario`, `id_empresa`, `fecha`, `orde
 (48, 6, 1, '2026-02-11', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-04 18:52:26', '2026-02-04 18:52:26'),
 (49, 6, 1, '2026-02-12', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-04 18:52:26', '2026-02-04 18:52:26'),
 (50, 6, 1, '2026-02-13', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-02-04 18:52:26', '2026-02-04 18:52:26'),
-(51, 6, 1, '2026-02-14', 1, 'LIBRE', NULL, NULL, NULL, '', '2026-02-04 18:52:26', '2026-02-04 18:52:26');
+(51, 6, 1, '2026-02-14', 1, 'LIBRE', NULL, NULL, NULL, '', '2026-02-04 18:52:26', '2026-02-04 18:52:26'),
+(52, 4, 1, '2026-05-08', 1, 'TRABAJO', '09:00:00', '17:00:00', 8.00, '', '2026-04-06 11:28:12', '2026-04-06 11:28:12'),
+(61, 4, 1, '2026-04-08', 1, 'PARTIDA_M', '09:00:00', '14:00:00', NULL, NULL, '2026-04-06 15:42:15', '2026-04-06 15:42:15'),
+(63, 4, 1, '2026-04-06', 1, 'PARTIDA_M', '09:00:00', '14:00:00', 5.00, NULL, '2026-04-06 15:42:49', '2026-04-06 15:42:49'),
+(64, 4, 1, '2026-04-07', 3, 'PARTIDA_M', '09:00:00', '14:00:00', 5.00, NULL, '2026-04-06 15:42:49', '2026-04-06 15:42:49'),
+(66, 4, 1, '2026-04-09', 1, 'PARTIDA_M', '09:00:00', '14:00:00', 5.00, NULL, '2026-04-06 15:42:49', '2026-04-06 15:42:49'),
+(67, 4, 1, '2026-04-10', 1, 'PARTIDA_M', '09:00:00', '14:00:00', 5.00, NULL, '2026-04-06 15:42:49', '2026-04-06 15:42:49'),
+(68, 4, 1, '2026-04-06', 2, 'PARTIDA_T', '16:00:00', '19:00:00', 3.00, NULL, '2026-04-06 15:43:23', '2026-04-06 15:43:23'),
+(69, 4, 1, '2026-04-07', 4, 'PARTIDA_T', '16:00:00', '19:00:00', 3.00, NULL, '2026-04-06 15:43:23', '2026-04-06 15:43:23'),
+(70, 4, 1, '2026-04-08', 2, 'PARTIDA_T', '16:00:00', '19:00:00', 3.00, NULL, '2026-04-06 15:43:23', '2026-04-06 15:43:23'),
+(71, 4, 1, '2026-04-09', 2, 'PARTIDA_T', '16:00:00', '19:00:00', 3.00, NULL, '2026-04-06 15:43:23', '2026-04-06 15:43:23'),
+(72, 4, 1, '2026-04-10', 2, 'PARTIDA_T', '16:00:00', '19:00:00', 3.00, NULL, '2026-04-06 15:43:23', '2026-04-06 15:43:23');
 
 -- --------------------------------------------------------
 
@@ -339,8 +363,6 @@ CREATE TABLE `notificaciones` (
 --
 
 INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `mensaje`, `tipo`, `leida`, `fecha_creacion`) VALUES
-(1, 4, 'El administrador ha actualizado tu horario para el día 07/02/2026', 'cambio_horario', 1, '2026-02-02 09:59:49'),
-(4, 4, 'El administrador ha actualizado tu horario para el día 02/02/2026', 'cambio_horario', 1, '2026-02-02 10:00:20'),
 (6, 2, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-02 10:15:03'),
 (8, 2, 'Nueva solicitud de MEDICO de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-02 12:38:12'),
 (11, 2, 'El administrador ha actualizado tu horario para el día 04/02/2026', 'cambio_horario', 0, '2026-02-02 12:45:52'),
@@ -349,20 +371,10 @@ INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `mensaje`, `tipo`
 (14, 2, 'El administrador ha actualizado tu horario para el día 06/02/2026', 'cambio_horario', 0, '2026-02-02 12:46:40'),
 (16, 2, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-03 08:20:43'),
 (18, 2, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-03 08:21:15'),
-(19, 4, '❌ Tu solicitud de HORARIO_MES ha sido RECHAZADA. Motivo: no te puedes asignar dias festivos', 'resultado_peticion', 1, '2026-02-03 08:23:03'),
-(20, 4, '✅ Tu solicitud de HORARIO_MES ha sido APROBADA.', 'resultado_peticion', 1, '2026-02-03 08:23:23'),
 (22, 2, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-03 08:24:18'),
-(23, 4, '❌ Tu solicitud de HORARIO_MES ha sido RECHAZADA. Motivo: no te lo digo mas veces', 'resultado_peticion', 1, '2026-02-03 08:25:24'),
-(24, 4, '📝 El administrador ha modificado tu fichaje del día 03/02/2026.', 'cambio_fichaje', 1, '2026-02-03 09:03:46'),
-(25, 4, '➕ El administrador ha añadido un nuevo fichaje a tu registro del día 31/01/2026.', 'fichaje_anadido', 1, '2026-02-03 09:04:22'),
-(26, 1, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 1, '2026-02-03 09:58:55'),
 (27, 2, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-03 09:58:55'),
-(28, 4, 'El administrador ha actualizado tu horario para el día 02/02/2026', 'cambio_horario', 0, '2026-02-04 08:32:51'),
-(29, 1, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 1, '2026-02-04 09:21:43'),
 (30, 2, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-04 09:21:43'),
-(31, 1, 'Nueva solicitud de MEDICO de Usuario1 Cuatro', 'nueva_peticion', 1, '2026-02-04 09:22:39'),
 (32, 2, 'Nueva solicitud de MEDICO de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-04 09:22:39'),
-(33, 1, 'Nueva solicitud de MEDICO de Usuario1 Cuatro', 'nueva_peticion', 1, '2026-02-04 09:23:15'),
 (34, 2, 'Nueva solicitud de MEDICO de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-02-04 09:23:15'),
 (35, 2, 'El administrador ha actualizado tu horario para el día 05/02/2026', 'cambio_horario', 0, '2026-02-04 10:38:06'),
 (36, 2, 'El administrador ha actualizado tu horario para el día 02/02/2026', 'cambio_horario', 0, '2026-02-04 11:00:06'),
@@ -371,15 +383,18 @@ INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `mensaje`, `tipo`
 (39, 2, 'El administrador ha actualizado tu horario para el día 02/02/2026', 'cambio_horario', 0, '2026-02-04 11:06:17'),
 (40, 2, 'El administrador ha actualizado tu horario para el día 02/02/2026', 'cambio_horario', 0, '2026-02-04 11:06:28'),
 (41, 2, 'El administrador ha actualizado tu horario para el día 02/02/2026', 'cambio_horario', 0, '2026-02-04 11:06:36'),
-(42, 1, 'Nueva solicitud de HORARIO_MES de Perico Palote', 'nueva_peticion', 1, '2026-02-04 18:50:33'),
 (43, 2, 'Nueva solicitud de HORARIO_MES de Perico Palote', 'nueva_peticion', 0, '2026-02-04 18:50:33'),
 (44, 6, '✅ Tu solicitud de HORARIO_MES ha sido APROBADA.', 'resultado_peticion', 1, '2026-02-04 18:52:26'),
-(45, 4, '❌ Tu solicitud de MEDICO ha sido RECHAZADA. Motivo: necesito justificante cita médica', 'resultado_peticion', 0, '2026-02-04 18:53:05'),
 (46, 6, '📝 El administrador ha modificado tu fichaje del día 04/02/2026.', 'cambio_fichaje', 1, '2026-02-04 18:58:29'),
-(47, 1, 'Nueva solicitud de HORARIO_MES de Perico Palote', 'nueva_peticion', 1, '2026-02-04 19:04:07'),
 (48, 2, 'Nueva solicitud de HORARIO_MES de Perico Palote', 'nueva_peticion', 0, '2026-02-04 19:04:07'),
 (49, 2, '➕ El administrador ha añadido un nuevo fichaje a tu registro del día 26/02/2026.', 'fichaje_anadido', 0, '2026-02-26 11:47:58'),
-(50, 2, '📝 El administrador ha modificado tu fichaje del día 26/02/2026.', 'cambio_fichaje', 0, '2026-02-26 11:48:17');
+(50, 2, '📝 El administrador ha modificado tu fichaje del día 26/02/2026.', 'cambio_fichaje', 0, '2026-02-26 11:48:17'),
+(51, 1, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 1, '2026-04-06 11:26:55'),
+(52, 2, 'Nueva solicitud de HORARIO_MES de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-04-06 11:26:55'),
+(54, 6, '❌ Tu solicitud de HORARIO_MES ha sido RECHAZADA. Motivo: xg', 'resultado_peticion', 0, '2026-04-06 11:28:21'),
+(56, 1, 'Nueva solicitud de MEDICO de Usuario1 Cuatro', 'nueva_peticion', 1, '2026-04-06 14:44:20'),
+(57, 2, 'Nueva solicitud de MEDICO de Usuario1 Cuatro', 'nueva_peticion', 0, '2026-04-06 14:44:20'),
+(60, 1, 'El administrador ha actualizado tu horario para el día 08/04/2026', 'cambio_horario', 1, '2026-04-06 14:50:58');
 
 -- --------------------------------------------------------
 
@@ -404,7 +419,8 @@ CREATE TABLE `reportes` (
 --
 
 INSERT INTO `reportes` (`id_reporte`, `id_usuario`, `id_empresa`, `tipo_reporte`, `mes`, `anio`, `fecha_generacion`, `generado_por`, `ruta_archivo`) VALUES
-(3, 2, 1, 'registro_jornada', 3, 2026, '2026-02-26 11:45:34', 1, 'reportes_pdf/reporte_2_3_2026_1772106334.pdf');
+(3, 2, 1, 'registro_jornada', 3, 2026, '2026-02-26 11:45:34', 1, 'reportes_pdf/reporte_2_3_2026_1772106334.pdf'),
+(5, 4, 1, 'registro_jornada', 4, 2026, '2026-04-06 11:29:43', 1, 'reportes_pdf/reporte_4_4_2026_1775474983.pdf');
 
 -- --------------------------------------------------------
 
@@ -444,7 +460,9 @@ INSERT INTO `solicitudes_horario` (`id_solicitud`, `id_usuario`, `id_empresa`, `
 (16, 4, 1, 'MEDICO', '2026-02-05', '2026-02-05', 'RECHAZADO', 'necesito justificante cita médica', 'Solicitud de horario para el mes de January 1970', 1, '2026-02-04 18:53:05', '2026-02-04 09:22:39'),
 (17, 4, 1, 'MEDICO', '2026-02-06', '2026-02-06', 'PENDIENTE', NULL, 'Solicitud de horario para el mes de January 1970', NULL, NULL, '2026-02-04 09:23:15'),
 (18, 6, 1, 'HORARIO_MES', '2026-02-08', '2026-02-15', 'APROBADO', NULL, 'Solicitud de horario para el mes de January 1970', 1, '2026-02-04 18:52:26', '2026-02-04 18:50:33'),
-(19, 6, 1, 'HORARIO_MES', '2026-03-08', '2026-03-15', 'PENDIENTE', NULL, 'Solicitud de horario para el mes de March 2026', NULL, NULL, '2026-02-04 19:04:07');
+(19, 6, 1, 'HORARIO_MES', '2026-03-08', '2026-03-15', 'RECHAZADO', 'xg', 'Solicitud de horario para el mes de March 2026', 1, '2026-04-06 11:28:21', '2026-02-04 19:04:07'),
+(20, 4, 1, 'HORARIO_MES', '2026-04-07', '2026-05-08', 'APROBADO', NULL, 'Solicitud de horario para el mes de January 1970', 1, '2026-04-06 11:28:12', '2026-04-06 11:26:55'),
+(21, 4, 1, 'MEDICO', '2026-04-08', '2026-04-08', 'APROBADO', NULL, 'Solicitud de horario para el mes de January 1970', 1, '2026-04-06 14:45:44', '2026-04-06 14:44:20');
 
 -- --------------------------------------------------------
 
@@ -523,7 +541,7 @@ CREATE TABLE `vista_horarios_dia` (
 ,`id_empresa` int(11)
 ,`fecha` date
 ,`orden_dia` tinyint(4)
-,`tipo_jornada` enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO')
+,`tipo_jornada` enum('TRABAJO','VACACIONES','MEDICO','LIBRE','FESTIVO','PARTIDA_M','PARTIDA_T')
 ,`hora_inicio` time
 ,`hora_fin` time
 ,`horas_totales` decimal(4,2)
@@ -589,7 +607,8 @@ ALTER TABLE `historial_validaciones`
 --
 ALTER TABLE `horarios`
   ADD PRIMARY KEY (`id_horario`),
-  ADD UNIQUE KEY `uq_trabajo_por_dia` (`id_usuario`,`id_empresa`,`fecha`,`solo_trabajo`),
+  ADD UNIQUE KEY `uq_horario_por_orden` (`id_usuario`,`id_empresa`,`fecha`,`orden_dia`),
+  ADD UNIQUE KEY `uq_horario_orden` (`id_usuario`,`id_empresa`,`fecha`,`orden_dia`),
   ADD KEY `idx_usuario` (`id_usuario`),
   ADD KEY `idx_empresa` (`id_empresa`),
   ADD KEY `idx_fecha` (`fecha`);
@@ -652,7 +671,7 @@ ALTER TABLE `vacaciones_acumulado`
 -- AUTO_INCREMENT de la tabla `detalle_solicitud_horario`
 --
 ALTER TABLE `detalle_solicitud_horario`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=177;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
 
 --
 -- AUTO_INCREMENT de la tabla `empresa`
@@ -664,37 +683,37 @@ ALTER TABLE `empresa`
 -- AUTO_INCREMENT de la tabla `fichaje`
 --
 ALTER TABLE `fichaje`
-  MODIFY `id_fichaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_fichaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_validaciones`
 --
 ALTER TABLE `historial_validaciones`
-  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `horarios`
 --
 ALTER TABLE `horarios`
-  MODIFY `id_horario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id_horario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT de la tabla `reportes`
 --
 ALTER TABLE `reportes`
-  MODIFY `id_reporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_reporte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitudes_horario`
 --
 ALTER TABLE `solicitudes_horario`
-  MODIFY `id_solicitud` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_solicitud` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
