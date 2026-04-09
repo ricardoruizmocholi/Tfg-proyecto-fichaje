@@ -1,0 +1,560 @@
+/* =====================================================
+   nominas.css — Nóminas y Documentos
+   Estética coherente con el resto de la aplicación
+   ===================================================== */
+
+/* ── Variables reutilizadas de la app ── */
+:root {
+    --primary:       #667eea;
+    --primary-dark:  #5568d3;
+    --primary-light: #f0f2ff;
+    --success:       #28a745;
+    --danger:        #dc3545;
+    --warning:       #ffc107;
+    --text-main:     #333;
+    --text-muted:    #6c757d;
+    --bg-card:       #ffffff;
+    --border:        #e9ecef;
+    --shadow-sm:     0 2px 4px rgba(0,0,0,0.08);
+    --shadow-md:     0 4px 12px rgba(0,0,0,0.12);
+    --radius:        10px;
+    --radius-sm:     6px;
+}
+
+/* =====================================================
+   COMPARTIDO
+   ===================================================== */
+
+.nominas-wrapper {
+    animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Banner de cabecera (como admin-header en peticiones) */
+.nominas-header-banner {
+    padding: 28px 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: var(--radius);
+    margin-bottom: 28px;
+    box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.nominas-header-banner h2 {
+    margin: 0 0 6px 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.nominas-header-banner p {
+    margin: 0;
+    opacity: 0.88;
+    font-size: 14px;
+}
+
+/* Alerta de feedback */
+.nominas-alert {
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nominas-alert.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.nominas-alert.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* =====================================================
+   ADMIN — FORMULARIO DE SUBIDA
+   ===================================================== */
+
+.upload-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+}
+
+.upload-card-header {
+    padding: 16px 24px;
+    background: var(--primary-light);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-card-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.upload-card-body {
+    padding: 24px;
+}
+
+.upload-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 120px 120px;
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 16px;
+}
+
+.upload-form-grid.segunda-fila {
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: end;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-field input,
+.form-field select {
+    padding: 10px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    color: var(--text-main);
+    background: #fcfcfc;
+    transition: all 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
+}
+
+/* Input de archivo estilizado
+   El input real está oculto con display:none
+   Este label lo activa mediante el atributo for="id" */
+.file-input-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    background: #fcfcfc;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: var(--text-muted);
+    /* Sin position relative ni absolute — completamente seguro */
+    user-select: none;
+}
+
+.file-input-label:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.file-input-label.has-file {
+    border-color: var(--success);
+    background: #f0fff4;
+    color: var(--success);
+}
+
+.file-input-label .file-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* Botón de subir */
+.btn-upload {
+    padding: 11px 24px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s;
+    box-shadow: 0 3px 8px rgba(102,126,234,0.3);
+}
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(102,126,234,0.4);
+}
+
+/* =====================================================
+   ADMIN — HISTORIAL (tabla)
+   ===================================================== */
+
+.historial-section h3 {
+    font-size: 17px;
+    color: var(--text-main);
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.historial-table-wrapper {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.historial-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.historial-table thead th {
+    background: var(--primary);
+    color: white;
+    padding: 13px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.historial-table tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid #f0f2f5;
+    color: var(--text-main);
+    vertical-align: middle;
+}
+
+.historial-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.historial-table tbody tr:hover {
+    background: #f8f9ff;
+}
+
+/* Badge de período */
+.periodo-badge {
+    display: inline-block;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Nombre empleado en tabla */
+.empleado-nombre-tabla {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.empleado-nombre-tabla img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+}
+
+/* Botones de acción en tabla */
+.btn-tabla {
+    padding: 5px 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-tabla-ver {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.btn-tabla-ver:hover {
+    background: #1976d2;
+    color: white;
+}
+
+.btn-tabla-borrar {
+    background: #fdecea;
+    color: var(--danger);
+}
+
+.btn-tabla-borrar:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.empty-historial {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-muted);
+    font-size: 15px;
+}
+
+.empty-historial .empty-icon {
+    font-size: 48px;
+    opacity: 0.3;
+    margin-bottom: 12px;
+}
+
+/* =====================================================
+   EMPLEADO — MIS NÓMINAS (tarjetas igual que reportes)
+   ===================================================== */
+
+.mis-nominas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Misma estructura que .reporte-card */
+.nomina-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.nomina-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+}
+
+/* Cabecera con degradado (igual que reporte-header) */
+.nomina-card-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.nomina-card-header .nomina-tipo {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+    margin-bottom: 4px;
+}
+
+.nomina-card-header .nomina-titulo {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.nomina-card-header .nomina-periodo-badge {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Cuerpo de la tarjeta */
+.nomina-card-body {
+    padding: 18px 20px;
+    flex: 1;
+    background: #f9fafb;
+}
+
+.nomina-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.nomina-meta-row:last-child {
+    border-bottom: none;
+}
+
+.nomina-meta-row .meta-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.nomina-meta-row .meta-value {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+/* Footer con botones */
+.nomina-card-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: white;
+}
+
+.btn-nomina {
+    padding: 9px 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-nomina-ver {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+.btn-nomina-ver:hover {
+    background: #1565c0;
+    color: white;
+    border-color: #1565c0;
+}
+
+.btn-nomina-descargar {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    box-shadow: 0 2px 6px rgba(102,126,234,0.3);
+}
+
+.btn-nomina-descargar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(102,126,234,0.4);
+}
+
+/* Estado vacío */
+.nominas-empty {
+    text-align: center;
+    padding: 64px 32px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 2px dashed var(--border);
+}
+
+.nominas-empty .empty-icon {
+    font-size: 64px;
+    opacity: 0.25;
+    margin-bottom: 16px;
+}
+
+.nominas-empty h3 {
+    color: var(--text-muted);
+    margin: 0 0 8px 0;
+    font-size: 18px;
+}
+
+.nominas-empty p {
+    color: #adb5bd;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+    .upload-form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .upload-form-grid.segunda-fila {
+        grid-template-columns: 1fr;
+    }
+
+    .mis-nominas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nominas-header-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .historial-table {
+        font-size: 13px;
+    }
+
+    .historial-table thead th,
+    .historial-table tbody td {
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .upload-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
