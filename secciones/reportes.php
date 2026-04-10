@@ -79,9 +79,9 @@ if ($vista === 'generar') {
                     <div class="form-group">
                         <label>Tipo de Reporte: *</label>
                         <select id="reporte_tipo" required>
-                            <option value="registro_jornada">Listado Resumen Mensual de Registro de Jornada</option>
-                            <option value="horas_trabajadas">Resumen de Horas Trabajadas</option>
-                            <option value="ausencias">Reporte de Ausencias</option>
+                            <option value="mensual">Listado Resumen Mensual de Registro de Jornada</option>
+                            <option value="anual">Resumen anual de registros de Jornada</option>
+                            
                         </select>
                     </div>
                 </div>
@@ -161,53 +161,74 @@ if ($vista === 'generar') {
     });
 
     function generarReportePDF() {
-        const empleadoId = document.getElementById('reporte_empleado').value;
-        const mes = document.getElementById('reporte_mes').value;
-        const anio = document.getElementById('reporte_anio').value;
-        const tipo = document.getElementById('reporte_tipo').value;
-        
-        if (!empleadoId || !mes || !anio) {
-            alert('⚠️ Completa todos los campos');
-            return;
-        }
-        
-        const btn = event.target;
-        btn.disabled = true;
-        btn.textContent = '⏳ Generando PDF...';
-        
-        fetch('secciones/reporte_generar_pdf.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                id_usuario: empleadoId,
-                mes: mes,
-                anio: anio,
-                tipo: tipo
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                alert('✅ Reporte generado correctamente');
-                // Descargar el PDF
-                window.open(data.url_pdf, '_blank');
-                // Ir al historial
-                setTimeout(() => {
-                    window.location.href = 'panel.php?seccion=reportes&vista=historial';
-                }, 1000);
-            } else {
-                alert('❌ Error: ' + data.message);
-                btn.disabled = false;
-                btn.textContent = ' Generar PDF';
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert('❌ Error de conexión');
-            btn.disabled = false;
-            btn.textContent = ' Generar PDF';
-        });
+    // 1. Capturamos los valores
+    const empleadoId = document.getElementById('reporte_empleado').value;
+    const mes        = document.getElementById('reporte_mes').value;
+    const anio       = document.getElementById('reporte_anio').value;
+    const tipo       = document.getElementById('reporte_tipo').value; // 'mensual' o 'anual'
+    
+    // 2. Validación dinámica
+    if (!empleadoId || !anio || (tipo === 'mensual' && !mes)) {
+        alert('⚠️ Completa los campos necesarios (el mes es obligatorio para reportes mensuales)');
+        return;
     }
+    
+    // 3. Configuración según el tipo de reporte
+    // Si es anual, usamos el nuevo archivo. Si es mensual, el de siempre.
+    let endpoint = (tipo === 'anual') 
+        ? 'secciones/reporte_anual_generar.php' 
+        : 'secciones/reporte_generar_pdf.php';
+
+    // Preparamos los datos a enviar
+    let datos = {
+        id_usuario: empleadoId,
+        anio: anio,
+        tipo: tipo
+    };
+
+    // Solo añadimos el mes si el reporte es mensual
+    if (tipo === 'mensual') {
+        datos.mes = mes;
+    }
+
+    // 4. Interfaz de usuario (Botón)
+    const btn = event.target;
+    btn.disabled = true;
+    const textoOriginal = btn.textContent;
+    btn.textContent = '⏳ Generando...';
+    
+    // 5. Envío de datos
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(datos)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Reporte generado correctamente');
+            
+            // Abrir el PDF (algunos archivos devuelven url_pdf y otros url)
+            const urlFinal = data.url_pdf || data.url;
+            window.open(urlFinal, '_blank');
+            
+            // Ir al historial
+            setTimeout(() => {
+                window.location.href = 'panel.php?seccion=reportes&vista=historial';
+            }, 1000);
+        } else {
+            alert('❌ Error: ' + data.message);
+            btn.disabled = false;
+            btn.textContent = textoOriginal;
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('❌ Error de conexión');
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
+    });
+}
     </script>
 
     <?php
@@ -246,12 +267,10 @@ if ($vista === 'generar') {
                     <option value="registro_jornada" <?= ($_GET['tipo'] ?? '') == 'registro_jornada' ? 'selected' : '' ?>>
                          Registro de Jornada
                     </option>
-                    <option value="horas_trabajadas" <?= ($_GET['tipo'] ?? '') == 'horas_trabajadas' ? 'selected' : '' ?>>
-                         Horas Trabajadas
+                    <option value="horas_trabajadas_anuales" <?= ($_GET['tipo'] ?? '') == 'horas_trabajadas_anuales' ? 'selected' : '' ?>>
+                         Resumen anual de registros de Jornada
                     </option>
-                    <option value="ausencias" <?= ($_GET['tipo'] ?? '') == 'ausencias' ? 'selected' : '' ?>>
-                         Ausencias
-                    </option>
+                   
                 </select>
             </div>
             
@@ -334,8 +353,8 @@ if ($vista === 'generar') {
               'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     $tipos = [
         'registro_jornada' => ' Registro de Jornada',
-        'horas_trabajadas' => ' Horas Trabajadas',
-        'ausencias' => ' Ausencias'
+        'horas_trabajadas_anuales' => ' Registro de Jornada anual',
+        
     ];
     ?>
 

@@ -173,8 +173,8 @@ $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'A
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="secciones/reporte_descarga.php?id=<?= $rep['id_reporte'] ?>&preview=1" target="_blank" class="btn-pro btn-view">👁️ Ver</a>
-                        <a href="secciones/reporte_descarga.php?id=<?= $rep['id_reporte'] ?>" class="btn-pro btn-download">📥 Bajar</a>
+                        <a href="secciones/reporte_descarga.php?id=<?= $rep['id_reporte'] ?>&preview=1" target="_blank" class="btn-pro btn-view"> Ver</a>
+                        <a href="secciones/reporte_descarga.php?id=<?= $rep['id_reporte'] ?>" class="btn-pro btn-download"> Bajar</a>
                     </div>
                 </div>
             <?php endforeach; ?>
