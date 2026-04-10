@@ -316,6 +316,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
             <div class="submenu-content">
                 <a href="panel.php?seccion=horario&vista=peticiones">Peticiones</a>
                 <a href="panel.php?seccion=horario&vista=cuadrantes">Cuadrantes</a>
+                <a href="panel.php?seccion=horario&vista=vacaciones">Vacaciones</a>
             </div>
 
             <a class="submenu-btn">
@@ -364,7 +365,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
             if ($seccion === "horario") {
                 if ($vista === "peticiones") include "secciones/horario.php";
                 if ($vista === "cuadrantes") include "secciones/horario_cuadrantes.php";
-                if ($vista === "eventos")    include "secciones/horario_eventos.php";
+                if ($vista === "vacaciones")    include "secciones/vacaciones_cuadrante.php";
                 if (!$vista)                 include "secciones/horario.php";
             }
             if ($seccion === "reportes") {

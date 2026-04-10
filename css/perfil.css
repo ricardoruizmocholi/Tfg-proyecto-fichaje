@@ -210,3 +210,99 @@
     .input-file-custom {
         display: none;
     }
+
+    /* ── Widgets de resumen laboral ───────────────── */
+.resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.widget-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-left: 4px solid #667eea;
+    position: relative;
+    overflow: hidden;
+}
+.widget-card.verde  { border-left-color: #28a745; }
+.widget-card.naranja{ border-left-color: #ffc107; }
+.widget-card.rojo   { border-left-color: #dc3545; }
+
+.widget-icon {
+    position: absolute; top: 14px; right: 16px;
+    font-size: 30px; opacity: 0.12;
+}
+.widget-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .6px; color: #6c757d; margin-bottom: 6px;
+}
+.widget-valor {
+    font-size: 32px; font-weight: 800; color: #333; line-height: 1;
+}
+.widget-sub {
+    font-size: 12px; color: #6c757d; margin-top: 4px;
+}
+
+/* Barra de progreso */
+.progress-wrap {
+    height: 6px; background: #e9ecef; border-radius: 10px;
+    overflow: hidden; margin-top: 8px;
+}
+.progress-fill {
+    height: 100%; border-radius: 10px; transition: width .6s ease;
+    background: #667eea;
+}
+.progress-fill.verde  { background: #28a745; }
+.progress-fill.naranja{ background: #ffc107; }
+.progress-fill.rojo   { background: #dc3545; }
+
+/* Alertas */
+.alerta-laboral {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+}
+.alerta-laboral.aviso  { background: #fff3cd; border: 1px solid #ffc107; color: #856404; }
+.alerta-laboral.danger { background: #f8d7da; border: 1px solid #dc3545; color: #721c24; }
+.alerta-laboral.info   { background: #d1ecf1; border: 1px solid #17a2b8; color: #0c5460; }
+
+/* Skeleton loader */
+.skeleton {
+    background: linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 6px;
+}
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+}
+
+/* Modal contrato */
+.modal-field {
+    margin-bottom: 16px;
+}
+.modal-field label {
+    display: block; margin-bottom: 6px; font-weight: 600; color: #333; font-size: 14px;
+}
+.modal-field select,
+.modal-field input {
+    width: 100%; padding: 11px 13px; border: 1.5px solid #ddd;
+    border-radius: 6px; font-size: 14px; box-sizing: border-box;
+    transition: border-color .2s;
+}
+.modal-field select:focus,
+.modal-field input:focus {
+    outline: none; border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102,126,234,.12);
+}
+.modal-field small { display: block; margin-top: 5px; font-size: 12px; color: #6c757d; }

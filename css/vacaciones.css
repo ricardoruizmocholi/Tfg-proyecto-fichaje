@@ -1,0 +1,234 @@
+/* =========================================================
+   vacaciones.css — Cuadrante de vacaciones
+   Coherente con la estética general de la app (#667eea)
+   ========================================================= */
+
+:root {
+    --primary:   #667eea;
+    --success:   #28a745;
+    --warning:   #ffc107;
+    --danger:    #dc3545;
+    --border:    #e9ecef;
+    --text-main: #333;
+    --text-muted:#6c757d;
+    --radius:    10px;
+}
+
+.vac-wrapper {
+    animation: fadeIn .35s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* ── Cabecera ─────────────────────────────────────────── */
+.vac-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 26px 30px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 14px rgba(102,126,234,.3);
+}
+.vac-header h2  { margin: 0 0 5px; font-size: 22px; font-weight: 700; }
+.vac-header p   { margin: 0; opacity: .88; font-size: 14px; }
+
+.vac-nav { display: flex; align-items: center; gap: 12px; }
+.vac-nav-btn {
+    background: rgba(255,255,255,.2);
+    border: 1px solid rgba(255,255,255,.35);
+    color: white;
+    padding: 7px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background .2s;
+}
+.vac-nav-btn:hover { background: rgba(255,255,255,.35); }
+.vac-nav-label { font-size: 17px; font-weight: 700; min-width: 170px; text-align: center; }
+
+/* ── Leyenda ─────────────────────────────────────────── */
+.vac-leyenda {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-main);
+    margin-bottom: 14px;
+}
+.vac-chip {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+.vac-chip.aprobada  { background: #28a745; }
+.vac-chip.pendiente { background: #ffc107; }
+.vac-chip.alerta    { background: #dc3545; }
+.vac-chip.finde     { background: #dee2e6; }
+
+/* ── Stats ───────────────────────────────────────────── */
+.vac-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.vac-stat-item {
+    background: white;
+    border-radius: 8px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.07);
+    border-left: 4px solid var(--primary);
+    text-align: center;
+}
+.vac-stat-item.alerta { border-left-color: var(--danger); }
+.vac-stat-num  { font-size: 28px; font-weight: 800; color: var(--text-main); line-height: 1; }
+.vac-stat-lbl  { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* ── Scroll + Tabla ──────────────────────────────────── */
+.vac-scroll {
+    background: white;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    border: 1px solid var(--border);
+}
+
+.vac-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12px;
+    min-width: 900px;
+}
+
+/* Thead sticky */
+.vac-table thead { position: sticky; top: 0; z-index: 10; }
+
+/* Th cabecera empleado/saldo */
+.vac-th-empleado {
+    background: var(--primary);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    min-width: 180px;
+    position: sticky; left: 0; z-index: 11;
+    border-right: 1px solid rgba(255,255,255,.2);
+}
+.vac-th-saldo {
+    background: var(--primary);
+    color: white;
+    padding: 10px 8px;
+    text-align: center;
+    font-weight: 700;
+    min-width: 70px;
+    border-right: 1px solid rgba(255,255,255,.15);
+}
+
+/* Th días */
+.vac-th-dia {
+    background: var(--primary);
+    color: white;
+    padding: 6px 3px;
+    text-align: center;
+    min-width: 30px;
+    max-width: 36px;
+    border-right: 1px solid rgba(255,255,255,.1);
+    cursor: default;
+}
+.vac-th-dia .vac-th-num { font-size: 13px; font-weight: 700; }
+.vac-th-dia .vac-alerta-ico { font-size: 9px; }
+
+.vac-th-dia.finde    { background: #4a5568; }
+.vac-th-dia.hoy      { background: #ff9f43; }
+.vac-th-dia.dia-alerta { background: #c0392b; }
+
+/* Celdas de empleado */
+.vac-td-empleado {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 12px;
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    position: sticky; left: 0; z-index: 2;
+    min-width: 180px;
+}
+.vac-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    flex-shrink: 0;
+}
+.vac-nombre   { font-weight: 600; font-size: 12px; color: var(--text-main); white-space: nowrap; }
+.vac-contrato { font-size: 10px; color: var(--text-muted); }
+
+/* Celda saldo */
+.vac-td-saldo {
+    padding: 8px 6px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid #ddd;
+    background: #f8f9fa;
+    min-width: 70px;
+}
+.vac-td-saldo.poco { background: #fff8e1; }
+.vac-td-saldo.cero { background: #fdecea; }
+.vac-saldo-num  { font-size: 15px; font-weight: 800; color: var(--text-main); }
+.vac-saldo-sub  { font-size: 10px; color: var(--text-muted); }
+.vac-saldo-bar  { height: 4px; background: #e9ecef; border-radius: 4px; margin: 3px 0; overflow: hidden; }
+.vac-saldo-fill { height: 100%; border-radius: 4px; background: var(--success); transition: width .5s; }
+.vac-saldo-fill.poco { background: var(--warning); }
+.vac-saldo-fill.cero { background: var(--danger); }
+
+/* Celdas de días */
+.vac-td-dia {
+    padding: 4px 2px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid #eee;
+    min-width: 30px;
+}
+.vac-td-dia.finde   { background: #f8f9fa; }
+.vac-td-dia.hoy     { background: #fff8e1; }
+.vac-td-dia.dia-alerta { background: #fff0f0; }
+
+/* Píldoras dentro de la celda */
+.vac-celda {
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+.vac-celda.aprobada  { background: #d4edda; color: #155724; }
+.vac-celda.pendiente { background: #fff3cd; color: #856404; }
+.vac-celda.finde     { background: transparent; }
+.vac-celda.vacia     { background: transparent; }
+
+/* Hover fila */
+.vac-table tbody tr:hover .vac-td-empleado,
+.vac-table tbody tr:hover .vac-td-saldo  { background: #eef0ff; }
+.vac-table tbody tr:hover .vac-td-dia    { background: #f0f3ff; }
+.vac-table tbody tr:hover .vac-td-dia.finde { background: #eff1f3; }
+
+@media (max-width: 768px) {
+    .vac-header { flex-direction: column; align-items: flex-start; }
+    .vac-stats  { grid-template-columns: 1fr 1fr; }
+}
