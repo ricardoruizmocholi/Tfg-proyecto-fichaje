@@ -9,8 +9,8 @@ if (!$datosUsuario) die("Error al cargar datos del usuario.");
 $imagenPerfil = $datosUsuario['foto_perfil'] ?? 'secciones/uploads/perfil_default.jpg';
 
 $labelTipoContrato = [
-    'completa' => '📋 Jornada Completa',
-    'parcial'  => '📋 Jornada Parcial',
+    'completa' => 'Jornada Completa',
+    'parcial'  => 'Jornada Parcial',
 ];
 ?>
 
@@ -37,13 +37,6 @@ $labelTipoContrato = [
                 <h2><?= htmlspecialchars($datosUsuario['nombre'] . ' ' . $datosUsuario['apellidos']) ?></h2>
                 <p> <?= htmlspecialchars($datosUsuario['email']) ?></p>
                 <p> Empresa: <strong><?= htmlspecialchars($usuario['empresas'][0]['nombre'] ?? 'N/A') ?></strong></p>
-                <p>
-                    <?= $labelTipoContrato[$datosUsuario['tipo_contrato'] ?? 'completa'] ?>
-                    &nbsp;·&nbsp;
-                     <strong><?= $datosUsuario['horas_contrato_mes'] ?? 160 ?>h/mes</strong>
-                    &nbsp;·&nbsp;
-                     <strong><?= $datosUsuario['vacaciones_totales_anuales'] ?? 30 ?> días/año</strong>
-                </p>
             </div>
         </div>
 
@@ -53,11 +46,11 @@ $labelTipoContrato = [
                 <div class="dato-valor"><?= htmlspecialchars($datosUsuario['NIF'] ?? 'No registrado') ?></div>
             </div>
             <div class="dato-item">
-                <div class="dato-label"> Nº Afiliación</div>
+                <div class="dato-label"> Nº Afiliación S.S.</div>
                 <div class="dato-valor"><?= htmlspecialchars($datosUsuario['Numero_Afiliciacion'] ?? 'No registrado') ?></div>
             </div>
             <div class="dato-item">
-                <div class="dato-label"> Cuenta creada</div>
+                <div class="dato-label"> Alta en sistema</div>
                 <div class="dato-valor"><?= date('d/m/Y', strtotime($datosUsuario['created_at'] ?? 'now')) ?></div>
             </div>
             <div class="dato-item">
@@ -66,9 +59,36 @@ $labelTipoContrato = [
             </div>
         </div>
 
-        <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+        <!-- Info del contrato (solo lectura) -->
+        <div class="contrato-info-box">
+            <h4> Mi Contrato</h4>
+            <div class="contrato-info-grid">
+                <div class="contrato-info-item">
+                    <span class="ci-label">Tipo de jornada</span>
+                    <span class="ci-value">
+                        <?= $labelTipoContrato[$datosUsuario['tipo_contrato'] ?? 'completa'] ?? 'Jornada Completa' ?>
+                    </span>
+                </div>
+                <div class="contrato-info-item">
+                    <span class="ci-label">Horas contratadas/mes</span>
+                    <span class="ci-value"><?= $datosUsuario['horas_contrato_mes'] ?? 160 ?>h</span>
+                </div>
+                <div class="contrato-info-item">
+                    <span class="ci-label">Vacaciones anuales</span>
+                    <span class="ci-value"><?= $datosUsuario['vacaciones_totales_anuales'] ?? 30 ?> días</span>
+                </div>
+                <div class="contrato-info-item">
+                    <span class="ci-label">Límite horas extra/año</span>
+                    <span class="ci-value"><?= $datosUsuario['horas_extra_anuales_limite'] ?? 80 ?>h</span>
+                </div>
+            </div>
+            <p class="contrato-nota">
+                 Los datos del contrato son gestionados por el administrador. Si hay algún error, contacta con RRHH.
+            </p>
+        </div>
+
+        <div style="margin-top:20px;">
             <button class="boton-accion" onclick="abrirModalPassword()"> Cambiar Contraseña</button>
-            <button class="boton-accion" onclick="abrirModalContrato()" style="background:#28a745;"> Mi Contrato</button>
         </div>
     </div>
 
@@ -81,7 +101,6 @@ $labelTipoContrato = [
 
         <div id="alertasDiv"></div>
 
-        <!-- Widgets (skeleton mientras carga) -->
         <div class="resumen-grid" id="resumenGrid">
             <?php for ($i = 0; $i < 4; $i++): ?>
             <div class="widget-card">
@@ -120,48 +139,8 @@ $labelTipoContrato = [
     </div>
 </div>
 
-<!-- ── Modal contrato ────────────────────────────────────── -->
-<div id="modalContrato" class="modal-perfil">
-    <div class="modal-content-perfil">
-        <span class="close-modal" onclick="cerrarModalContrato()">&times;</span>
-        <h3 style="margin-bottom:6px;color:#333;"> Datos de mi Contrato</h3>
-        <p style="color:#6c757d;font-size:13px;margin-bottom:20px;">
-            Estos datos determinan cuántas vacaciones generas y cuándo se detectan horas extra.
-        </p>
-        <form id="formContrato">
-            <div class="modal-field">
-                <label>Tipo de Jornada:</label>
-                <select id="ctr_tipo">
-                    <option value="completa"  <?= ($datosUsuario['tipo_contrato']??'completa')==='completa'  ?'selected':'' ?>>Jornada Completa</option>
-                    <option value="parcial"   <?= ($datosUsuario['tipo_contrato']??'')==='parcial'   ?'selected':'' ?>>Jornada Parcial</option>
-                </select>
-            </div>
-            <div class="modal-field">
-                <label>Horas contratadas al mes:</label>
-                <input type="number" id="ctr_horas" min="1" max="240" step="1"
-                       value="<?= $datosUsuario['horas_contrato_mes'] ?? 160 ?>">
-                <small>
-                    Jornada completa = 160h/mes · Media jornada = 80h/mes<br>
-                    Este valor se usa para detectar horas extra (lo que supere este número).
-                </small>
-            </div>
-            <div class="modal-field">
-                <label>Días de vacaciones anuales:</label>
-                <input type="number" id="ctr_vac" min="0" max="60" step="0.5"
-                       value="<?= $datosUsuario['vacaciones_totales_anuales'] ?? 30 ?>">
-                <small>
-                    Jornada completa habitual = 30 días · Media jornada = 15 días<br>
-                    Se descuentan automáticamente cuando el admin aprueba vacaciones.
-                </small>
-            </div>
-            <button type="submit" class="boton-accion" style="width:100%;background:#28a745;"> Guardar</button>
-        </form>
-        <div id="mensajeContrato"></div>
-    </div>
-</div>
-
 <script>
-// ── Cargar resumen laboral ─────────────────────────────────────
+// Cargar resumen laboral
 async function cargarResumen() {
     try {
         const res  = await fetch('secciones/api/obtener_resumen_empleado.php');
@@ -172,37 +151,23 @@ async function cargarResumen() {
         const hm = data.horas_mes;
         const ha = data.horas_extra_anio;
 
-        // ── Alertas ──────────────────────────────────────────
         let alertas = '';
-
         if (ha.excede_limite) {
-            alertas += `<div class="alerta-laboral danger">
-                 <div><strong>Límite de horas extra superado.</strong>
-                Llevas <strong>${ha.acumuladas}h</strong> extra este año.
-                El límite legal son <strong>${ha.limite}h/año</strong>. Consulta con tu responsable.</div>
-            </div>`;
+            alertas += `<div class="alerta-laboral danger"> <div><strong>Límite de horas extra superado.</strong>
+                Llevas <strong>${ha.acumuladas}h</strong> extra este año. El límite legal son <strong>${ha.limite}h/año</strong>.
+                Habla con tu responsable.</div></div>`;
         } else if (hm.excede) {
-            alertas += `<div class="alerta-laboral aviso">
-                ⚠️ <div><strong>Has excedido tu jornada este mes en ${hm.horas_extra}h.</strong>
-                Se computarán como horas extra. Llevas <strong>${ha.acumuladas}h</strong> extra acumuladas
-                de ${ha.limite}h permitidas al año.</div>
-            </div>`;
+            alertas += `<div class="alerta-laboral aviso">⚠️ <div><strong>Has excedido tu jornada este mes en ${hm.horas_extra}h.</strong>
+                Se computarán como horas extra. Llevas <strong>${ha.acumuladas}h</strong> de ${ha.limite}h permitidas al año.</div></div>`;
         }
-
         if (v.dias_disponibles <= 2 && v.dias_disponibles > 0) {
-            alertas += `<div class="alerta-laboral aviso">
-                 <div>Solo te quedan <strong>${v.dias_disponibles} días</strong> de vacaciones disponibles este año.</div>
-            </div>`;
+            alertas += `<div class="alerta-laboral aviso"> <div>Solo te quedan <strong>${v.dias_disponibles} días</strong> de vacaciones disponibles este año.</div></div>`;
         }
         if (v.dias_pendientes > 0) {
-            alertas += `<div class="alerta-laboral info">
-                ⏳ <div>Tienes <strong>${v.dias_pendientes} días</strong> de vacaciones solicitados pendientes de aprobación.</div>
-            </div>`;
+            alertas += `<div class="alerta-laboral info"> <div>Tienes <strong>${v.dias_pendientes} días</strong> de vacaciones solicitados pendientes de aprobación.</div></div>`;
         }
-
         document.getElementById('alertasDiv').innerHTML = alertas;
 
-        // ── Clases de color según estado ─────────────────────
         const claseVac  = v.dias_disponibles <= 2 ? 'rojo' : v.dias_disponibles <= 5 ? 'naranja' : 'verde';
         const claseHora = ha.excede_limite ? 'rojo' : ha.porcentaje > 75 ? 'naranja' : '';
         const pctVac    = Math.min(100, v.porcentaje_usado);
@@ -210,73 +175,53 @@ async function cargarResumen() {
         const fillVac   = pctVac > 90 ? 'rojo' : pctVac > 70 ? 'naranja' : 'verde';
         const fillHora  = pctHora > 100 ? 'rojo' : pctHora > 75 ? 'naranja' : '';
 
-        // ── Widgets ───────────────────────────────────────────
         document.getElementById('resumenGrid').innerHTML = `
             <div class="widget-card ${claseVac}">
                 <div class="widget-icon"></div>
                 <div class="widget-label">Vacaciones disponibles</div>
                 <div class="widget-valor">${v.dias_disponibles}</div>
                 <div class="widget-sub">días de ${v.total_anuales} anuales</div>
-                <div class="progress-wrap">
-                    <div class="progress-fill ${fillVac}" style="width:${pctVac}%"></div>
-                </div>
+                <div class="progress-wrap"><div class="progress-fill ${fillVac}" style="width:${pctVac}%"></div></div>
             </div>
-
             <div class="widget-card">
-                <div class="widget-icon">✅</div>
+                <div class="widget-icon"></div>
                 <div class="widget-label">Vacaciones disfrutadas</div>
                 <div class="widget-valor">${v.dias_usados}</div>
-                <div class="widget-sub">días usados en ${v.anio}
-                    ${v.dias_pendientes > 0 ? `<br><span style="color:#856404;">+ ${v.dias_pendientes} pendientes</span>` : ''}
-                </div>
+                <div class="widget-sub">días en ${v.anio}${v.dias_pendientes > 0 ? `<br><span style="color:#856404;">+${v.dias_pendientes} pendientes</span>` : ''}</div>
             </div>
-
             <div class="widget-card">
                 <div class="widget-icon"></div>
                 <div class="widget-label">Horas este mes</div>
                 <div class="widget-valor ${hm.excede ? 'rojo' : ''}">${hm.horas_fichadas}</div>
-                <div class="widget-sub">de ${hm.horas_contrato}h contratadas
-                    ${hm.excede ? `<br><span style="color:#dc3545;">+${hm.horas_extra}h extra</span>` : ''}
-                </div>
+                <div class="widget-sub">de ${hm.horas_contrato}h contratadas${hm.excede ? `<br><span style="color:#dc3545;">+${hm.horas_extra}h extra</span>` : ''}</div>
             </div>
-
             <div class="widget-card ${claseHora}">
                 <div class="widget-icon"></div>
                 <div class="widget-label">Horas extra año</div>
                 <div class="widget-valor">${ha.acumuladas}</div>
                 <div class="widget-sub">de ${ha.limite}h máximo legal</div>
-                <div class="progress-wrap">
-                    <div class="progress-fill ${fillHora}" style="width:${pctHora}%"></div>
-                </div>
-            </div>
-        `;
-
-    } catch (e) {
-        console.error('Error cargando resumen:', e);
-    }
+                <div class="progress-wrap"><div class="progress-fill ${fillHora}" style="width:${pctHora}%"></div></div>
+            </div>`;
+    } catch (e) { console.error('Error cargando resumen:', e); }
 }
-
 cargarResumen();
 
-// ── Modal contraseña ──────────────────────────────────────────
+// Modal contraseña
 function abrirModalPassword()  { document.getElementById('modalPassword').style.display = 'block'; }
 function cerrarModalPassword() {
     document.getElementById('modalPassword').style.display = 'none';
     document.getElementById('formCambiarPassword').reset();
     document.getElementById('mensajePassword').innerHTML = '';
 }
-
 document.getElementById('formCambiarPassword').onsubmit = async function(e) {
     e.preventDefault();
     const p1 = document.getElementById('passwordActual').value;
     const p2 = document.getElementById('passwordNueva1').value;
     const p3 = document.getElementById('passwordNueva2').value;
     const msg = document.getElementById('mensajePassword');
-
     if (p2 !== p3)    { msg.innerHTML = '<div class="mensaje-perfil error">❌ Las contraseñas no coinciden.</div>'; return; }
     if (p2.length < 6){ msg.innerHTML = '<div class="mensaje-perfil error">❌ Mínimo 6 caracteres.</div>'; return; }
     if (p1 === p2)    { msg.innerHTML = '<div class="mensaje-perfil error">❌ La nueva no puede ser igual a la actual.</div>'; return; }
-
     msg.innerHTML = '<div class="mensaje-perfil" style="background:#e3f2fd;color:#0277bd;">⏳ Verificando...</div>';
     const res  = await fetch('secciones/cambiar_password_perfil.php', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -289,50 +234,12 @@ document.getElementById('formCambiarPassword').onsubmit = async function(e) {
     if (data.success) setTimeout(cerrarModalPassword, 1500);
 };
 
-// ── Modal contrato ────────────────────────────────────────────
-function abrirModalContrato()  { document.getElementById('modalContrato').style.display = 'block'; }
-function cerrarModalContrato() {
-    document.getElementById('modalContrato').style.display = 'none';
-    document.getElementById('mensajeContrato').innerHTML = '';
-}
-
-// Autoajustar horas y vacaciones según tipo de contrato
-document.getElementById('ctr_tipo').addEventListener('change', function() {
-    if (this.value === 'completa') {
-        document.getElementById('ctr_horas').value = 160;
-        document.getElementById('ctr_vac').value   = 30;
-    } else {
-        document.getElementById('ctr_horas').value = 80;
-        document.getElementById('ctr_vac').value   = 15;
-    }
-});
-
-document.getElementById('formContrato').onsubmit = async function(e) {
-    e.preventDefault();
-    const msg = document.getElementById('mensajeContrato');
-    msg.innerHTML = '<div class="mensaje-perfil" style="background:#e3f2fd;color:#0277bd;">⏳ Guardando...</div>';
-
-    const res  = await fetch('secciones/api/actualizar_contrato.php', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            tipo_contrato:             document.getElementById('ctr_tipo').value,
-            horas_contrato_mes:        parseInt(document.getElementById('ctr_horas').value),
-            vacaciones_totales_anuales: parseFloat(document.getElementById('ctr_vac').value),
-        })
-    });
-    const data = await res.json();
-    msg.innerHTML = data.success
-        ? '<div class="mensaje-perfil success">✅ Contrato actualizado. Recargando...</div>'
-        : `<div class="mensaje-perfil error">❌ ${data.message}</div>`;
-    if (data.success) setTimeout(() => location.reload(), 1200);
-};
-
-// ── Cambiar foto ──────────────────────────────────────────────
+// Cambiar foto
 document.getElementById('inputFoto').onchange = async function() {
     const file = this.files[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) { alert('Selecciona una imagen válida.'); return; }
-    if (file.size > 5 * 1024 * 1024)    { alert('Máximo 5MB.');                  return; }
+    if (file.size > 5 * 1024 * 1024)    { alert('Máximo 5MB.'); return; }
     const formData = new FormData();
     formData.append('foto', file);
     const res  = await fetch('secciones/cambiar_foto_perfil.php', { method: 'POST', body: formData });
@@ -344,9 +251,7 @@ document.getElementById('inputFoto').onchange = async function() {
 };
 
 window.onclick = function(e) {
-    ['modalPassword','modalContrato'].forEach(id => {
-        if (e.target === document.getElementById(id))
-            document.getElementById(id).style.display = 'none';
-    });
+    if (e.target === document.getElementById('modalPassword'))
+        document.getElementById('modalPassword').style.display = 'none';
 };
 </script>
