@@ -1,113 +1,119 @@
 /**
  * tipos_jornada_helper.js
- * Carga los tipos de jornada (genéricos + custom de la empresa)
- * y rellena uno o varios <select> de la página.
+ * Ubicación: secciones/tipos_jornada_helper.js
  *
- * Uso:
- *   await cargarTiposJornada(['#edit_tipo', '#masivo_tipo']);
- *   // o para un select concreto:
- *   await cargarTiposJornada('#inputTipo', { mostrarSoloProductivos: true });
+ * Guard anti-doble-carga: panel.php y horario_cuadrantes_scripts.php
+ * incluyen este archivo. El guard evita redeclarar variables.
  */
+if (typeof window._tiposJornadaLoaded === 'undefined') {
+    window._tiposJornadaLoaded = true;
+    window._tiposCache = null;
 
-let _tiposCache = null; // cache para no pedir la API múltiples veces por carga
+    /**
+     * Rellena uno o varios <select> con los tipos genéricos + plantillas
+     * custom activas de la empresa actual.
+     *
+     * @param {string|string[]|Element} selectores  CSS selector, array de selectores, o elemento DOM
+     * @param {object} opciones
+     *   - mostrarProductivos   {bool}  incluir tipos que cuentan como horas (default: true)
+     *   - mostrarNoProductivos {bool}  incluir vacaciones, libre, etc. (default: true)
+     *   - incluirCustom        {bool}  incluir plantillas de empresa (default: true)
+     */
+    window.cargarTiposJornada = async function(selectores, opciones = {}) {
+        const {
+            mostrarProductivos   = true,
+            mostrarNoProductivos = true,
+            incluirCustom        = true,
+        } = opciones;
 
-async function cargarTiposJornada(selectores, opciones = {}) {
-    const {
-        valorSeleccionado  = null,   // pre-seleccionar un valor
-        mostrarProductivos = true,   // incluir tipos productivos
-        mostrarNoProductivos = true, // incluir vacaciones, médico, etc.
-        incluirCustom      = true,   // incluir las plantillas personalizadas
-    } = opciones;
-
-    // Obtener tipos (con caché)
-    if (!_tiposCache) {
-        try {
-            const res  = await fetch('api/obtener_tipos_jornada.php');
-            _tiposCache = await res.json();
-        } catch (e) {
-            console.error('Error cargando tipos de jornada:', e);
-            return;
-        }
-    }
-
-    if (!_tiposCache.success) return;
-
-    // Construir lista de opciones
-    const todos = [
-        ..._tiposCache.genericos,
-        ...(incluirCustom ? _tiposCache.custom : []),
-    ].filter(t => {
-        if (!mostrarProductivos   && t.es_productivo) return false;
-        if (!mostrarNoProductivos && !t.es_productivo) return false;
-        return true;
-    });
-
-    // Rellenar cada selector
-    const lista = Array.isArray(selectores) ? selectores : [selectores];
-    lista.forEach(sel => {
-        const el = typeof sel === 'string' ? document.querySelector(sel) : sel;
-        if (!el) return;
-
-        const valorActual = valorSeleccionado ?? el.value;
-        el.innerHTML = '';
-
-        // Grupo genéricos
-        const grpGen = document.createElement('optgroup');
-        grpGen.label = 'Tipos generales';
-        _tiposCache.genericos
-            .filter(t => (mostrarProductivos || !t.es_productivo) && (mostrarNoProductivos || t.es_productivo))
-            .forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t.valor_enum;
-                // data-* para autorellenar horas y color
-                opt.dataset.inicio      = t.inicio  || '';
-                opt.dataset.fin         = t.fin     || '';
-                opt.dataset.color       = t.color   || '#667eea';
-                opt.dataset.productivo  = t.es_productivo;
-                opt.dataset.idCustom    = '';
-                opt.textContent = t.label;
-                grpGen.appendChild(opt);
-            });
-        el.appendChild(grpGen);
-
-        // Grupo custom (si hay)
-        if (incluirCustom && _tiposCache.custom.length > 0) {
-            const grpCus = document.createElement('optgroup');
-            grpCus.label = '── Plantillas de la empresa ──';
-            _tiposCache.custom
-                .filter(t => (mostrarProductivos || !t.es_productivo) && (mostrarNoProductivos || t.es_productivo))
-                .forEach(t => {
-                    const opt = document.createElement('option');
-                    opt.value = t.valor_enum; // siempre 'TRABAJO' como fallback enum
-                    opt.dataset.inicio      = t.inicio  || '';
-                    opt.dataset.fin         = t.fin     || '';
-                    opt.dataset.color       = t.color   || '#667eea';
-                    opt.dataset.productivo  = t.es_productivo;
-                    opt.dataset.idCustom    = t.id_tipo_custom;  // ← clave: id de la plantilla
-                    opt.textContent = t.label;
-                    grpCus.appendChild(opt);
-                });
-            el.appendChild(grpCus);
+        // Cargar tipos desde la API (con caché para no repetir llamadas)
+        if (!window._tiposCache) {
+            try {
+                // URL relativa al root del proyecto (panel.php).
+                // panel.php está en la raíz, por lo que esta ruta es siempre válida.
+                const res = await fetch('secciones/api/obtener_tipos_jornada.php');
+                if (!res.ok) {
+                    throw new Error('Error HTTP ' + res.status + ' al cargar tipos de jornada');
+                }
+                window._tiposCache = await res.json();
+            } catch (e) {
+                console.error('[tipos_jornada_helper] No se pudieron cargar los tipos:', e.message);
+                return;
+            }
         }
 
-        // Restaurar valor seleccionado si existe
-        if (valorActual) el.value = valorActual;
-    });
-}
+        if (!window._tiposCache || !window._tiposCache.success) return;
 
-/**
- * Extrae datos de la opción seleccionada de un <select> de jornada.
- * Devuelve { tipoJornada, idTipoCustom, horaInicio, horaFin, color, esProductivo }
- */
-function getDatosOpcionJornada(selectEl) {
-    const opt = selectEl.options[selectEl.selectedIndex];
-    if (!opt) return null;
-    return {
-        tipoJornada  : opt.value,
-        idTipoCustom : opt.dataset.idCustom ? parseInt(opt.dataset.idCustom) : null,
-        horaInicio   : opt.dataset.inicio   || null,
-        horaFin      : opt.dataset.fin      || null,
-        color        : opt.dataset.color    || '#667eea',
-        esProductivo : opt.dataset.productivo === '1',
+        const lista = Array.isArray(selectores) ? selectores : [selectores];
+
+        lista.forEach(sel => {
+            const el = typeof sel === 'string' ? document.querySelector(sel) : sel;
+            if (!el) return;
+
+            const valorAnterior = el.value; // para restaurar la selección al recargar
+            el.innerHTML = '';
+
+            // ── Grupo tipos genéricos ─────────────────────────────
+            const grpGen = document.createElement('optgroup');
+            grpGen.label = 'Tipos generales';
+
+            (window._tiposCache.genericos || [])
+                .filter(t =>
+                    (mostrarProductivos   || !t.es_productivo) &&
+                    (mostrarNoProductivos ||  t.es_productivo)
+                )
+                .forEach(t => grpGen.appendChild(_buildOption(t)));
+
+            el.appendChild(grpGen);
+
+            // ── Grupo plantillas custom ───────────────────────────
+            const customs = (window._tiposCache.custom || [])
+                .filter(t =>
+                    (mostrarProductivos   || !t.es_productivo) &&
+                    (mostrarNoProductivos ||  t.es_productivo)
+                );
+
+            if (incluirCustom && customs.length > 0) {
+                const grpCus = document.createElement('optgroup');
+                grpCus.label = '── Plantillas de la empresa ──';
+                customs.forEach(t => grpCus.appendChild(_buildOption(t)));
+                el.appendChild(grpCus);
+            }
+
+            // Restaurar valor seleccionado anteriormente si aún existe
+            if (valorAnterior) el.value = valorAnterior;
+        });
+    };
+
+    /** Construye un <option> con todos los data-* necesarios */
+    window._buildOption = function(t) {
+        const opt = document.createElement('option');
+        opt.value              = t.valor_enum || 'TRABAJO';
+        opt.dataset.inicio     = t.inicio        || '';
+        opt.dataset.fin        = t.fin           || '';
+        opt.dataset.color      = t.color         || '#667eea';
+        opt.dataset.productivo = t.es_productivo ? '1' : '0';
+        opt.dataset.idCustom   = (t.id_tipo_custom != null) ? t.id_tipo_custom : '';
+        opt.textContent        = t.label;
+        return opt;
+    };
+
+    /**
+     * Lee los data-* de la opción seleccionada en un <select> de jornada.
+     *
+     * @param  {HTMLSelectElement} selectEl
+     * @returns {{ tipoJornada, idTipoCustom, horaInicio, horaFin, color, esProductivo }}
+     */
+    window.getDatosOpcionJornada = function(selectEl) {
+        const opt = selectEl.options[selectEl.selectedIndex];
+        if (!opt) return null;
+        return {
+            tipoJornada  : opt.value,
+            idTipoCustom : opt.dataset.idCustom ? parseInt(opt.dataset.idCustom) : null,
+            horaInicio   : opt.dataset.inicio   || null,
+            horaFin      : opt.dataset.fin      || null,
+            color        : opt.dataset.color    || '#667eea',
+            esProductivo : opt.dataset.productivo === '1',
+        };
     };
 }

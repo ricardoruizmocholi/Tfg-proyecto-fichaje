@@ -268,49 +268,76 @@ function etiquetaTipoEnum(string $tipo): string {
 </div>
 
 <!-- Modal masivo -->
-<div id="modalMasivo" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="cerrarModalMasivo()">&times;</span>
-        <h3> Añadir Horarios en bloque</h3>
-        <form id="formMasivo" onsubmit="return guardarMasivos(event)">
-            <div class="form-group">
+<div id="modalMasivo" class="modal-horario">
+    <div class="modal-content-horario">
+        <div class="modal-header-horario">
+            <span>Añadir Horarios en bloque</span>
+            <span style="cursor:pointer" onclick="cerrarModalMasivo()">&times;</span>
+        </div>
+        
+        <form id="formMasivo" onsubmit="return guardarMasivos(event)" class="modal-body-horario">
+            <div class="form-group-horario">
                 <label>Empleados:*</label>
-                <select id="masivo_emps" multiple size="5" style="height:120px;">
+                <select id="masivo_emps" multiple size="5" style="height:120px;" class="form-control-horario">
                     <option value="todos">TODOS</option>
                     <?php foreach ($todosEmpleados as $emp): ?>
-                        <option value="<?= $emp['id_usuario'] ?>">
-                            <?= htmlspecialchars($emp['nombre'].' '.$emp['apellidos']) ?>
-                        </option>
+                        <option value="<?= $emp['id_usuario'] ?>"><?= htmlspecialchars($emp['nombre'].' '.$emp['apellidos']) ?></option>
                     <?php endforeach; ?>
                 </select>
                 <small>Ctrl/Cmd para seleccionar varios</small>
             </div>
+            
             <div class="form-row">
-                <div class="form-group"><label>Desde:*</label><input type="date" id="masivo_inicio" value="<?= date('Y-m-d') ?>"></div>
-                <div class="form-group"><label>Hasta:*</label><input type="date" id="masivo_fin" value="<?= date('Y-m-d', strtotime('+6 days')) ?>"></div>
-            </div>
-            <div class="form-group">
-                <label>Días:</label>
-                <div class="dias-checkbox">
-                    <?php foreach (['1'=>'Lun','2'=>'Mar','3'=>'Mié','4'=>'Jue','5'=>'Vie','6'=>'Sáb','7'=>'Dom'] as $v=>$lbl): ?>
-                        <label><input type="checkbox" value="<?= $v ?>" class="dia-cb" <?= $v<=5?'checked':'' ?>> <?= $lbl ?></label>
-                    <?php endforeach; ?>
+                <div class="form-group-horario">
+                    <label>Desde:*</label>
+                    <input type="date" id="masivo_inicio" value="<?= date('Y-m-d') ?>" class="form-control-horario">
+                </div>
+                <div class="form-group-horario">
+                    <label>Hasta:*</label>
+                    <input type="date" id="masivo_fin" value="<?= date('Y-m-d', strtotime('+6 days')) ?>" class="form-control-horario">
                 </div>
             </div>
-            <div class="form-group">
-                <label>Tipo:*</label>
-                <select id="masivo_tipo"><!-- JS --></select>
+            
+            <div class="form-group-horario">
+                <label>Días:</label>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px;">
+                    <label style="font-weight:normal;"><input type="checkbox" value="1" checked class="dia-cb"> Lun</label>
+                    <label style="font-weight:normal;"><input type="checkbox" value="2" checked class="dia-cb"> Mar</label>
+                    <label style="font-weight:normal;"><input type="checkbox" value="3" checked class="dia-cb"> Mié</label>
+                    <label style="font-weight:normal;"><input type="checkbox" value="4" checked class="dia-cb"> Jue</label>
+                    <label style="font-weight:normal;"><input type="checkbox" value="5" checked class="dia-cb"> Vie</label>
+                    <label style="font-weight:normal;"><input type="checkbox" value="6" class="dia-cb"> Sáb</label>
+                    <label style="font-weight:normal;"><input type="checkbox" value="7" class="dia-cb"> Dom</label>
+                </div>
             </div>
+            
+            <div class="form-group-horario">
+                <label>Tipo:*</label>
+                <select id="masivo_tipo" class="form-control-horario"><!-- JS -->
+                                   </select>
+            </div>
+            
             <div id="horasMasivoDiv">
                 <div class="form-row">
-                    <div class="form-group"><label>Inicio:</label><input type="time" id="masivo_inicio_hora" value="09:00"></div>
-                    <div class="form-group"><label>Fin:</label><input type="time" id="masivo_fin_hora" value="17:00"></div>
+                    <div class="form-group-horario">
+                        <label>Inicio:</label>
+                        <input type="time" id="masivo_inicio_hora" value="09:00" class="form-control-horario">
+                    </div>
+                    <div class="form-group-horario">
+                        <label>Fin:</label>
+                        <input type="time" id="masivo_fin_hora" value="17:00" class="form-control-horario">
+                    </div>
                 </div>
             </div>
-            <div class="form-group"><label>Observaciones:</label><textarea id="masivo_obs" rows="2"></textarea></div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">💾 Guardar</button>
-                <button type="button" class="btn-secondary" onclick="cerrarModalMasivo()">Cancelar</button>
+            
+            <div class="form-group-horario">
+                <label>Observaciones:</label>
+                <textarea id="masivo_obs" rows="2" class="form-control-horario"></textarea>
+            </div>
+            
+            <div class="modal-footer-horario" style="padding: 15px 0 0 0; background: transparent; border: none;">
+                <button type="button" class="btn-cancel-horario" onclick="cerrarModalMasivo()">Cancelar</button>
+                <button type="submit" class="btn-success-horario">💾 Guardar cambios</button>
             </div>
         </form>
     </div>

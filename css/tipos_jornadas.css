@@ -1,0 +1,144 @@
+/* ── Tarjetas de plantilla ────────────────────────────────── */
+.plantillas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.plantilla-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+    border: 1px solid #e9ecef;
+    opacity: 1;
+}
+.plantilla-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.13);
+}
+.plantilla-card.inactiva { opacity: .55; }
+
+.plantilla-card-header {
+    height: 8px;
+    /* color dinámico via style inline */
+}
+
+.plantilla-card-body {
+    padding: 18px 20px 14px;
+}
+
+.plantilla-nombre {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plantilla-color-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid rgba(0,0,0,.08);
+}
+
+.plantilla-meta {
+    font-size: 13px;
+    color: #6c757d;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.plantilla-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-top: 6px;
+}
+.plantilla-badge.productivo  { background: #d4edda; color: #155724; }
+.plantilla-badge.noproductivo{ background: #f8d7da; color: #721c24; }
+.plantilla-badge.inactiva    { background: #e2e3e5; color: #383d41; }
+
+.plantilla-actions {
+    padding: 12px 20px;
+    border-top: 1px solid #f0f2f5;
+    display: flex;
+    gap: 8px;
+    background: #fafbfc;
+}
+
+/* ── Barra superior ───────────────────────────────────────── */
+.plantillas-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.plantillas-topbar h2 { margin: 0; }
+
+/* ── Modal ────────────────────────────────────────────────── */
+.color-preview {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.color-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-input-row input[type="color"] {
+    width: 0; height: 0;
+    padding: 0; border: none;
+    visibility: hidden;
+    position: absolute;
+}
+
+.presets-colores {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.preset-color {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color .15s, transform .15s;
+}
+.preset-color:hover, .preset-color.activo {
+    border-color: #333;
+    transform: scale(1.15);
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.plantillas-empty {
+    text-align: center;
+    padding: 60px 30px;
+    background: white;
+    border-radius: 10px;
+    border: 2px dashed #e9ecef;
+    margin-top: 20px;
+}
+.plantillas-empty .empty-icon { font-size: 52px; opacity: .25; margin-bottom: 14px; }
+.plantillas-empty h3 { color: #6c757d; font-size: 17px; margin: 0 0 6px; }
+.plantillas-empty p  { color: #adb5bd; font-size: 14px; margin: 0; }
