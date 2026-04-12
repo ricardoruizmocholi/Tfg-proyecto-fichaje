@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../../config.php';
 
 // 2. Parámetros de la Máquina Virtual
-$ip_vm = "192.168.0.11";
+$ip_vm = "192.168.0.19";
 $url_ollama = "http://$ip_vm:11434/api/generate";
 
 // 3. Capturar datos del usuario (pregunta + contexto de sección)
