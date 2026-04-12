@@ -1,144 +1,334 @@
-/* ── Tarjetas de plantilla ────────────────────────────────── */
-.plantillas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 18px;
-    margin-top: 20px;
+/* ── Variables de Diseño ─────────────────────────────────── */
+:root {
+    --primary-color: #4f46e5;
+    --bg-main: #f8fafc;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-.plantilla-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    overflow: hidden;
-    transition: transform .2s, box-shadow .2s;
-    border: 1px solid #e9ecef;
-    opacity: 1;
-}
-.plantilla-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.13);
-}
-.plantilla-card.inactiva { opacity: .55; }
-
-.plantilla-card-header {
-    height: 8px;
-    /* color dinámico via style inline */
+/* ── Estructura y Cabecera ────────────────────────────────── */
+.section-header {
+    margin-bottom: 32px;
+    padding: 0 5px;
 }
 
-.plantilla-card-body {
-    padding: 18px 20px 14px;
+.section-header h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
 }
 
-.plantilla-nombre {
-    font-size: 17px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.plantilla-color-dot {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    border: 2px solid rgba(0,0,0,.08);
-}
-
-.plantilla-meta {
-    font-size: 13px;
-    color: #6c757d;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 8px;
-}
-
-.plantilla-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 20px;
-    margin-top: 6px;
-}
-.plantilla-badge.productivo  { background: #d4edda; color: #155724; }
-.plantilla-badge.noproductivo{ background: #f8d7da; color: #721c24; }
-.plantilla-badge.inactiva    { background: #e2e3e5; color: #383d41; }
-
-.plantilla-actions {
-    padding: 12px 20px;
-    border-top: 1px solid #f0f2f5;
-    display: flex;
-    gap: 8px;
-    background: #fafbfc;
-}
-
-/* ── Barra superior ───────────────────────────────────────── */
 .plantillas-topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
-    flex-wrap: wrap;
+    padding: 20px 24px;
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* ── Tarjetas con Banda de Color ───────────────────────────── */
+.plantillas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.plantilla-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.plantilla-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-xl);
+    border-color: #cbd5e1;
+}
+
+/* La famosa banda de color superior */
+.plantilla-card-header {
+    height: 10px; /* Un poco más gruesa para que destaque */
+    width: 100%;
+}
+
+.plantilla-card-body {
+    padding: 28px; /* Más aire en la tarjeta */
+    flex-grow: 1;
+}
+
+.plantilla-nombre {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plantilla-detalles {
+    font-size: 14.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.plantilla-actions {
+    padding: 18px 28px;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
     gap: 12px;
 }
 
-.plantillas-topbar h2 { margin: 0; }
-
-/* ── Modal ────────────────────────────────────────────────── */
-.color-preview {
-    width: 36px; height: 36px;
-    border-radius: 6px;
-    border: 2px solid #ddd;
+/* ── Botones  ──────────────────────────────────────── */
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+        margin-right: 2%;
+    border: none;
+    transition: all 0.2s;
     cursor: pointer;
-    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
 }
 
+.btn-primary:hover {
+    background: #4338ca;
+    transform: scale(1.02);
+    box-shadow: 0 6px 15px rgba(79, 70, 229, 0.35);
+}
+
+.btn-secondary{
+    background: white;
+    color: var(--primary-color);
+    padding: 12px 20px;
+    border: 1.5px solid var(--primary-color);
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+.btn-secondary:hover{
+    
+    transform: scale(1.02);
+    box-shadow: 0 6px 15px rgba(79, 70, 229, 0.35);
+
+}
+.btn-action {
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #475569;
+    transition: all 0.2s;
+    flex: 1;
+    text-align: center;
+}
+
+.btn-action:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: var(--text-main);
+}
+
+.btn-delete:hover {
+    background: #fff1f1;
+    color: #e11d48;
+    border-color: #fecaca;
+}
+
+/*modal*/
+.modal{
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* ── EL MODAL (Rediseño Total) ───────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0; /* Abarca todo */
+    background: rgba(15, 23, 42, 0.75); /* Más oscuro para contraste */
+    backdrop-filter: blur(12px) saturate(180%); /* Blur premium */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    position: relative;
+    padding: 2%;
+    left: 35%;
+    top: 15%;
+    width: 94%;
+    max-height: 56%;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: modalSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes modalSpring {
+    from { opacity: 0; transform: scale(0.9) translateY(40px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+    padding: 32px 40px 20px; /* Mucho padding arriba */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.modal-body {
+    padding: 0 40px 40px; /* Padding lateral y abajo generoso */
+}
+
+.modal-footer {
+    padding: 24px 40px;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+/* ── Formularios dentro del Modal ────────────────────────── */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #f1f5f9; /* Bordes más suaves */
+    border-radius: 14px;
+    font-size: 16px;
+    color: var(--text-main);
+    background-color: #f8fafc;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px; /* Más espacio entre columnas */
+}
+
+/* ── Selector de Colores Mejorado ────────────────────────── */
 .color-input-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 16px;
 }
 
-.color-input-row input[type="color"] {
-    width: 0; height: 0;
-    padding: 0; border: none;
-    visibility: hidden;
-    position: absolute;
+.color-preview {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    border: 4px solid white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.color-preview:hover {
+    transform: scale(1.1);
 }
 
 .presets-colores {
     display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-}
-.preset-color {
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border-color .15s, transform .15s;
-}
-.preset-color:hover, .preset-color.activo {
-    border-color: #333;
-    transform: scale(1.15);
+    gap: 10px;
+    margin-top: 16px;
+    justify-content: space-between;
 }
 
-/* ── Empty state ──────────────────────────────────────────── */
-.plantillas-empty {
-    text-align: center;
-    padding: 60px 30px;
-    background: white;
+.preset-color {
+    width: 32px;
+    height: 32px;
     border-radius: 10px;
-    border: 2px dashed #e9ecef;
-    margin-top: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
 }
-.plantillas-empty .empty-icon { font-size: 52px; opacity: .25; margin-bottom: 14px; }
-.plantillas-empty h3 { color: #6c757d; font-size: 17px; margin: 0 0 6px; }
-.plantillas-empty p  { color: #adb5bd; font-size: 14px; margin: 0; }
+
+.preset-color:hover {
+    transform: translateY(-4px) scale(1.1);
+    border-color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+/*Boton close*/
+.close{
+    color: #dc3545;
+    background: white;
+    border: 1px solid #dc3545 ;
+    border-radius: 50px;
+    position: relative;
+    padding: 1% 2%;
+    top: -2%;
+    right: -98%;
+    transition: 0.3s ease;
+
+}
+.close:hover{
+    color: white;
+    background: #dc3545;
+    border: 1px solid #dc3545 ;
+}
