@@ -341,6 +341,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
                 <a href="panel.php?seccion=empleados&vista=lista">Ver empleados</a>
                 <a href="panel.php?seccion=empleados&vista=nuevo">Añadir empleados</a>
                 <a href="panel.php?seccion=empleados&vista=nominas">Subir nominas</a>
+                <a href="panel.php?seccion=empleados&vista=tickets"> Tickets</a>
             </div>
 
             <a href="panel.php?seccion=perfil">Perfil</a>
@@ -351,6 +352,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
             <a href="panel.php?seccion=fichaje">Fichaje</a>
             <a href="panel.php?seccion=horario">Horario</a>
             <a href="panel.php?seccion=documentos">Mis Nominas</a>
+            <a href="panel.php?seccion=tickets"> Mis Tickets</a>
             <a href="panel.php?seccion=perfil">Perfil</a>
         </div>
     <?php endif; ?>
@@ -379,6 +381,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
                 if ($vista === "lista") include "secciones/empleados_lista.php";
                 if ($vista === "nuevo") include "secciones/empleados_nuevo.php";
                 if ($vista === "nominas") include "secciones/nominas_admin.php";
+                if ($vista === "tickets")  include "secciones/tickets_admin.php";
             }
         }
 
@@ -390,6 +393,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
         if ($seccion === "documentos")     include "secciones/mis_nominas.php";
         if ($seccion === "perfil")         include "secciones/perfil.php";
         if ($seccion === "notificaciones") include "secciones/notificaciones.php";
+        if ($seccion === "tickets")       include "secciones/tickets.php";
         ?>
     </main>
 
