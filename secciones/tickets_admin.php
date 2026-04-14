@@ -8,7 +8,7 @@ $idAdmin   = $_SESSION['usuario']['id'];
 $labelEstado    = ['PENDIENTE'=>'Pendiente','EN_PROCESO'=>'En proceso','RESUELTA'=>'Resuelta','CERRADA'=>'Cerrada'];
 $labelCategoria = ['HORARIO'=>'Horario','NOMINA'=>'Nómina','VACACIONES'=>'Vacaciones','FICHAJE'=>'Fichaje','OTRO'=>'Otro'];
 $labelPrioridad = ['BAJA'=>'Baja','MEDIA'=>'Media','ALTA'=>'Alta'];
-$iconoCategoria = ['HORARIO'=>'📅','NOMINA'=>'💰','VACACIONES'=>'🏖️','FICHAJE'=>'🕐','OTRO'=>'📌'];
+$iconoCategoria = ['HORARIO'=>'','NOMINA'=>'','VACACIONES'=>'','FICHAJE'=>'','OTRO'=>''];
 
 // ── Detalle de un ticket ──────────────────────────────────
 $idTicket = isset($_GET['ticket']) ? (int)$_GET['ticket'] : 0;
@@ -22,7 +22,7 @@ if ($idTicket) {
     $stmtT->execute([$idTicket, $idEmpresa]);
     $ticket = $stmtT->fetch(PDO::FETCH_ASSOC);
 
-    if (!$ticket) { header('Location: panel.php?seccion=tickets_admin'); exit; }
+    if (!$ticket) { header('Location: panel.php?seccion=empleados&vista=tickets'); exit; }
 
     $stmtM = $pdo->prepare("
         SELECT m.*, U.nombre, U.apellidos, U.foto_perfil
@@ -83,7 +83,7 @@ $empleados = $stmtEmps->fetchAll(PDO::FETCH_ASSOC);
         <div class="ticket-detalle-header">
             <div style="flex:1;">
                 <button class="btn-volver" style="margin-bottom:10px;"
-                        onclick="location.href='panel.php?seccion=tickets_admin'">← Volver</button>
+                        onclick="location.href='panel.php?seccion=empleados&vista=tickets'">← Volver</button>
                 <div class="ticket-empleado-info" style="margin-bottom:8px;">
                     <img src="<?= htmlspecialchars($ticket['foto_perfil'] ?? 'secciones/uploads/perfil_default.jpg') ?>"
                          onerror="this.src='secciones/uploads/perfil_default.jpg'">
@@ -106,14 +106,14 @@ $empleados = $stmtEmps->fetchAll(PDO::FETCH_ASSOC);
             <!-- Acciones de estado -->
             <div style="display:flex;flex-direction:column;gap:8px;min-width:160px;">
                 <?php if ($ticket['estado'] === 'PENDIENTE'): ?>
-                    <button class="btn-info" onclick="cambiarEstado(<?= $idTicket ?>, 'EN_PROCESO')">▶️ Marcar en proceso</button>
+                    <button class="btn-info" onclick="cambiarEstado(<?= $idTicket ?>, 'EN_PROCESO')"> Marcar en proceso</button>
                 <?php endif; ?>
                 <?php if (in_array($ticket['estado'], ['PENDIENTE','EN_PROCESO'])): ?>
-                    <button class="btn-success" onclick="cambiarEstado(<?= $idTicket ?>, 'RESUELTA')">✅ Marcar resuelta</button>
-                    <button class="btn-danger" onclick="cambiarEstado(<?= $idTicket ?>, 'CERRADA')">🔒 Cerrar ticket</button>
+                    <button class="btn-success" onclick="cambiarEstado(<?= $idTicket ?>, 'RESUELTA')"> Marcar resuelta</button>
+                    <button class="btn-danger" onclick="cambiarEstado(<?= $idTicket ?>, 'CERRADA')"> Cerrar ticket</button>
                 <?php endif; ?>
                 <?php if ($ticket['estado'] === 'RESUELTA'): ?>
-                    <button class="btn-danger" onclick="cambiarEstado(<?= $idTicket ?>, 'CERRADA')">🔒 Cerrar ticket</button>
+                    <button class="btn-danger" onclick="cambiarEstado(<?= $idTicket ?>, 'CERRADA')"> Cerrar ticket</button>
                 <?php endif; ?>
             </div>
         </div>
@@ -166,7 +166,7 @@ $empleados = $stmtEmps->fetchAll(PDO::FETCH_ASSOC);
     ══════════════════════════════════════════ -->
     <div class="tickets-header">
         <div>
-            <h2>🎫 Gestión de Tickets</h2>
+            <h2> Gestión de Tickets</h2>
             <p>Consultas e incidencias de los empleados</p>
         </div>
     </div>
@@ -229,14 +229,14 @@ $empleados = $stmtEmps->fetchAll(PDO::FETCH_ASSOC);
     <div class="tickets-lista">
         <?php if (empty($tickets)): ?>
             <div class="tickets-empty">
-                <div class="empty-icon">🎫</div>
+                <div class="empty-icon"></div>
                 <h3>No hay tickets con estos filtros</h3>
                 <p>Cambia los filtros para ver otros tickets.</p>
             </div>
         <?php else: ?>
             <?php foreach ($tickets as $t): ?>
                 <div class="ticket-card <?= strtolower($t['estado']) ?>"
-                     onclick="location.href='panel.php?seccion=tickets_admin&ticket=<?= $t['id_incidencia'] ?>'">
+                     onclick="location.href='panel.php?seccion=empleados&vista=tickets&ticket=<?= $t['id_incidencia'] ?>'">
                     <div style="display:flex;align-items:center;gap:12px;margin-right:10px;">
                         <img src="<?= htmlspecialchars($t['foto_perfil'] ?? 'secciones/uploads/perfil_default.jpg') ?>"
                              onerror="this.src='secciones/uploads/perfil_default.jpg'"
@@ -276,7 +276,8 @@ $empleados = $stmtEmps->fetchAll(PDO::FETCH_ASSOC);
 <script>
 function filtrar(sel, param) {
     const url = new URL(window.location.href);
-    url.searchParams.set('seccion', 'tickets_admin');
+    url.searchParams.set('seccion', 'empleados');
+    url.searchParams.set('vista', 'tickets');
     url.searchParams.set(param, sel.value);
     window.location.href = url.toString();
 }

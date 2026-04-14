@@ -56,7 +56,7 @@ foreach ($tickets as $t) {
 $labelEstado = ['PENDIENTE'=>'Pendiente','EN_PROCESO'=>'En proceso','RESUELTA'=>'Resuelta','CERRADA'=>'Cerrada'];
 $labelCategoria = ['HORARIO'=>'Horario','NOMINA'=>'Nómina','VACACIONES'=>'Vacaciones','FICHAJE'=>'Fichaje','OTRO'=>'Otro'];
 $labelPrioridad = ['BAJA'=>'Baja','MEDIA'=>'Media','ALTA'=>'Alta'];
-$iconoCategoria = ['HORARIO'=>'📅','NOMINA'=>'💰','VACACIONES'=>'🏖️','FICHAJE'=>'🕐','OTRO'=>'📌'];
+$iconoCategoria = ['HORARIO'=>'','NOMINA'=>'','VACACIONES'=>'','FICHAJE'=>'','OTRO'=>''];
 ?>
 
 <link rel="stylesheet" href="css/tickets.css">
@@ -186,7 +186,7 @@ $iconoCategoria = ['HORARIO'=>'📅','NOMINA'=>'💰','VACACIONES'=>'🏖️','F
                             <span> <?= $labelCategoria[$t['categoria']] ?></span>
                             <span> <?= date('d/m/Y H:i', strtotime($t['fecha_creacion'])) ?></span>
                             <?php if ($t['fecha_respuesta']): ?>
-                                <span>💬 Última respuesta: <?= date('d/m/Y', strtotime($t['fecha_respuesta'])) ?></span>
+                                <span> Última respuesta: <?= date('d/m/Y', strtotime($t['fecha_respuesta'])) ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -245,7 +245,7 @@ $iconoCategoria = ['HORARIO'=>'📅','NOMINA'=>'💰','VACACIONES'=>'🏖️','F
         </div>
         <div class="modal-ticket-footer">
             <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
-            <button class="btn-primary" onclick="crearTicket()">📨 Enviar Ticket</button>
+            <button class="btn-primary" onclick="crearTicket()"> Enviar Ticket</button>
         </div>
     </div>
 </div>
