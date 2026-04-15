@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-04-2026 a las 11:40:39
+-- Tiempo de generación: 15-04-2026 a las 11:44:47
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -194,16 +194,39 @@ CREATE TABLE `empresa` (
   `telefono` varchar(20) DEFAULT NULL,
   `CIF` varchar(20) DEFAULT NULL,
   `CCC` varchar(30) DEFAULT NULL,
-  `panel_destino` varchar(50) NOT NULL
+  `panel_destino` varchar(50) NOT NULL,
+  `restringir_ip` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0=libre, 1=solo IPs autorizadas'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `empresa`
 --
 
-INSERT INTO `empresa` (`id_empresa`, `nombre`, `direccion`, `telefono`, `CIF`, `CCC`, `panel_destino`) VALUES
-(1, 'empresa 1', 'Dirección 1', '123456789', 'CIF123456', 'CCC123456', 'panel_ensenyem'),
-(2, 'empresa 2', 'Dirección 2', '987654321', 'CIF654321', 'CCC654321', 'panel_sm');
+INSERT INTO `empresa` (`id_empresa`, `nombre`, `direccion`, `telefono`, `CIF`, `CCC`, `panel_destino`, `restringir_ip`) VALUES
+(1, 'empresa 1', 'Dirección 1', '123456789', 'CIF123456', 'CCC123456', 'panel_ensenyem', 0),
+(2, 'empresa 2', 'Dirección 2', '987654321', 'CIF654321', 'CCC654321', 'panel_sm', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `empresa_ips_autorizadas`
+--
+
+CREATE TABLE `empresa_ips_autorizadas` (
+  `id` int(11) NOT NULL,
+  `id_empresa` int(11) NOT NULL,
+  `ip_address` varchar(50) NOT NULL,
+  `etiqueta` varchar(100) DEFAULT NULL COMMENT 'Nombre descriptivo, ej: Oficina central',
+  `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Lista blanca de IPs permitidas para fichar por empresa';
+
+--
+-- Volcado de datos para la tabla `empresa_ips_autorizadas`
+--
+
+INSERT INTO `empresa_ips_autorizadas` (`id`, `id_empresa`, `ip_address`, `etiqueta`, `creado_en`) VALUES
+(1, 1, '::1', NULL, '2026-04-15 08:50:08'),
+(2, 1, '192.168.1.', 'ip local', '2026-04-15 08:50:47');
 
 -- --------------------------------------------------------
 
@@ -295,7 +318,9 @@ INSERT INTO `fichaje` (`id_fichaje`, `id_usuario`, `fecha`, `hora_entrada`, `hor
 (49, 4, '2026-04-12', '13:12:23', NULL, NULL, '19:35:00', 'normal', NULL),
 (50, 4, '2026-04-12', '19:35:01', NULL, NULL, NULL, 'partida_tarde', NULL),
 (51, 1, '2026-04-13', '09:53:37', NULL, NULL, NULL, 'normal', NULL),
-(52, 4, '2026-04-13', '09:54:16', NULL, NULL, NULL, 'normal', NULL);
+(52, 4, '2026-04-13', '09:54:16', NULL, NULL, NULL, 'normal', NULL),
+(53, 4, '2026-04-15', '10:51:23', '10:51:27', NULL, '11:38:55', 'normal', NULL),
+(54, 1, '2026-04-15', '11:00:28', NULL, NULL, NULL, 'normal', NULL);
 
 -- --------------------------------------------------------
 
@@ -618,9 +643,7 @@ INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `mensaje`, `tipo`
 (115, 1, '🎫 Nuevo ticket de Usuario1 Cuatro: olvido de fichaje', 'nuevo_ticket', 1, '2026-04-12 18:02:53'),
 (116, 2, '🎫 Nuevo ticket de Usuario1 Cuatro: olvido de fichaje', 'nuevo_ticket', 0, '2026-04-12 18:02:53'),
 (121, 1, '🎫 Nuevo ticket de Usuario1 Cuatro: h', 'nuevo_ticket', 1, '2026-04-13 08:11:20'),
-(122, 2, '🎫 Nuevo ticket de Usuario1 Cuatro: h', 'nuevo_ticket', 0, '2026-04-13 08:11:20'),
-(123, 4, ' Tu ticket \'h\' ha sido cerrado.', 'estado_ticket', 0, '2026-04-13 08:12:03'),
-(124, 4, ' Tu ticket \'Fallo del sistema\' ha sido cerrado.', 'estado_ticket', 0, '2026-04-13 08:13:42');
+(122, 2, '🎫 Nuevo ticket de Usuario1 Cuatro: h', 'nuevo_ticket', 0, '2026-04-13 08:11:20');
 
 -- --------------------------------------------------------
 
@@ -864,6 +887,13 @@ ALTER TABLE `empresa`
   ADD UNIQUE KEY `CIF` (`CIF`);
 
 --
+-- Indices de la tabla `empresa_ips_autorizadas`
+--
+ALTER TABLE `empresa_ips_autorizadas`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_empresa_ip` (`id_empresa`,`ip_address`);
+
+--
 -- Indices de la tabla `empresa_usuario`
 --
 ALTER TABLE `empresa_usuario`
@@ -1003,10 +1033,16 @@ ALTER TABLE `empresa`
   MODIFY `id_empresa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT de la tabla `empresa_ips_autorizadas`
+--
+ALTER TABLE `empresa_ips_autorizadas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `fichaje`
 --
 ALTER TABLE `fichaje`
-  MODIFY `id_fichaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id_fichaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_validaciones`
@@ -1096,6 +1132,12 @@ ALTER TABLE `detalle_solicitud_horario`
 ALTER TABLE `documentos`
   ADD CONSTRAINT `documentos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
   ADD CONSTRAINT `documentos_ibfk_2` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id_empresa`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `empresa_ips_autorizadas`
+--
+ALTER TABLE `empresa_ips_autorizadas`
+  ADD CONSTRAINT `fk_ips_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id_empresa`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `empresa_usuario`
