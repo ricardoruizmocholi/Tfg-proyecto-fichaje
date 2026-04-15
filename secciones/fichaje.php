@@ -108,19 +108,19 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
         <?php if ($acceso_permitido): ?>
             <form action="secciones/fichaje_accion.php" method="POST">
                 <?php if ($jornadaCompleta): ?>
-                    <p style="color:#28a745;font-weight:bold;padding:10px;">✅ Jornada partida completada</p>
+                    <p style="color:#28a745;font-weight:bold;padding:10px;"> Jornada partida completada</p>
                 <?php else: ?>
                     <?php if ($pMostrarEntM): ?>
-                        <button type="submit" name="accion" value="entrada" class="btn-fichaje btn-entrada">🟢 Entrada Mañana</button>
+                        <button type="submit" name="accion" value="entrada" class="btn-fichaje btn-entrada"> Entrada Mañana</button>
                     <?php endif; ?>
                     <?php if ($pMostrarSalM): ?>
-                        <button type="submit" name="accion" value="salida" class="btn-fichaje btn-salida">🔴 Salida Mañana</button>
+                        <button type="submit" name="accion" value="salida" class="btn-fichaje btn-salida"> Salida Mañana</button>
                     <?php endif; ?>
                     <?php if ($pMostrarEntT): ?>
-                        <button type="submit" name="accion" value="entrada_tarde" class="btn-fichaje btn-reanudar" style="background:#3f51b5;">🟣 Entrada Tarde</button>
+                        <button type="submit" name="accion" value="entrada_tarde" class="btn-fichaje btn-reanudar" style="background:#3f51b5;"> Entrada Tarde</button>
                     <?php endif; ?>
                     <?php if ($pMostrarSalT): ?>
-                        <button type="submit" name="accion" value="salida_tarde" class="btn-fichaje btn-salida" style="background:#880e4f;">🟤 Salida Tarde</button>
+                        <button type="submit" name="accion" value="salida_tarde" class="btn-fichaje btn-salida" style="background:#880e4f;"> Salida Tarde</button>
                     <?php endif; ?>
                 <?php endif; ?>
             </form>
@@ -155,16 +155,16 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
         <?php if ($acceso_permitido): ?>
             <form action="secciones/fichaje_accion.php" method="POST">
                 <?php if($mostrarEntrada): ?>
-                    <button type="submit" name="accion" value="entrada" class="btn-fichaje btn-entrada">🟢 Fichar Entrada</button>
+                    <button type="submit" name="accion" value="entrada" class="btn-fichaje btn-entrada"> Fichar Entrada</button>
                 <?php endif; ?>
                 <?php if($mostrarPausa): ?>
-                    <button type="submit" name="accion" value="pausa" class="btn-fichaje btn-pausa">⏸️ Iniciar Pausa</button>
+                    <button type="submit" name="accion" value="pausa" class="btn-fichaje btn-pausa"> Iniciar Pausa</button>
                 <?php endif; ?>
                 <?php if($mostrarReanudar): ?>
-                    <button type="submit" name="accion" value="reanudar" class="btn-fichaje btn-reanudar">▶️ Reanudar Trabajo</button>
+                    <button type="submit" name="accion" value="reanudar" class="btn-fichaje btn-reanudar"> Reanudar Trabajo</button>
                 <?php endif; ?>
                 <?php if($mostrarSalida): ?>
-                    <button type="submit" name="accion" value="salida" class="btn-fichaje btn-salida">🔴 Fichar Salida</button>
+                    <button type="submit" name="accion" value="salida" class="btn-fichaje btn-salida"> Fichar Salida</button>
                     <?php if($fichajeHoy['hora_pausa'] !== null && $fichajeHoy['hora_reanudacion'] === null): ?>
                         <p style="color:#ff9800;margin-top:10px;">⚠️ Estás en pausa...</p>
                     <?php endif; ?>

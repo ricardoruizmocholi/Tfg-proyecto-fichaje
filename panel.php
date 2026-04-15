@@ -42,227 +42,8 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($nombreEmpresa) ?></title>
     <link rel="stylesheet" href="<?= $cssFile ?>">
-    <style>
-        /* =============================================
-           CHATBOT MODAL
-        ============================================= */
-        .chat-fab {
-            position: fixed;
-            bottom: 24px;
-            left: 180px; /* alineado con el sidebar de 220px */
-            width: 48px;
-            height: 48px;
-            background: #007bff;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 22px;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(0,123,255,0.45);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: background 0.2s, transform 0.2s;
-        }
-        .chat-fab:hover {
-            background: #0056b3;
-            transform: scale(1.08);
-        }
-
-        /* Overlay oscuro */
-        .chat-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.45);
-            z-index: 10000;
-        }
-        .chat-overlay.open { display: block; }
-
-        /* Modal */
-        .chat-modal {
-            position: fixed;
-            bottom: 80px;
-            left: 230px;
-            width: 360px;
-            max-height: 520px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
-            display: flex;
-            flex-direction: column;
-            z-index: 10001;
-            overflow: hidden;
-            transform: translateY(20px);
-            opacity: 0;
-            pointer-events: none;
-            transition: transform 0.25s ease, opacity 0.25s ease;
-        }
-        .chat-modal.open {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        /* Cabecera del modal */
-        .chat-header {
-            background: #222;
-            color: white;
-            padding: 13px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: 12px 12px 0 0;
-        }
-        .chat-header-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: bold;
-            font-size: 15px;
-        }
-        .chat-header-title span.dot {
-            width: 9px;
-            height: 9px;
-            background: #28a745;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .chat-close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            line-height: 1;
-            padding: 0 4px;
-        }
-        .chat-close-btn:hover { color: #ccc; }
-
-        /* Área de mensajes */
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 14px 14px 6px;
-            background: #f2f2f2;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-height: 280px;
-            max-height: 340px;
-        }
-
-        /* Burbujas */
-        .chat-bubble {
-            max-width: 82%;
-            padding: 9px 13px;
-            border-radius: 12px;
-            font-size: 13.5px;
-            line-height: 1.5;
-            word-break: break-word;
-        }
-        .chat-bubble.bot {
-            background: #333;
-            color: white;
-            align-self: flex-start;
-            border-bottom-left-radius: 3px;
-        }
-        .chat-bubble.user {
-            background: #007bff;
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 3px;
-        }
-
-        /* Indicador de escritura */
-        .chat-bubble.typing {
-            background: #444;
-            color: #ccc;
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            padding: 12px 16px;
-        }
-        .typing-dot {
-            width: 7px;
-            height: 7px;
-            background: #aaa;
-            border-radius: 50%;
-            animation: typingBounce 1.2s infinite ease-in-out;
-        }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typingBounce {
-            0%, 80%, 100% { transform: translateY(0); }
-            40%           { transform: translateY(-6px); }
-        }
-
-        /* Input */
-        .chat-input-area {
-            display: flex;
-            gap: 8px;
-            padding: 10px 12px;
-            background: #fff;
-            border-top: 1px solid #ddd;
-        }
-        .chat-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            font-size: 13px;
-            outline: none;
-            resize: none;
-            font-family: Arial, sans-serif;
-        }
-        .chat-input:focus { border-color: #007bff; }
-        .chat-send-btn {
-            background: #007bff;
-            border: none;
-            color: white;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: background 0.2s;
-        }
-        .chat-send-btn:hover { background: #0056b3; }
-        .chat-send-btn:disabled { background: #aaa; cursor: not-allowed; }
-
-        /* Botón limpiar conversación */
-        .chat-clear-btn {
-            background: none;
-            border: none;
-            color: #aaa;
-            font-size: 11px;
-            cursor: pointer;
-            padding: 2px 12px 6px;
-            text-align: left;
-            text-decoration: underline;
-        }
-        .chat-clear-btn:hover { color: #555; }
-
-        /* Responsive: en móvil el fab y modal ocupan bien */
-        @media (max-width: 700px) {
-            .chat-fab {
-                left: auto;
-                right: 16px;
-                bottom: 80px; /* encima de la barra inferior */
-            }
-            .chat-modal {
-                left: 8px;
-                right: 8px;
-                bottom: 140px;
-                width: auto;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/panel.css">
+    
 </head>
 <body>
     
@@ -270,7 +51,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
         <div class="logo"><?= htmlspecialchars($nombreEmpresa) ?></div>
         <div>
             <span style="color:white; margin-right:15px;">
-                <?= $esAdmin ? '👤 Admin' : '👤 Empleado' ?> - 
+                <?= $esAdmin ? ' Admin' : ' Empleado' ?> - 
                 <?= htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellidos']) ?>
             </span>
             <div class="notification-container" style="display: inline-block; position: relative; margin-right: 15px;">
@@ -293,68 +74,72 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
 
     <?php if($esAdmin): ?>
         <div class="sidebar">
-            <h3 class="sidebar-title">Administrador</h3>
-
-            <a class="submenu-btn">
-                Fichaje
-                <svg class="arrow-icon" width="16" height="16" viewBox="0 0 20 20">
-                    <path d="M 10 13.7 a 0.897 0.897 0 0 1 -0.636 -0.264 l -4.6 -4.6 a 0.9 0.9 0 1 1 1.272 -1.273 L 10 11.526 l 3.964 -3.963 a 0.9 0.9 0 0 1 1.272 1.273 l -4.6 4.6 A 0.897 0.897 0 0 1 10 13.7 Z"></path>
-                </svg>
-            </a>
-            <div class="submenu-content">
-                <a href="panel.php?seccion=fichaje&vista=inicio">Fichar</a>
-                <a href="panel.php?seccion=fichaje&vista=ver">Ver fichajes</a>
-                <a href="panel.php?seccion=fichaje&vista=modificar">Modificar fichajes</a>
-                <a href="panel.php?seccion=fichaje&vista=config_ip"> Restricción por IP</a>
+            <div class="sidebar_container">
+                <h3 class="sidebar-title">Administrador</h3>
+    
+                <a class="submenu-btn">
+                    Fichaje
+                    <svg class="arrow-icon" width="16" height="16" viewBox="0 0 20 20">
+                        <path d="M 10 13.7 a 0.897 0.897 0 0 1 -0.636 -0.264 l -4.6 -4.6 a 0.9 0.9 0 1 1 1.272 -1.273 L 10 11.526 l 3.964 -3.963 a 0.9 0.9 0 0 1 1.272 1.273 l -4.6 4.6 A 0.897 0.897 0 0 1 10 13.7 Z"></path>
+                    </svg>
+                </a>
+                <div class="submenu-content">
+                    <a href="panel.php?seccion=fichaje&vista=inicio">Fichar</a>
+                    <a href="panel.php?seccion=fichaje&vista=ver">Ver fichajes</a>
+                    <a href="panel.php?seccion=fichaje&vista=modificar">Modificar fichajes</a>
+                    <a href="panel.php?seccion=fichaje&vista=config_ip"> Restricción por IP</a>
+                </div>
+    
+                <a class="submenu-btn">
+                    Horario
+                    <svg class="arrow-icon" width="16" height="16" viewBox="0 0 20 20">
+                        <path d="M 10 13.7 a 0.897 0.897 0 0 1 -0.636 -0.264 l -4.6 -4.6 a 0.9 0.9 0 1 1 1.272 -1.273 L 10 11.526 l 3.964 -3.963 a 0.9 0.9 0 0 1 1.272 1.273 l -4.6 4.6 A 0.897 0.897 0 0 1 10 13.7 Z"></path>
+                    </svg>
+                </a>
+                <div class="submenu-content">
+                    <a href="panel.php?seccion=horario&vista=peticiones">Peticiones</a>
+                    <a href="panel.php?seccion=horario&vista=cuadrantes">Cuadrantes</a>
+                    <a href="panel.php?seccion=horario&vista=vacaciones">Vacaciones</a>
+                      <a href="panel.php?seccion=horario&vista=plantillas"> Plantillas de Jornada</a>
+                </div>
+    
+                <a class="submenu-btn">
+                    Reportes
+                    <svg class="arrow-icon" width="16" height="16" viewBox="0 0 20 20">
+                        <path d="M 10 13.7 a 0.897 0.897 0 0 1 -0.636 -0.264 l -4.6 -4.6 a 0.9 0.9 0 1 1 1.272 -1.273 L 10 11.526 l 3.964 -3.963 a 0.9 0.9 0 0 1 1.272 1.273 l -4.6 4.6 A 0.897 0.897 0 0 1 10 13.7 Z"></path>
+                    </svg>
+                </a>
+                <div class="submenu-content">
+                    <a href="panel.php?seccion=reportes&vista=generar">Generar reportes</a>
+                    <a href="panel.php?seccion=reportes&vista=historial">Historial reportes</a>
+                </div>
+    
+                <a class="submenu-btn">
+                    Gestión empleados
+                    <svg class="arrow-icon" width="16" height="16" viewBox="0 0 20 20">
+                        <path d="M 10 13.7 a 0.897 0.897 0 0 1 -0.636 -0.264 l -4.6 -4.6 a 0.9 0.9 0 1 1 1.272 -1.273 L 10 11.526 l 3.964 -3.963 a 0.9 0.9 0 0 1 1.272 1.273 l -4.6 4.6 A 0.897 0.897 0 0 1 10 13.7 Z"></path>
+                    </svg>
+                </a>
+                <div class="submenu-content">
+                    <a href="panel.php?seccion=empleados&vista=lista">Ver empleados</a>
+                    <a href="panel.php?seccion=empleados&vista=nuevo">Añadir empleados</a>
+                    <a href="panel.php?seccion=empleados&vista=nominas">Subir nominas</a>
+                    <a href="panel.php?seccion=empleados&vista=tickets"> Tickets</a>
+                </div>
+    
+                <a href="panel.php?seccion=perfil">Perfil</a>
             </div>
-
-            <a class="submenu-btn">
-                Horario
-                <svg class="arrow-icon" width="16" height="16" viewBox="0 0 20 20">
-                    <path d="M 10 13.7 a 0.897 0.897 0 0 1 -0.636 -0.264 l -4.6 -4.6 a 0.9 0.9 0 1 1 1.272 -1.273 L 10 11.526 l 3.964 -3.963 a 0.9 0.9 0 0 1 1.272 1.273 l -4.6 4.6 A 0.897 0.897 0 0 1 10 13.7 Z"></path>
-                </svg>
-            </a>
-            <div class="submenu-content">
-                <a href="panel.php?seccion=horario&vista=peticiones">Peticiones</a>
-                <a href="panel.php?seccion=horario&vista=cuadrantes">Cuadrantes</a>
-                <a href="panel.php?seccion=horario&vista=vacaciones">Vacaciones</a>
-                  <a href="panel.php?seccion=horario&vista=plantillas"> Plantillas de Jornada</a>
-            </div>
-
-            <a class="submenu-btn">
-                Reportes
-                <svg class="arrow-icon" width="16" height="16" viewBox="0 0 20 20">
-                    <path d="M 10 13.7 a 0.897 0.897 0 0 1 -0.636 -0.264 l -4.6 -4.6 a 0.9 0.9 0 1 1 1.272 -1.273 L 10 11.526 l 3.964 -3.963 a 0.9 0.9 0 0 1 1.272 1.273 l -4.6 4.6 A 0.897 0.897 0 0 1 10 13.7 Z"></path>
-                </svg>
-            </a>
-            <div class="submenu-content">
-                <a href="panel.php?seccion=reportes&vista=generar">Generar reportes</a>
-                <a href="panel.php?seccion=reportes&vista=historial">Historial reportes</a>
-            </div>
-
-            <a class="submenu-btn">
-                Gestión empleados
-                <svg class="arrow-icon" width="16" height="16" viewBox="0 0 20 20">
-                    <path d="M 10 13.7 a 0.897 0.897 0 0 1 -0.636 -0.264 l -4.6 -4.6 a 0.9 0.9 0 1 1 1.272 -1.273 L 10 11.526 l 3.964 -3.963 a 0.9 0.9 0 0 1 1.272 1.273 l -4.6 4.6 A 0.897 0.897 0 0 1 10 13.7 Z"></path>
-                </svg>
-            </a>
-            <div class="submenu-content">
-                <a href="panel.php?seccion=empleados&vista=lista">Ver empleados</a>
-                <a href="panel.php?seccion=empleados&vista=nuevo">Añadir empleados</a>
-                <a href="panel.php?seccion=empleados&vista=nominas">Subir nominas</a>
-                <a href="panel.php?seccion=empleados&vista=tickets"> Tickets</a>
-            </div>
-
-            <a href="panel.php?seccion=perfil">Perfil</a>
         </div>
     <?php else: ?>
         <div class="sidebar">
-            <h3>Empleado</h3>
-            <a href="panel.php?seccion=fichaje">Fichaje</a>
-            <a href="panel.php?seccion=horario">Horario</a>
-            <a href="panel.php?seccion=documentos">Mis Nominas</a>
-            <a href="panel.php?seccion=tickets"> Mis Tickets</a>
-            <a href="panel.php?seccion=perfil">Perfil</a>
+            <div class="sidebar_container">              
+                <h3>Empleado</h3>
+                <a href="panel.php?seccion=fichaje">Fichaje</a>
+                <a href="panel.php?seccion=horario">Horario</a>
+                <a href="panel.php?seccion=documentos">Mis Nominas</a>
+                <a href="panel.php?seccion=tickets"> Mis Tickets</a>
+                <a href="panel.php?seccion=perfil">Perfil</a>
+            </div>
         </div>
     <?php endif; ?>
 
@@ -628,6 +413,8 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
                 chatInput.focus();
             }
         }
+
+        
     </script>
  <script src="secciones/tipos_jornada_helper.js"></script>
 </body>

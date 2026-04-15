@@ -20,7 +20,7 @@ header {
 
 /* LATERAL */
 .sidebar {
-    width:220px;
+    width:18%;
     background:#333;
     color:white;
     position:fixed;
@@ -28,17 +28,23 @@ header {
     bottom:0;
     padding-top:20px;
 }
+.sidebar_container{
+    position: relative;
+    left: 11%;
+}
 
 .sidebar a {
     display:block;
     padding:12px 20px;
+    width: 66%;
     color:white;
     text-decoration:none;
     transition:0.2s;
 }
 
 .sidebar a:hover {
-    background:#444;
+    background: #0056b3;
+    border-radius: 100px;
 }
 
 /* CONTENIDO */
@@ -106,7 +112,7 @@ main {
     max-height: 0;
     overflow: hidden;
     transition: max-height .35s ease, padding .25s ease;
-    background: rgba(255, 255, 255, 0.08); /* fondo más claro */
+    
     margin-left: 15px; /* indentado */
     border-radius: 4px;
 }
