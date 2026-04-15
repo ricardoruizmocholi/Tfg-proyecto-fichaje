@@ -63,13 +63,8 @@ $pMostrarSalT    = $fichajeTarde && $fichajeTarde['hora_entrada'] !== null && $f
 $jornadaCompleta = $mananaCerrado && $fichajeTarde && $fichajeTarde['hora_salida'] !== null;
 
 // IP
-$ip_usuario = $_SERVER['REMOTE_ADDR'];
-$acceso_permitido = (
-    $ip_usuario === IP_OFICINA ||
-    strpos($ip_usuario, RANGO_LOCAL) === 0 ||
-    $ip_usuario === '127.0.0.1' ||
-    $ip_usuario === '::1'
-);
+require_once __DIR__ . '/api/fichaje_ip_helper.php';
+$acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa']);
 ?>
 
 <h2> Fichaje</h2>

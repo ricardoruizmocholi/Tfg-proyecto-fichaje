@@ -1,0 +1,472 @@
+/* css/config_ip.css — Control de Acceso por IP
+   Estética: industrial-refinada · tipografía monoespaciada para IPs
+   Paleta fría de grises con acento azul-eléctrico                    */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+/* ── Variables ────────────────────────────────────────────── */
+:root {
+    --c-bg:          #f4f5f7;
+    --c-surface:     #ffffff;
+    --c-border:      #e2e4e8;
+    --c-border-soft: #eef0f3;
+    --c-text:        #1a1d23;
+    --c-muted:       #6b7180;
+    --c-accent:      #2563eb;          /* azul eléctrico */
+    --c-accent-lite: #dbeafe;
+    --c-danger:      #dc2626;
+    --c-danger-lite: #fee2e2;
+    --c-ok:          #16a34a;
+    --c-ok-lite:     #dcfce7;
+    --c-warn:        #d97706;
+    --c-warn-lite:   #fef3c7;
+    --radius:        14px;
+    --radius-sm:     8px;
+    --shadow:        0 1px 3px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.05);
+    --shadow-lg:     0 8px 30px rgba(0,0,0,.12);
+    --font-sans:     'IBM Plex Sans', sans-serif;
+    --font-mono:     'IBM Plex Mono', monospace;
+    --transition:    0.22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Page wrapper ──────────────────────────────────────────── */
+.cip-page {
+    font-family: var(--font-sans);
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 4px 0 40px;
+    color: var(--c-text);
+}
+
+/* ── Hero header ───────────────────────────────────────────── */
+.cip-hero {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--c-border);
+    flex-wrap: wrap;
+}
+.cip-hero-icon {
+    font-size: 2.4rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.cip-hero-title {
+    margin: 0 0 4px;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+.cip-hero-sub {
+    margin: 0;
+    color: var(--c-muted);
+    font-size: .9rem;
+    line-height: 1.5;
+}
+.cip-tu-ip {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    flex-shrink: 0;
+}
+.cip-tu-ip-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--c-muted);
+    font-weight: 600;
+}
+.cip-tu-ip-val {
+    font-family: var(--font-mono);
+    font-size: .85rem;
+    background: var(--c-accent-lite);
+    color: var(--c-accent);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #bfdbfe;
+}
+
+/* ── Cards ─────────────────────────────────────────────────── */
+.cip-card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    transition: opacity var(--transition), box-shadow var(--transition);
+}
+.cip-card:hover { box-shadow: var(--shadow-lg); }
+
+/* Toggle card */
+.cip-card-toggle {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 28px;
+}
+.cip-card-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+}
+.cip-toggle-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    transition: filter var(--transition);
+}
+.cip-toggle-icon.off { filter: grayscale(.3); }
+.cip-toggle-title {
+    margin: 0 0 3px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.cip-toggle-desc {
+    margin: 0;
+    font-size: .84rem;
+    color: var(--c-muted);
+    line-height: 1.5;
+}
+
+/* ── Toggle switch ──────────────────────────────────────────── */
+.cip-switch { position: relative; cursor: pointer; flex-shrink: 0; }
+.cip-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.cip-switch-track {
+    display: flex;
+    align-items: center;
+    width: 56px;
+    height: 30px;
+    background: #d1d5db;
+    border-radius: 30px;
+    padding: 3px;
+    transition: background var(--transition);
+}
+.cip-switch input:checked ~ .cip-switch-track { background: var(--c-danger); }
+.cip-switch-thumb {
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    transition: transform var(--transition);
+}
+.cip-switch input:checked ~ .cip-switch-track .cip-switch-thumb {
+    transform: translateX(26px);
+}
+
+/* ── Card header row ────────────────────────────────────────── */
+.cip-card-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.cip-card-title {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.cip-card-hint {
+    margin: 0;
+    font-size: .82rem;
+    color: var(--c-muted);
+}
+.cip-card-hint code {
+    font-family: var(--font-mono);
+    font-size: .82em;
+    background: var(--c-border-soft);
+    padding: 1px 5px;
+    border-radius: 4px;
+    border: 1px solid var(--c-border);
+}
+
+/* ── Botón añadir ────────────────────────────────────────────── */
+.cip-btn-add {
+    padding: 9px 18px;
+    background: var(--c-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: .875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background var(--transition), transform var(--transition);
+    box-shadow: 0 2px 8px rgba(37,99,235,.25);
+}
+.cip-btn-add:hover { background: #1d4ed8; transform: translateY(-1px); }
+.cip-btn-add:active { transform: translateY(0); }
+
+/* ── Lista de IPs ────────────────────────────────────────────── */
+.cip-ip-list { display: flex; flex-direction: column; gap: 8px; }
+
+.cip-ip-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    transition: background var(--transition), transform var(--transition), opacity var(--transition);
+}
+.cip-ip-row:hover { background: #eef2ff; border-color: #c7d2fe; }
+.cip-row-icon { font-size: 1rem; flex-shrink: 0; opacity: .7; }
+.cip-row-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cip-row-ip {
+    font-family: var(--font-mono);
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--c-text);
+}
+.cip-row-etq {
+    font-size: .78rem;
+    color: var(--c-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cip-badge-mia {
+    font-size: .7rem;
+    font-weight: 700;
+    background: var(--c-accent-lite);
+    color: var(--c-accent);
+    border: 1px solid #bfdbfe;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.cip-btn-del {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: background var(--transition);
+    flex-shrink: 0;
+    opacity: .5;
+}
+.cip-btn-del:hover { background: var(--c-danger-lite); opacity: 1; }
+
+/* ── Animación entrada fila ─────────────────────────────────── */
+.cip-row-enter {
+    opacity: 0;
+    transform: translateY(-8px);
+}
+.cip-ip-row { transition: opacity .25s ease, transform .25s ease, background var(--transition), border-color var(--transition); }
+
+/* ── Empty state ────────────────────────────────────────────── */
+.cip-empty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--c-warn-lite);
+    border: 1px dashed var(--c-warn);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    color: #92400e;
+    font-size: .87rem;
+    line-height: 1.5;
+}
+.cip-empty-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+/* ── Modal backdrop ──────────────────────────────────────────── */
+.cip-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10, 12, 18, .5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+}
+.cip-backdrop.visible { opacity: 1; pointer-events: auto; }
+
+/* ── Modal ───────────────────────────────────────────────────── */
+.cip-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -46%) scale(.96);
+    z-index: 1000;
+    width: min(500px, 92vw);
+    background: var(--c-surface);
+    border-radius: 20px;
+    padding: 36px 32px 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.06);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition), transform var(--transition);
+}
+.cip-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+}
+.cip-modal-close {
+    position: absolute;
+    top: 14px; right: 16px;
+    background: var(--c-border-soft);
+    border: none;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--c-muted);
+    display: flex; align-items: center; justify-content: center;
+    transition: background var(--transition), color var(--transition);
+}
+.cip-modal-close:hover { background: var(--c-danger-lite); color: var(--c-danger); }
+.cip-modal-title {
+    margin: 0 0 6px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -.015em;
+}
+.cip-modal-hint {
+    margin: 0 0 24px;
+    font-size: .85rem;
+    color: var(--c-muted);
+}
+
+/* ── Campos del modal ───────────────────────────────────────── */
+.cip-field { margin-bottom: 18px; position: relative; }
+.cip-label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--c-muted);
+}
+.cip-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: .9rem;
+    color: var(--c-text);
+    background: var(--c-bg);
+    box-sizing: border-box;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+.cip-input:focus {
+    outline: none;
+    border-color: var(--c-accent);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+}
+.cip-btn-miip {
+    position: absolute;
+    right: 8px; top: 33px;
+    font-size: .73rem;
+    background: var(--c-accent-lite);
+    color: var(--c-accent);
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 3px 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: var(--font-sans);
+    transition: background var(--transition);
+}
+.cip-btn-miip:hover { background: #bfdbfe; }
+
+/* ── Error modal ────────────────────────────────────────────── */
+.cip-error {
+    background: var(--c-danger-lite);
+    border: 1px solid #fca5a5;
+    color: var(--c-danger);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: .85rem;
+    margin-bottom: 16px;
+}
+
+/* ── Footer modal ───────────────────────────────────────────── */
+.cip-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 8px;
+}
+.cip-btn-cancel {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1.5px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: .875rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--c-muted);
+    transition: border-color var(--transition), color var(--transition);
+}
+.cip-btn-cancel:hover { border-color: var(--c-text); color: var(--c-text); }
+.cip-btn-save {
+    padding: 10px 24px;
+    background: var(--c-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: .875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition), transform var(--transition);
+    box-shadow: 0 2px 8px rgba(37,99,235,.25);
+}
+.cip-btn-save:hover    { background: #1d4ed8; transform: translateY(-1px); }
+.cip-btn-save:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+
+/* ── Toast ───────────────────────────────────────────────────── */
+.cip-toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--c-text);
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 30px;
+    font-family: var(--font-sans);
+    font-size: .875rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    z-index: 2000;
+    white-space: nowrap;
+}
+.cip-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.cip-toast.cip-toast-ok   { background: var(--c-ok);   }
+.cip-toast.cip-toast-warn { background: var(--c-warn);  }
+.cip-toast.cip-toast-err  { background: var(--c-danger);}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .cip-card { padding: 18px 16px; }
+    .cip-hero { gap: 12px; }
+    .cip-tu-ip { margin-left: 0; align-items: flex-start; }
+    .cip-modal { padding: 28px 20px 22px; }
+    .cip-btn-miip { position: static; margin-top: 6px; display: block; }
+    .cip-card-toggle { flex-wrap: wrap; }
+}

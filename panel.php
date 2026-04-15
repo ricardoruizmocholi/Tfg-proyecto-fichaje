@@ -305,6 +305,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
                 <a href="panel.php?seccion=fichaje&vista=inicio">Fichar</a>
                 <a href="panel.php?seccion=fichaje&vista=ver">Ver fichajes</a>
                 <a href="panel.php?seccion=fichaje&vista=modificar">Modificar fichajes</a>
+                <a href="panel.php?seccion=fichaje&vista=config_ip"> Restricción por IP</a>
             </div>
 
             <a class="submenu-btn">
@@ -362,6 +363,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
         if ($esAdmin) {
             if ($seccion === "fichaje") {
                 if ($vista === "ver")      include "secciones/fichaje_ver.php";
+                if ($vista === "config_ip")  include "secciones/config_ip.php";
                 if ($vista === "modificar") include "secciones/fichaje_modificar.php";
                 if ($vista === "inicio")   include "secciones/fichaje.php";
             }
