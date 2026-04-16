@@ -101,7 +101,8 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
                     <a href="panel.php?seccion=horario&vista=peticiones">Peticiones</a>
                     <a href="panel.php?seccion=horario&vista=cuadrantes">Cuadrantes</a>
                     <a href="panel.php?seccion=horario&vista=vacaciones">Vacaciones</a>
-                      <a href="panel.php?seccion=horario&vista=plantillas"> Plantillas de Jornada</a>
+                    <a href="panel.php?seccion=horario&vista=plantillas">Plantillas de Jornada</a>
+                    <a href="panel.php?seccion=horario&vista=calendario">Calendario empleados</a>
                 </div>
     
                 <a class="submenu-btn">
@@ -158,6 +159,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
                 if ($vista === "cuadrantes") include "secciones/horario_cuadrantes.php";
                 if ($vista === "vacaciones")    include "secciones/vacaciones_cuadrante.php";
                 if ($vista === "plantillas") include "secciones/tipos_jornada_admin.php";
+                if ($vista === "calendario") include "secciones/horario_admin_calendario.php";
                 if (!$vista)                 include "secciones/horario.php";
             }
             if ($seccion === "reportes") {
