@@ -346,7 +346,7 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
             
             <div class="form-group">
                 <label>Observaciones:</label>
-                <textarea id="modal_obs" rows="2" placeholder="Detalles adicionales..."></textarea>
+                <textarea id="modal_obs" rows="2" class="input-text-area" placeholder="Detalles adicionales..."></textarea>
             </div>
             
             <div class="form-actions">

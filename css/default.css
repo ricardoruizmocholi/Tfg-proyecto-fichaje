@@ -20,7 +20,7 @@ header {
 
 /* LATERAL */
 .sidebar {
-    width:18%;
+    width:220px;
     background:#333;
     color:white;
     position:fixed;
@@ -28,23 +28,17 @@ header {
     bottom:0;
     padding-top:20px;
 }
-.sidebar_container{
-    position: relative;
-    left: 11%;
-}
 
 .sidebar a {
     display:block;
     padding:12px 20px;
-    width: 66%;
     color:white;
     text-decoration:none;
     transition:0.2s;
 }
 
 .sidebar a:hover {
-    background: #0056b3;
-    border-radius: 100px;
+    background:#444;
 }
 
 /* CONTENIDO */
