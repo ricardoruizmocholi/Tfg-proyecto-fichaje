@@ -186,7 +186,7 @@
 .modal-detalle-header,
 .modal-rechazo-header,
 .modal-ticket-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background:  #667eea  !important;
     color: #fff !important;
     margin: calc(-36px) calc(-32px) 24px !important;  /* sangría negativa = ocupa todo el ancho */
     padding: 22px 28px 20px !important;

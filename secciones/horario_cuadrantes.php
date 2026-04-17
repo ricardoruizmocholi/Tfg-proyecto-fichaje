@@ -169,7 +169,7 @@ function etiquetaTipoEnum(string $tipo): string {
             <label>Fecha inicio:</label>
             <input type="date" name="fecha_inicio" value="<?= $fecha_inicio_filtro ?>" onchange="this.form.submit()">
         </div>
-        <button type="button" class="btn-success" onclick="abrirModalMasivo()">➕ Añadir en bloque</button>
+        <button type="button" class="btn-success" onclick="abrirModalMasivo()"> Añadir en bloque</button>
     </form>
 </div>
 
@@ -260,7 +260,7 @@ function etiquetaTipoEnum(string $tipo): string {
                 <textarea id="edit_obs" rows="2"></textarea>
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn-primary">💾 Guardar</button>
+                <button type="submit" class="btn-primary"> Guardar</button>
                 <button type="button" class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
             </div>
         </form>
@@ -337,7 +337,7 @@ function etiquetaTipoEnum(string $tipo): string {
             
             <div class="modal-footer-horario" style="padding: 15px 0 0 0; background: transparent; border: none;">
                 <button type="button" class="btn-cancel-horario" onclick="cerrarModalMasivo()">Cancelar</button>
-                <button type="submit" class="btn-success-horario">💾 Guardar cambios</button>
+                <button type="submit" class="btn-success-horario">Guardar cambios</button>
             </div>
         </form>
     </div>

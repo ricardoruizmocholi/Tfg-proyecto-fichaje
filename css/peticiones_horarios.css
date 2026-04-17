@@ -229,6 +229,8 @@
         z-index: 1000;
         left: 0;
         top: 0;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
         width: 100%;
         height: 100%;
         background: rgba(0,0,0,0.5);
@@ -359,8 +361,9 @@
     }
 
     .form-rechazo textarea {
-        width: 100%;
+        width: 95%;
         padding: 12px;
+        
         border: 1px solid #ced4da;
         border-radius: 6px;
         font-size: 14px;
@@ -403,6 +406,8 @@
     .modal-admin-rechazo {
     display: none; 
     position: fixed;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     z-index: 2000; /* Por encima del primer modal */
     left: 0; top: 0; width: 100%; height: 100%;
     background-color: rgba(0,0,0,0.6);
@@ -421,7 +426,7 @@
 .modal-rechazo-header { background: #e53e3e; color: white; padding: 15px; }
 .modal-rechazo-body { padding: 20px; }
 .modal-rechazo-body textarea {
-    width: 100%; height: 100px; margin-top: 10px;
+    width: 95%; height: 100px; margin-top: 10px;
     padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px;
 }
 

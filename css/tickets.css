@@ -24,7 +24,7 @@
 
 /* ── Cabecera ─────────────────────────────────────────── */
 .tickets-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     padding: 26px 30px;
     border-radius: var(--radius);
@@ -194,7 +194,7 @@
 }
 
 .ticket-detalle-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     padding: 20px 25px;
     display: flex;
@@ -293,6 +293,8 @@
 .modal-ticket {
     position: fixed; z-index: 1000;
     left: 0; top: 0; width: 100%; height: 100%;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     overflow: auto;
     background: rgba(0,0,0,.5);
     animation: fadeInUp .25s;
@@ -316,7 +318,7 @@
 }
 
 .modal-ticket-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background:  #667eea ;
     color: white;
     padding: 18px 24px;
     border-radius: var(--radius) var(--radius) 0 0;

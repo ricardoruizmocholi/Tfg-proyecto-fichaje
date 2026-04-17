@@ -350,7 +350,7 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
             </div>
             
             <div class="form-actions">
-                <button type="submit" class="btn-primary">💾 Guardar</button>
+                <button type="submit" class="btn-primary"> Guardar</button>
                 <button type="button" class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
             </div>
         </form>

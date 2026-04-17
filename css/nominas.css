@@ -37,7 +37,7 @@
 /* Banner de cabecera (como admin-header en peticiones) */
 .nominas-header-banner {
     padding: 28px 32px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background:  #667eea ;
     color: white;
     border-radius: var(--radius);
     margin-bottom: 28px;
@@ -380,7 +380,7 @@
 /* Cabecera con degradado (igual que reporte-header) */
 .nomina-card-header {
     padding: 16px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background:  #667eea ;
     color: white;
     display: flex;
     justify-content: space-between;

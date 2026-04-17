@@ -86,7 +86,7 @@ $idEmpleadoSel = $_GET['empleado'] ?? ($empleados[0]['id_usuario'] ?? null);
             </div>
         </div>
         <div class="toolbar-right">
-            <button class="btn-toolbar btn-success" onclick="abrirModalMasivoAdmin()">➕ Añadir en bloque</button>
+            <button class="btn-toolbar btn-success" onclick="abrirModalMasivoAdmin()"> Añadir en bloque</button>
         </div>
     </div>
 
@@ -149,7 +149,7 @@ $idEmpleadoSel = $_GET['empleado'] ?? ($empleados[0]['id_usuario'] ?? null);
         </div>
         <div class="modal-footer-horario">
             <button class="btn-cancel-horario" onclick="cerrarModalAdmin()">Cancelar</button>
-            <button class="btn-success-horario" onclick="guardarDiaAdmin()">💾 Guardar</button>
+            <button class="btn-success-horario" onclick="guardarDiaAdmin()"> Guardar</button>
         </div>
     </div>
 </div>
@@ -215,7 +215,7 @@ $idEmpleadoSel = $_GET['empleado'] ?? ($empleados[0]['id_usuario'] ?? null);
         </div>
         <div class="modal-footer-horario">
             <button class="btn-cancel-horario" onclick="cerrarModalMasivoAdmin()">Cancelar</button>
-            <button class="btn-success-horario" onclick="guardarMasivoAdmin()">💾 Guardar</button>
+            <button class="btn-success-horario" onclick="guardarMasivoAdmin()"> Guardar</button>
         </div>
     </div>
 </div>
@@ -377,7 +377,7 @@ function editarDiaAdmin(fecha, ev) {
     document.getElementById('adm_inicio').value     = ev && ev.hora_inicio ? ev.hora_inicio.substr(0,5) : '09:00';
     document.getElementById('adm_fin').value        = ev && ev.hora_fin    ? ev.hora_fin.substr(0,5)    : '17:00';
     document.getElementById('adm_obs').value        = ev ? (ev.observaciones || '') : '';
-    document.getElementById('tituloModalAdmin').textContent = ev ? '✏️ Editar jornada' : '➕ Añadir jornada';
+    document.getElementById('tituloModalAdmin').textContent = ev ? ' Editar jornada' : ' Añadir jornada';
     cambiarTipoAdmin();
     document.getElementById('modalEditarDiaAdmin').style.display = 'flex';
 }

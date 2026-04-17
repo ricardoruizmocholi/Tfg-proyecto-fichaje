@@ -209,8 +209,8 @@
 }
 
 .close {
-     position: absolute;
-    top: 6%; right: 29%;
+     position: relative;
+    top: 6%; right: -96%;
     background: #f4f5f7;;
     border: none;
     border-radius: 50%;
