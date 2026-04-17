@@ -75,7 +75,7 @@ try {
         }
     }
     
-    $dirPdf = __DIR__ . '/../reportes_pdf/';
+    $dirPdf = __DIR__ . '/../uploads/reportes_pdf/';
     if (!file_exists($dirPdf)) mkdir($dirPdf, 0755, true);
     
     $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8');
@@ -176,9 +176,9 @@ try {
     $pdf->Output($rutaArchivo, 'F');
     
     $stmtReporte = $pdo->prepare("INSERT INTO REPORTES (id_usuario, id_empresa, tipo_reporte, mes, anio, generado_por, ruta_archivo) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmtReporte->execute([$data['id_usuario'], $empresa, $data['tipo'] ?? 'registro_jornada', $data['mes'], $data['anio'], $idUsuarioSolicitante, 'reportes_pdf/' . $nombreArchivo]);
+    $stmtReporte->execute([$data['id_usuario'], $empresa, $data['tipo'] ?? 'registro_jornada', $data['mes'], $data['anio'], $idUsuarioSolicitante, 'uploads/reportes_pdf/' . $nombreArchivo]);
     
-    echo json_encode(['success' => true, 'id_reporte' => $pdo->lastInsertId(), 'url_pdf' => 'reportes_pdf/' . $nombreArchivo]);
+    echo json_encode(['success' => true, 'id_reporte' => $pdo->lastInsertId(), 'url_pdf' => 'uploads/reportes_pdf/' . $nombreArchivo]);
     
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);

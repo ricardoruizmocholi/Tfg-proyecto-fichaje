@@ -110,7 +110,7 @@ try {
 
     // Guardar archivo
     $nombreArchivo = "reporte_anual_{$idUsuario}_{$anio}_" . time() . ".pdf";
-    $rutaRelativa = "reportes_pdf/" . $nombreArchivo;
+    $rutaRelativa = "uploads/reportes_pdf/" . $nombreArchivo;
     $pdf->Output(__DIR__ . "/../" . $rutaRelativa, 'F');
 
     // Registrar en la base de datos (opcional, para el historial)

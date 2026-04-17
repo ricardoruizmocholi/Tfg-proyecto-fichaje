@@ -39,90 +39,9 @@ if ($idEmpleado) {
 
 $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 ?>
-
+<link rel="stylesheet" href="css/reportes.css">
 <style>
-    :root {
-        --primary-color: #4f46e5;
-        --danger-color: #ef4444;
-        --text-main: #111827;
-        --text-muted: #6b7280;
-        --radius: 12px;
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    }
-
-    .historial-wrapper { font-family: 'Inter', sans-serif; padding: 20px; }
     
-    .selector-card {
-        background: white; padding: 20px; border-radius: var(--radius);
-        border: 1px solid #e5e7eb; margin-bottom: 30px; display: flex; align-items: center; gap: 15px;
-    }
-
-    .selector-card select {
-        padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; min-width: 280px;
-    }
-
-    .report-grid {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;
-    }
-
-    /* CARD ESTILIZADA */
-    .report-card {
-        background: white; border-radius: var(--radius); border: 1px solid #e5e7eb;
-        position: relative; overflow: hidden; transition: all 0.3s ease; display: flex; flex-direction: column;
-    }
-
-    .report-card:hover {
-        transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--primary-color);
-    }
-
-    /* BOTÓN ELIMINAR (Invisible por defecto) */
-    .btn-delete-float {
-        position: absolute; top: 12px; right: 12px;
-        width: 32px; height: 32px; border-radius: 50%;
-        background: white; color: var(--danger-color);
-        border: 1px solid #fee2e2; display: flex; align-items: center; justify-content: center;
-        cursor: pointer; opacity: 0; transition: all 0.2s ease; z-index: 10;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .report-card:hover .btn-delete-float {
-        opacity: 1;
-    }
-
-    .btn-delete-float:hover {
-        background: var(--danger-color); color: white; transform: scale(1.1);
-    }
-
-    .card-body { padding: 24px; }
-    
-    .report-icon {
-        width: 44px; height: 44px; background: #f5f3ff; color: var(--primary-color);
-        border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;
-    }
-
-    .report-date { font-size: 18px; font-weight: 700; margin-bottom: 5px; }
-    .report-meta { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-
-    .card-footer {
-        background: #f9fafb; padding: 15px 24px; border-top: 1px solid #e5e7eb;
-        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    }
-
-    .btn-pro {
-        display: flex; align-items: center; justify-content: center; gap: 6px;
-        padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 600;
-        text-decoration: none; border: 1px solid #d1d5db; transition: 0.2s;
-    }
-
-    .btn-view { background: white; color: #374151; }
-    .btn-download { background: var(--primary-color); color: white; border: none; }
-    
-    /* Animación de borrado */
-    .fade-out { opacity: 0; transform: scale(0.9); transition: all 0.4s ease; }
-
-    .empty-state {
-        text-align: center; padding: 60px; background: #f9fafb; border: 2px dashed #d1d5db; border-radius: var(--radius);
-    }
 </style>
 
 <div class="historial-wrapper">

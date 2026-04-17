@@ -236,7 +236,7 @@ if ($vista === 'generar') {
     // Vista de historial de reportes
     ?>
     <div class="section-header">
-        <h2>📁 Historial de Reportes</h2>
+        <h2> Historial de Reportes</h2>
         <p>Consulta, visualiza y descarga los reportes generados anteriormente</p>
     </div>
 
@@ -303,7 +303,7 @@ if ($vista === 'generar') {
                 </select>
             </div>
             
-            <a href="panel.php?seccion=reportes&vista=generar" class="btn-success">➕ Generar Nuevo Reporte</a>
+            <a href="panel.php?seccion=reportes&vista=generar" class="btn-success"> Generar Nuevo Reporte</a>
         </form>
     </div>
 
