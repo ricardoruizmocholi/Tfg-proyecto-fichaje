@@ -22,10 +22,7 @@ $empleados = $stmtEmps->fetchAll(PDO::FETCH_ASSOC);
 $idEmpleadoSel = $_GET['empleado'] ?? ($empleados[0]['id_usuario'] ?? null);
 ?>
 <link rel="stylesheet" href="css/horario_empleado.css">
-<style>
-/* Ajustes admin: la toolbar usa los colores del panel admin */
 
-</style>
 
 <!-- Banner informativo -->
 <div class="hac-banner">
