@@ -100,7 +100,7 @@ $meses = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
     <!-- CABECERA -->
     <div class="nominas-header-banner">
         <div>
-            <h2>📁 Gestión de Nóminas y Documentos</h2>
+            <h2> Gestión de Nóminas y Documentos</h2>
             <p>Sube y gestiona los documentos de los empleados de tu empresa</p>
         </div>
         <div style="font-size:40px;opacity:0.3;">📄</div>

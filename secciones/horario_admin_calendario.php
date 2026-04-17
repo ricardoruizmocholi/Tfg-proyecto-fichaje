@@ -24,33 +24,7 @@ $idEmpleadoSel = $_GET['empleado'] ?? ($empleados[0]['id_usuario'] ?? null);
 <link rel="stylesheet" href="css/horario_empleado.css">
 <style>
 /* Ajustes admin: la toolbar usa los colores del panel admin */
-.hac-selector {
-    background: white;
-    padding: 14px 20px;
-    border-radius: 8px;
-    margin-bottom: 14px;
-    box-shadow: 0 2px 4px rgba(0,0,0,.08);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-.hac-selector label { font-weight: 600; font-size: 14px; color: #333; }
-.hac-selector select {
-    padding: 9px 14px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    min-width: 220px;
-}
-.hac-banner {
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    color: white;
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-size: 13px;
-    margin-bottom: 14px;
-}
+
 </style>
 
 <!-- Banner informativo -->

@@ -4,10 +4,7 @@ $user = "root";
 $pass = "";
 $db   = "sistema_fichajes";
 
-// En config.php
-define('IP_OFICINA', '149.74.30.101'); // Sustituye por la IP pública real del despacho
-// O si quieres permitir cualquier IP local (si el servidor está en la oficina):
-define('RANGO_LOCAL', '192.168.1.');
+
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, [

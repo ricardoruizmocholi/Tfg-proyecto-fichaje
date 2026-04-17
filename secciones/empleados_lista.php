@@ -225,7 +225,7 @@ $empleados = $stmtEmpleados->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-primary">💾 Guardar Cambios</button>
+                <button type="submit" class="btn-primary"> Guardar Cambios</button>
                 <button type="button" class="btn-secondary" onclick="cerrarModalEditar()">Cancelar</button>
             </div>
         </form>

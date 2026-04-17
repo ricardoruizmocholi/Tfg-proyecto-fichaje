@@ -117,14 +117,14 @@
 
         <div class="modal-detalle-footer">
             <button class="btn-action btn-rechazar" onclick="mostrarFormRechazo()">
-                ❌ Rechazar
+                 Rechazar
             </button>
             <div class="btn-group">
                 <button class="btn-action" onclick="cerrarModalDetalle()" style="background: #6c757d; color: white;">
                     Cerrar
                 </button>
                 <button class="btn-action btn-aprobar" onclick="aprobarSolicitud()">
-                    ✅ Aprobar
+                     Aprobar
                 </button>
             </div>
         </div>

@@ -176,7 +176,7 @@
         </div>
         <div class="modal-footer-horario">
             <button class="btn-cancel-horario" onclick="cerrarModal()">Cancelar</button>
-            <button class="btn-success-horario" onclick="guardarDia()">💾 Guardar</button>
+            <button class="btn-success-horario" onclick="guardarDia()"> Guardar</button>
         </div>
     </div>
 </div>
@@ -249,7 +249,7 @@
         </div>
         <div class="modal-footer-horario">
             <button class="btn-cancel-horario" onclick="cerrarModalMasivo()">Cancelar</button>
-            <button class="btn-success-horario" onclick="guardarMasivo()">💾 Guardar</button>
+            <button class="btn-success-horario" onclick="guardarMasivo()"> Guardar</button>
         </div>
     </div>
 </div>
@@ -257,34 +257,7 @@
 <!-- LOADING -->
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
 
-<style>
-/* Botón ausencia */
-.btn-ausencia {
-    background: #388e3c;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 14px;
-    transition: background .2s;
-}
-.btn-ausencia:hover { background: #2e7d32; }
 
-/* Info box ausencia */
-.aus-info-box {
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    margin-top: 4px;
-    line-height: 1.5;
-}
-.aus-info-vacaciones { background: #e8f5e9; border-left: 3px solid #388e3c; color: #1b5e20; }
-.aus-info-medico     { background: #fff3e0; border-left: 3px solid #f57c00; color: #e65100; }
-.aus-info-libre      { background: #f3e5f5; border-left: 3px solid #7b1fa2; color: #4a148c; }
-.aus-info-festivo    { background: #ffebee; border-left: 3px solid #c62828; color: #b71c1c; }
-</style>
 
 <script src="secciones/api/horario_calendario.js"></script>
 <script>

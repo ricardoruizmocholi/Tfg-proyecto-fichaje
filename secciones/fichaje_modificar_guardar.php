@@ -73,7 +73,7 @@ try {
             $idEmpleado = $fichajeInfo['id_usuario'];
             $fechaFichaje = date('d/m/Y', strtotime($fichajeInfo['fecha']));
             
-            $mensaje = "📝 El administrador ha modificado tu fichaje del día $fechaFichaje.";
+            $mensaje = " El administrador ha modificado tu fichaje del día $fechaFichaje.";
 
             $sqlInsNotif = "INSERT INTO NOTIFICACIONES (id_usuario, mensaje, tipo) VALUES (:id_u, :msg, 'cambio_fichaje')";
             $stmtInsNotif = $pdo->prepare($sqlInsNotif);
