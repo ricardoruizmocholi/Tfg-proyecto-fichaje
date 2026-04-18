@@ -90,7 +90,7 @@ $promptFinal = "Sistema: {$systemPrompt}\n\n{$promptConversacion}Usuario: {$preg
 
 // 7. Payload para Ollama
 $data = [
-    "model"  => "phi3",
+    "model"  => "asistente-fichajes",
     "prompt" => $promptFinal,
     "stream" => false,
     "options" => [
