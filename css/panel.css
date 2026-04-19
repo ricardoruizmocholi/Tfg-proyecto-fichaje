@@ -4,7 +4,7 @@
         .chat-fab {
             position: fixed;
             bottom: 24px;
-            left: 180px; /* alineado con el sidebar de 220px */
+            left: 1%; /* alineado con el sidebar de 220px */
             width: 48px;
             height: 48px;
             background: #007bff;

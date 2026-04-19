@@ -66,7 +66,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
 
     <div>
         <span style="color:white; margin-right:15px;">
-            <?= $esAdmin ? '🔑 Admin' : '👤 Empleado' ?> - 
+            <?= $esAdmin ? ' Admin' : ' Empleado' ?> - 
             <?= htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellidos']) ?>
         </span>
         <div class="notification-container" style="display: inline-block; position: relative; margin-right: 15px;">
