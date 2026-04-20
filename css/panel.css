@@ -217,3 +217,12 @@
                 width: auto;
             }
         }
+.icon-bell {
+    stroke: #ffffff; /* Esto pone las líneas en blanco */
+    /* Opcional: si quieres que el interior tenga un poco de color al pasar el ratón */
+    transition: all 0.3s ease;
+}
+
+.notification-link:hover .icon-bell {
+    stroke: #ecf0f1; /* Un blanco un poco más grisáceo al pasar el ratón */
+}

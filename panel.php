@@ -77,7 +77,10 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
             $badge = ($countNotif > 9) ? '9+' : $countNotif;
             ?>
             <a href="panel.php?seccion=notificaciones" style="text-decoration: none; font-size: 20px;">
-                🔔
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-bell">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
                 <?php if ($countNotif > 0): ?>
                     <span class="notification-badge"><?= $badge ?></span>
                 <?php endif; ?>
@@ -158,7 +161,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
             </div>
 
             <div class="sidebar_container">              
-                <h3>👤 Empleado</h3>
+                <h3> Empleado</h3>
                 <a href="panel.php?seccion=fichaje" onclick="closeMobileMenu()"> Fichaje</a>
                 <a href="panel.php?seccion=horario" onclick="closeMobileMenu()"> Horario</a>
                 <a href="panel.php?seccion=documentos" onclick="closeMobileMenu()"> Mis Nóminas</a>
