@@ -44,6 +44,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
     <link rel="stylesheet" href="<?= $cssFile ?>">
     <link rel="stylesheet" href="css/panel.css">
     <link rel="stylesheet" href="css/mobile_menu.css">
+    <link rel="stylesheet" href="css/modales_global.css">
 </head>
 <body>
 

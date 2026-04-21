@@ -11,9 +11,9 @@
      · .modal / .modal-content / .modal-small         (genérico)
      · .modal-horario / *-horario                     (horarios)
      · .modal-detalle / *-detalle                     (peticiones)
-     · .modal-admin-rechazo / .modal-rechazo-*        (rechazo)
+     · .modal-admin-rechazo / .modal-rechazo-* (rechazo)
      · .modal-perfil / .modal-content-perfil          (perfil)
-     · .modal-ticket / *-ticket-*                     (tickets)
+     · .modal-ticket / *-ticket-* (tickets)
      · .modal-plantilla (tipos_jornada_admin.php)
    ================================================================ */
 
@@ -41,10 +41,8 @@
 
 /* ================================================================
    1. BACKDROP UNIFICADO
-   Cualquier overlay/fondo oscuro que envuelva un modal.
    ================================================================ */
 
-/* Familia genérica (.modal usado como overlay) */
 .modal,
 .modal-horario,
 .modal-admin-rechazo,
@@ -53,22 +51,16 @@
     position: fixed !important;
     inset: 0 !important;
     z-index: 1000 !important;
-    display: flex !important;
+    display: flex;            
     align-items: center !important;
     justify-content: center !important;
     padding: 20px !important;
-
-    /* El backdrop */
     background: rgba(10, 12, 18, .52) !important;
     backdrop-filter: blur(6px) !important;
     -webkit-backdrop-filter: blur(6px) !important;
-
-    /* Animación de entrada */
     animation: mg-fadeIn var(--mg-anim) forwards !important;
 }
 
-/* Los modales que ya usan display:none / display:block
-   mantienen su visibilidad pero con la nueva estética */
 .modal-detalle {
     position: fixed !important;
     inset: 0 !important;
@@ -86,7 +78,7 @@
 }
 
 /* ================================================================
-   2. CAJA DEL MODAL (el panel blanco interior)
+   2. CAJA DEL MODAL
    ================================================================ */
 
 .modal-content,
@@ -106,15 +98,10 @@
     max-height: 90vh !important;
     overflow-y: auto !important;
     color: var(--mg-text) !important;
-
-    /* Entrada con escala */
     animation: mg-slideIn var(--mg-anim) forwards !important;
-
-    /* Quitar estilos anteriores que puedan interferir */
     border: none !important;
 }
 
-/* Variantes de ancho */
 .modal-content.modal-small   { max-width: 420px !important; }
 .modal-detalle-content        { max-width: 1100px !important; }
 .modal-rechazo-content        { max-width: 460px !important; }
@@ -125,20 +112,17 @@
     to   { opacity: 1; transform: scale(1)   translateY(0); }
 }
 
-/* Posición centrada para los modales que no usan flexbox */
 .modal-content,
 .modal-rechazo-content {
-    margin: auto !important;  /* funciona dentro del flex del overlay */
+    margin: auto !important;
 }
 
-/* El modal de detalle de peticiones usa scroll vertical propio */
 .modal-detalle .modal-detalle-content {
     margin: 30px auto !important;
 }
 
 /* ================================================================
    3. BOTÓN ✕ DE CIERRE
-   Aplica a .close, .close-btn, .close-modal y variantes
    ================================================================ */
 
 .modal-content .close,
@@ -163,7 +147,7 @@
     align-items: center !important;
     justify-content: center !important;
     transition: background var(--mg-anim), color var(--mg-anim) !important;
-    float: none !important;       /* cancela el float:right heredado */
+    float: none !important;
     padding: 0 !important;
 }
 
@@ -179,7 +163,6 @@
 
 /* ================================================================
    4. CABECERA DEL MODAL
-   Mantiene el degradado de la app (#667eea) pero con nueva forma.
    ================================================================ */
 
 .modal-header-horario,
@@ -188,7 +171,7 @@
 .modal-ticket-header {
     background:  #667eea  !important;
     color: #fff !important;
-    margin: calc(-36px) calc(-32px) 24px !important;  /* sangría negativa = ocupa todo el ancho */
+    margin: calc(-36px) calc(-32px) 24px !important;
     padding: 22px 28px 20px !important;
     border-radius: var(--mg-radius) var(--mg-radius) 0 0 !important;
     display: flex !important;
@@ -197,7 +180,6 @@
     gap: 12px !important;
 }
 
-/* Título dentro de la cabecera */
 .modal-header-horario h3,
 .modal-detalle-header h3,
 .modal-rechazo-header h3,
@@ -210,27 +192,8 @@
     letter-spacing: -.01em !important;
 }
 
-/* El botón de cierre dentro de cabeceras de color */
-.modal-header-horario .close-btn-horario,
-.modal-detalle-header .close-modal-btn,
-.modal-ticket-header .close-btn {
-    background: rgba(255,255,255,.18) !important;
-    color: #fff !important;
-    width: 30px !important;
-    height: 30px !important;
-    flex-shrink: 0 !important;
-}
-
-.modal-header-horario .close-btn-horario:hover,
-.modal-detalle-header .close-modal-btn:hover,
-.modal-ticket-header .close-btn:hover {
-    background: rgba(255,255,255,.32) !important;
-    color: #fff !important;
-}
-
 /* ================================================================
-   5. TÍTULO cuando NO hay cabecera de color
-   (modal genérico .modal-content + perfil)
+   5. TÍTULOS SIN CABECERA COLOR
    ================================================================ */
 
 .modal-content h3,
@@ -241,25 +204,21 @@
     letter-spacing: -.02em !important;
     color: var(--mg-text) !important;
     margin: 0 0 6px !important;
-    clear: both !important;         /* cancela float del botón ✕ */
-    padding-right: 36px !important; /* espacio para el botón ✕ */
+    clear: both !important;
+    padding-right: 36px !important;
 }
 
 /* ================================================================
-   6. CUERPO DEL MODAL
+   6. CUERPOS Y PIES
    ================================================================ */
 
 .modal-body-horario,
 .modal-detalle-body,
 .modal-rechazo-body,
 .modal-ticket-body {
-    padding: 24px 0 0 !important;   /* la caja ya tiene padding lateral */
+    padding: 24px 0 0 !important;
     font-family: var(--mg-font) !important;
 }
-
-/* ================================================================
-   7. PIE DEL MODAL (footer con botones)
-   ================================================================ */
 
 .modal-footer-horario,
 .modal-detalle-footer,
@@ -278,11 +237,9 @@
 }
 
 /* ================================================================
-   8. BOTONES DENTRO DE MODALES
-   Botón primario (guardar/aprobar) y secundario (cancelar)
+   7. BOTONES
    ================================================================ */
 
-/* Primario: fondo accent */
 .modal-content .btn-primary,
 .modal-content-horario .btn-success-horario,
 .modal-content-perfil .boton-accion,
@@ -307,32 +264,8 @@
     align-items: center !important;
 }
 
-.modal-content .btn-primary:hover,
-.modal-content-horario .btn-success-horario:hover,
-.modal-content-perfil .boton-accion:hover,
-.modal-rechazo-footer .btn-peligro:hover,
-.modal-detalle-footer .btn-aprobar:hover,
-.modal-ticket-footer  .btn-primary:hover,
-.modal-footer-horario .btn-success-horario:hover {
-    background: var(--mg-accent-dark) !important;
-    transform: translateY(-1px) !important;
-}
-
-/* Botón de rechazo: usa rojo */
-.modal-detalle-footer .btn-rechazar,
-.modal-rechazo-footer .btn-peligro {
-    background: var(--mg-danger) !important;
-    box-shadow: 0 2px 8px rgba(220,38,38,.25) !important;
-}
-.modal-detalle-footer .btn-rechazar:hover,
-.modal-rechazo-footer .btn-peligro:hover {
-    background: #b91c1c !important;
-}
-
-/* Secundario: contorno */
 .modal-content .btn-secondary,
 .modal-content-horario .btn-cancel-horario,
-.modal-content-perfil .boton-accion.rojo,
 .modal-rechazo-footer .btn-secundario,
 .modal-detalle-footer .btn-action[onclick*="cerrar"],
 .modal-ticket-footer  .btn-secondary,
@@ -347,34 +280,21 @@
     font-weight: 500 !important;
     cursor: pointer !important;
     transition: border-color var(--mg-anim), color var(--mg-anim) !important;
-    background-color: transparent !important;
     box-shadow: none !important;
     text-decoration: none !important;
     display: inline-flex !important;
     align-items: center !important;
 }
 
-.modal-content .btn-secondary:hover,
-.modal-content-horario .btn-cancel-horario:hover,
-.modal-rechazo-footer .btn-secundario:hover,
-.modal-ticket-footer  .btn-secondary:hover,
-.modal-footer-horario .btn-cancel-horario:hover {
-    border-color: var(--mg-text) !important;
-    color: var(--mg-text) !important;
-}
-
 /* ================================================================
-   9. CAMPOS DE FORMULARIO DENTRO DE MODALES
-   Labels, inputs y selects unificados
+   8. FORMULARIOS (Inputs/Selects/Labels)
    ================================================================ */
 
 .modal-content label,
 .modal-content-horario label,
 .modal-content-perfil label,
 .modal-rechazo-body label,
-.modal-ticket-body label,
-.modal-content .form-group label,
-.modal-content-horario .form-group-horario label {
+.modal-ticket-body label {
     display: block !important;
     font-family: var(--mg-font) !important;
     font-size: .76rem !important;
@@ -414,24 +334,6 @@
     -webkit-appearance: none !important;
 }
 
-.modal-content input:focus,
-.modal-content select:focus,
-.modal-content textarea:focus,
-.modal-content-horario input:focus,
-.modal-content-horario select:focus,
-.modal-content-horario textarea:focus,
-.modal-content-perfil input:focus,
-.modal-rechazo-body textarea:focus,
-.modal-ticket-body input:focus,
-.modal-ticket-body select:focus,
-.modal-ticket-body textarea:focus,
-.form-control-horario:focus {
-    border-color: var(--mg-accent) !important;
-    background: #fff !important;
-    box-shadow: 0 0 0 3px rgba(102,126,234,.12) !important;
-}
-
-/* Select: flecha personalizada */
 .modal-content select,
 .modal-content-horario select,
 .modal-ticket-body select {
@@ -441,16 +343,8 @@
     padding-right: 36px !important;
 }
 
-/* Separación entre campos */
-.modal-content .form-group,
-.modal-content-horario .form-group-horario,
-.modal-ticket-body .ticket-form-group,
-.modal-rechazo-body > * + * {
-    margin-bottom: 18px !important;
-}
-
 /* ================================================================
-   10. SCROLLBAR PERSONALIZADA dentro del modal
+   9. SCROLLBARS Y RESPONSIVE
    ================================================================ */
 
 .modal-content::-webkit-scrollbar,
@@ -458,12 +352,6 @@
 .modal-detalle-content::-webkit-scrollbar,
 .modal-ticket-content::-webkit-scrollbar {
     width: 5px !important;
-}
-.modal-content::-webkit-scrollbar-track,
-.modal-content-horario::-webkit-scrollbar-track,
-.modal-detalle-content::-webkit-scrollbar-track,
-.modal-ticket-content::-webkit-scrollbar-track {
-    background: transparent !important;
 }
 .modal-content::-webkit-scrollbar-thumb,
 .modal-content-horario::-webkit-scrollbar-thumb,
@@ -474,103 +362,102 @@
 }
 
 /* ================================================================
-   11. MODAL DE DETALLE DE PETICIONES (modal-detalle)
-   Tiene su propio layout de cuadrícula + días
-   ================================================================ */
-
-.modal-detalle-body .detalle-info-grid {
-    background: #f6f7f9 !important;
-    border-radius: var(--mg-radius-sm) !important;
-    padding: 18px 20px !important;
-    border: 1px solid #eef0f3 !important;
-    margin-bottom: 24px !important;
-}
-
-.modal-detalle-body .dia-mini {
-    border-radius: 8px !important;
-    border: 1px solid #e2e4e8 !important;
-    overflow: hidden !important;
-    transition: box-shadow var(--mg-anim) !important;
-}
-.modal-detalle-body .dia-mini:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,.1) !important;
-}
-
-/* ================================================================
-   12. MODAL DE RECHAZO (modal-admin-rechazo)
-   ================================================================ */
-
-.modal-admin-rechazo {
-    position: fixed !important;
-    inset: 0 !important;
-    z-index: 2000 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 20px !important;
-    background: rgba(10, 12, 18, .6) !important;
-    backdrop-filter: blur(6px) !important;
-    -webkit-backdrop-filter: blur(6px) !important;
-    animation: mg-fadeIn var(--mg-anim) forwards !important;
-}
-
-/* ================================================================
-   13. RESPONSIVE — móviles
+   9. SCROLLBARS Y RESPONSIVE (Optimizado para Móvil)
    ================================================================ */
 
 @media (max-width: 600px) {
-    .modal,
-    .modal-horario,
-    .modal-perfil,
-    .modal-ticket,
-    .modal-admin-rechazo {
-        padding: 12px !important;
-        align-items: flex-end !important;  /* sheet desde abajo en móvil */
+    .modal, .modal-horario, .modal-perfil, .modal-ticket, .modal-admin-rechazo, .modal-detalle {
+        padding: 0 !important; /* Eliminamos padding para que pegue abajo */
+        align-items: flex-end !important; /* Efecto Bottom Sheet */
+        justify-content: center !important;
     }
 
-    .modal-content,
-    .modal-content-horario,
-    .modal-content-perfil,
-    .modal-rechazo-content,
+    .modal-content, 
+    .modal-content-horario, 
+    .modal-content-perfil, 
+    .modal-rechazo-content, 
+    .modal-detalle-content, 
     .modal-ticket-content {
         max-width: 100% !important;
-        border-radius: 20px 20px 0 0 !important; /* sheet inferior */
-        padding: 28px 20px 24px !important;
-        max-height: 92vh !important;
-        animation: mg-sheetUp var(--mg-anim) forwards !important;
-    }
-
-    .modal-detalle-content {
-        margin: 12px auto 0 !important;
-        border-radius: 20px 20px 0 0 !important;
-    }
-
-    .modal-header-horario,
-    .modal-detalle-header,
-    .modal-rechazo-header,
-    .modal-ticket-header {
-        margin: -28px -20px 20px !important;
-    }
-
-    .modal-footer-horario,
-    .modal-detalle-footer,
-    .modal-ticket-footer,
-    .modal-content .form-actions {
-        flex-direction: column-reverse !important;
-    }
-
-    .modal-content .btn-primary,
-    .modal-content .btn-secondary,
-    .modal-content-horario .btn-success-horario,
-    .modal-content-horario .btn-cancel-horario,
-    .modal-ticket-footer .btn-primary,
-    .modal-ticket-footer .btn-secondary {
         width: 100% !important;
-        justify-content: center !important;
+        border-radius: 20px 20px 0 0 !important; /* Solo redondeado arriba */
+        padding: 32px 20px 40px !important; /* Más padding abajo para evitar botones de navegación del móvil */
+        max-height: 88vh !important; /* Altura máxima para que no tape todo y se vea que hay algo detrás */
+        margin: 0 !important; /* ¡CRUCIAL! Quita el margin auto que corta el modal */
+        overflow-y: auto !important;
+        animation: mg-sheetUp 0.3s ease-out forwards !important;
+        top: auto !important; /* Asegura que no herede posiciones fijas */
+        left: 0 !important;
+    }
+
+    /* Ajuste de cabeceras en móvil */
+    .modal-header-horario, .modal-detalle-header, .modal-ticket-header {
+        margin: -32px -20px 20px !important;
+        padding: 18px 20px !important;
     }
 }
 
 @keyframes mg-sheetUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+/* ================================================================
+   10. FIXES QUIRÚRGICOS FINALES (Desktop)
+   ================================================================ */
+@media (min-width: 601px) {
+    .modal .modal-content,
+    .modal-horario .modal-content-horario,
+    .modal-admin-rechazo .modal-rechazo-content,
+    .modal-detalle .modal-detalle-content,
+    .modal-ticket .modal-ticket-content {
+        margin: auto !important; /* Solo centrado en PC */
+        position: relative !important;
+    }
+}
+
+
+
+/* ================================================================
+   10. FIXES QUIRÚRGICOS FINALES (Resolución de Bugs)
+   ================================================================ */
+
+/* BUG 1: Rescate de Checkboxes y Radios */
+.modal-content input[type="checkbox"],
+.modal-content-horario input[type="checkbox"],
+.modal-content-perfil input[type="checkbox"],
+.modal-ticket-body input[type="checkbox"],
+.modal-content input[type="radio"],
+.modal-content-horario input[type="radio"] {
+    appearance: auto !important;
+    -webkit-appearance: auto !important;
+    width: auto !important;
+    height: auto !important;
+    margin-right: 8px !important;
+    cursor: pointer !important;
+}
+
+/* BUG 2 y 3: Centrado Forzado (Anula left/top de archivos externos) */
+.modal .modal-content,
+.modal-horario .modal-content-horario,
+.modal-admin-rechazo .modal-rechazo-content,
+.modal-detalle .modal-detalle-content,
+.modal-ticket .modal-ticket-content,
+.modal-plantilla .modal-content {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin: auto !important;
+    transform: none !important;
+}
+
+/* Alineación de labels para checkboxes */
+.modal-content .form-check-label,
+.modal-content-horario .form-check-label {
+    display: inline-block !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    vertical-align: middle !important;
+    margin-bottom: 0 !important;
 }
