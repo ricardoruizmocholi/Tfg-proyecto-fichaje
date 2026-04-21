@@ -488,7 +488,7 @@
     min-width: 220px;
 }
 .hac-banner {
-    background: linear-gradient(135deg,#667eea,#764ba2);
+    background: #667eea;
     color: white;
     padding: 10px 18px;
     border-radius: 6px;

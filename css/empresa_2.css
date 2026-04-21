@@ -36,17 +36,16 @@ header {
 .sidebar a {
     display:block;
     padding:12px 10px;
-    width: 76%;
+    width: 77%;
     color:white;
     text-decoration:none;
     transition:0.2s;
 }
 
 .sidebar a:hover {
-    background: #0056b3;
-    border-radius: 100px;
+    background:rgba(68, 68, 68, 0.89);
+    border-radius: 12px;
 }
-
 /* CONTENIDO */
 main {
     margin-left:220px;

@@ -2,7 +2,7 @@
    Estética: industrial-refinada · tipografía monoespaciada para IPs
    Paleta fría de grises con acento azul-eléctrico                    */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+/* Fuente cargada globalmente por css/tipografia.css */
 
 /* ── Variables ────────────────────────────────────────────── */
 :root {
@@ -24,8 +24,8 @@
     --radius-sm:     8px;
     --shadow:        0 1px 3px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.05);
     --shadow-lg:     0 8px 30px rgba(0,0,0,.12);
-    --font-sans:     'IBM Plex Sans', sans-serif;
-    --font-mono:     'IBM Plex Mono', monospace;
+    --font-sans:     var(--app-font, 'Plus Jakarta Sans', system-ui, sans-serif);
+    --font-mono:     var(--app-font-mono, 'JetBrains Mono', 'Courier New', monospace);
     --transition:    0.22s cubic-bezier(.4,0,.2,1);
 }
 

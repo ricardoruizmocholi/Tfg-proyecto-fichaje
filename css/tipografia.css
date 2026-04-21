@@ -1,0 +1,96 @@
+/* ============================================================
+   css/tipografia.css
+   FUENTE ÚNICA PARA TODA LA APLICACIÓN
+   
+   Plus Jakarta Sans — limpia, excelente en datos (horas, fechas,
+   tablas), moderna sin ser genérica. Pesos: 300, 400, 500, 600, 700, 800.
+   
+   JetBrains Mono — solo para elementos de código e IPs.
+   
+   CARGAR COMO ÚLTIMO CSS en panel.php y login.php para que
+   los !important sobreescriban cualquier declaración previa.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Variables globales ─────────────────────────────────── */
+:root {
+    --app-font:      'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --app-font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+    /* Sobreescribir todas las variables de fuente del proyecto */
+    --mg-font:   var(--app-font);   /* modales_global.css */
+    --font-sans: var(--app-font);   /* config_ip.css */
+    --font-mono: var(--app-font-mono); /* config_ip.css */
+}
+
+/* ── Aplicación universal ───────────────────────────────── */
+/*
+   Carga DESPUÉS de todos los CSS del proyecto.
+   El !important sobreescribe las declaraciones directas
+   (Arial en empresa_1/2/default.css, Segoe UI en componentes,
+   IBM Plex Sans en modales, DM Sans en login).
+*/
+html,
+body,
+body * {
+    font-family: var(--app-font) !important;
+}
+
+/* ── Monospace: solo donde realmente tiene sentido ──────── */
+/*
+   IPs, códigos de verificación, elementos <code>, <pre>,
+   clases específicas del proyecto que muestran datos técnicos.
+*/
+code,
+pre,
+kbd,
+samp,
+.cip-tu-ip-val,
+.cip-row-ip,
+.cip-input,
+.code-input,
+.cf-ip-text,
+[class*="ip-val"],
+[class*="ip-address"] {
+    font-family: var(--app-font-mono) !important;
+}
+
+/* ── Login: título de marca ─────────────────────────────── */
+/*
+   El .logo-name usaba Syne 800. Plus Jakarta Sans 800
+   tiene suficiente personalidad para el título sin necesitar
+   una segunda fuente display.
+*/
+.logo-name {
+    font-family: var(--app-font) !important;
+    font-weight: 800 !important;
+}
+
+/* ── Ajuste fino de pesos ───────────────────────────────── */
+/*
+   Plus Jakarta Sans tiene pesos distintos a Segoe UI/Arial.
+   Ajustes mínimos para que tablas y formularios se lean bien.
+*/
+th,
+.modal-content h3,
+.modal-content-horario h3,
+.card-title,
+.logo-name {
+    font-weight: 700 !important;
+}
+
+label,
+.form-group label,
+.form-group-horario label {
+    font-weight: 600 !important;
+}
+
+body,
+td,
+input,
+select,
+textarea,
+button {
+    font-weight: 400;
+}
