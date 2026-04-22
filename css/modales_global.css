@@ -533,7 +533,7 @@
     .modal-content-perfil,
     .modal-rechazo-content,
     .modal-ticket-content {
-        max-width: 100% !important;
+        max-width: 80% !important;
         border-radius: 20px 20px 0 0 !important; /* sheet inferior */
         padding: 28px 20px 24px !important;
         max-height: 92vh !important;
@@ -627,9 +627,9 @@ input[type="radio"],
    ================================================================ */
 
 .modal-content-horario {
-    position: static !important;   /* cancela el position:relative problemático */
+    position: relative !important;   /* cancela el position:relative problemático */
     top:  auto !important;
-    left: auto !important;
+    left: -2% !important;
     margin: auto !important;       /* el flexbox del overlay lo centra */
 }
 
@@ -645,4 +645,23 @@ input[type="radio"],
     top:  auto !important;
     left: auto !important;
     margin: auto !important;
+}
+@media(max-width:600px){
+    .form-row{
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+
+    .perfil-header{
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .perfil-card{
+        max-width: 74%;
+    }
+    .acciones-header{
+        flex-direction: column;
+        gap: 15px;
+    }
 }

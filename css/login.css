@@ -118,7 +118,7 @@
         font-size: 24px;
         font-weight: 800;
         letter-spacing: -0.5px;
-        background: linear-gradient(135deg, #e8eaf6 30%, var(--accent) 100%);
+        background:  #e8eaf6 ;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -230,7 +230,7 @@
         display: flex;
         align-items: center;
         transition: color 0.2s;
-        -webkit-tap-highlight-color: transparent;
+        -webkit-tap-highlight-color: var(--muted);
     }
 
     .toggle-pass:hover { color: var(--text); }

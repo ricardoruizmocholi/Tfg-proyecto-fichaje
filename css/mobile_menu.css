@@ -263,16 +263,16 @@ body.menu-open #menu-overlay {
     /* ── Chat FAB: mover arriba del borde en mobile ── */
     .chat-fab {
         left: auto !important;
-        right: 16px !important;
+        right: 12% !important;
         bottom: 20px !important;
     }
 
     .chat-modal {
-        left: 8px !important;
+        left: 5% !important;
         right: 8px !important;
         bottom: 72px !important;
         width: auto !important;
-        max-width: 100% !important;
+        max-width: 80% !important;
     }
 
     /* ── Scroll lock cuando menú abierto ── */
