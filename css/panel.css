@@ -226,3 +226,14 @@
 .notification-link:hover .icon-bell {
     stroke: #ecf0f1; /* Un blanco un poco más grisáceo al pasar el ratón */
 }
+.chat-bubble.streaming::after {
+        content: '▋';
+        display: inline-block;
+        animation: cursorBlink 0.7s step-end infinite;
+        color: #667eea;
+        margin-left: 1px;
+    }
+    @keyframes cursorBlink {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0; }
+    }

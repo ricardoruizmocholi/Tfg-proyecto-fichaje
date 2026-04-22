@@ -46,6 +46,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
     <link rel="stylesheet" href="css/mobile_menu.css">
     <link rel="stylesheet" href="css/modales_global.css">
     <link rel="stylesheet" href="css/tipografia.css">
+    
 </head>
 <body>
 
@@ -79,7 +80,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
             $badge = ($countNotif > 9) ? '9+' : $countNotif;
             ?>
             <a href="panel.php?seccion=notificaciones" style="text-decoration: none; font-size: 20px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-bell">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-bell">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
@@ -163,7 +164,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
             </div>
 
             <div class="sidebar_container">              
-                <h3> Empleado</h3>
+                <h3>👤 Empleado</h3>
                 <a href="panel.php?seccion=fichaje" onclick="closeMobileMenu()"> Fichaje</a>
                 <a href="panel.php?seccion=horario" onclick="closeMobileMenu()"> Horario</a>
                 <a href="panel.php?seccion=documentos" onclick="closeMobileMenu()"> Mis Nóminas</a>
@@ -348,7 +349,8 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
     }
 
     // ─────────────────────────────────────────────────────────
-    // CHATBOT
+    // ─────────────────────────────────────────────────────────
+    // CHATBOT — Streaming + persistencia sessionStorage
     // ─────────────────────────────────────────────────────────
     const chatFab      = document.getElementById('chatFab');
     const chatModal    = document.getElementById('chatModal');
@@ -362,69 +364,114 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
     const ctxVista   = <?= json_encode($vista) ?>;
     const ctxEsAdmin = <?= json_encode((bool)$esAdmin) ?>;
 
+    const STORAGE_KEY = 'chat_historial_<?= $idUsuario ?>';
     let historialChat = [];
 
+    // ── Persistencia: cargar conversación guardada ────────────
+    function cargarHistorial() {
+        try {
+            const guardado = sessionStorage.getItem(STORAGE_KEY);
+            if (!guardado) return;
+            const datos = JSON.parse(guardado);
+            if (!Array.isArray(datos) || datos.length === 0) return;
+            historialChat = datos;
+
+            // Reconstruir visualmente los mensajes guardados
+            chatMessages.innerHTML = '';
+            datos.forEach(turno => {
+                const div = document.createElement('div');
+                div.className = 'chat-bubble ' + (turno.rol === 'usuario' ? 'user' : 'bot');
+                div.textContent = turno.texto;
+                chatMessages.appendChild(div);
+            });
+            scrollAbajo();
+        } catch (e) {
+            sessionStorage.removeItem(STORAGE_KEY);
+        }
+    }
+
+    function guardarHistorial() {
+        try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(historialChat));
+        } catch (e) { /* quota exceeded — ignorar */ }
+    }
+
+    // ── Abrir/cerrar modal ────────────────────────────────────
     chatFab.addEventListener('click', () => {
         chatModal.classList.toggle('open');
         if (chatModal.classList.contains('open')) chatInput.focus();
     });
     chatCloseBtn.addEventListener('click', () => chatModal.classList.remove('open'));
 
+    // ── Limpiar conversación ──────────────────────────────────
     chatClearBtn.addEventListener('click', () => {
         historialChat = [];
+        sessionStorage.removeItem(STORAGE_KEY);
         chatMessages.innerHTML = `
             <div class="chat-bubble bot">
                 👋 Hola, soy tu asistente. ¿En qué puedo ayudarte?
             </div>`;
     });
 
+    // ── Input auto-resize + envío con Enter ───────────────────
     chatInput.addEventListener('keydown', e => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensaje(); }
     });
     chatSendBtn.addEventListener('click', enviarMensaje);
-
     chatInput.addEventListener('input', () => {
         chatInput.style.height = 'auto';
         chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
     });
 
-    function scrollAbajo() { chatMessages.scrollTop = chatMessages.scrollHeight; }
+    // ── Helpers visuales ─────────────────────────────────────
+    function scrollAbajo() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
-    function agregarBurbuja(texto, tipo) {
+    function crearBurbuja(tipo) {
         const div = document.createElement('div');
-        div.className = `chat-bubble ${tipo}`;
-        div.textContent = texto;
+        div.className = 'chat-bubble ' + tipo;
         chatMessages.appendChild(div);
         scrollAbajo();
         return div;
     }
 
-    function mostrarTyping() {
-        const div = document.createElement('div');
-        div.className = 'chat-bubble bot typing';
-        div.id = 'typingIndicator';
-        div.innerHTML = `<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>`;
-        chatMessages.appendChild(div);
-        scrollAbajo();
+    function mostrarCursor(burbuja) {
+        // Cursor parpadeante mientras escribe
+        burbuja.classList.add('streaming');
     }
 
-    function quitarTyping() {
-        document.getElementById('typingIndicator')?.remove();
+    function quitarCursor(burbuja) {
+        burbuja.classList.remove('streaming');
     }
 
+    // ── Enviar mensaje con streaming ─────────────────────────
     async function enviarMensaje() {
         const texto = chatInput.value.trim();
-        if (!texto) return;
-        agregarBurbuja(texto, 'user');
+        if (!texto || chatSendBtn.disabled) return;
+
+        // Burbuja del usuario
+        const burbujaUser = crearBurbuja('user');
+        burbujaUser.textContent = texto;
         chatInput.value = '';
         chatInput.style.height = 'auto';
+
         historialChat.push({ rol: 'usuario', texto });
+        guardarHistorial();
+
         chatSendBtn.disabled = true;
         chatInput.disabled   = true;
-        mostrarTyping();
+
+        // Burbuja del bot — empieza vacía, se llena token a token
+        const burbujaBot = crearBurbuja('bot');
+        burbujaBot.textContent = '';
+        mostrarCursor(burbujaBot);
+
+        let textoCompleto = '';
+        let hayError = false;
 
         try {
-            const respuesta = await fetch('secciones/ia/ia_handler.php', {
+            const response = await fetch('secciones/ia/ia_handler.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -435,20 +482,71 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
                     historial: historialChat.slice(-10)
                 })
             });
-            const data = await respuesta.json();
-            quitarTyping();
-            const textoResp = data.success ? data.respuesta : '⚠️ ' + (data.respuesta || 'Error desconocido.');
-            agregarBurbuja(textoResp, 'bot');
-            if (data.success) historialChat.push({ rol: 'asistente', texto: textoResp });
+
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+
+            const reader  = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer    = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                // Acumular chunks parciales (un chunk puede contener varios eventos SSE)
+                buffer += decoder.decode(value, { stream: true });
+
+                // Procesar líneas completas
+                const lineas = buffer.split('\n');
+                buffer = lineas.pop(); // la última línea puede estar incompleta
+
+                for (const linea of lineas) {
+                    if (!linea.startsWith('data: ')) continue;
+                    const payload = linea.slice(6).trim();
+                    if (payload === '[DONE]') continue;
+
+                    try {
+                        const json = JSON.parse(payload);
+
+                        if (json.error) {
+                            textoCompleto = '⚠️ ' + json.error;
+                            burbujaBot.textContent = textoCompleto;
+                            hayError = true;
+                            break;
+                        }
+
+                        if (json.token) {
+                            textoCompleto += json.token;
+                            burbujaBot.textContent = textoCompleto;
+                            scrollAbajo();
+                        }
+                    } catch { /* JSON parcial — ignorar */ }
+                }
+
+                if (hayError) break;
+            }
+
         } catch (err) {
-            quitarTyping();
-            agregarBurbuja('⚠️ No se pudo conectar con el asistente.', 'bot');
+            textoCompleto = '⚠️ No se pudo conectar con el asistente.';
+            burbujaBot.textContent = textoCompleto;
+            hayError = true;
         } finally {
+            quitarCursor(burbujaBot);
             chatSendBtn.disabled = false;
             chatInput.disabled   = false;
             chatInput.focus();
         }
+
+        // Guardar respuesta en historial solo si fue exitosa
+        if (!hayError && textoCompleto) {
+            historialChat.push({ rol: 'asistente', texto: textoCompleto });
+            guardarHistorial();
+        }
     }
+
+    // ── Cargar historial al arrancar la página ────────────────
+    cargarHistorial();
+
     </script>
 
     <script src="secciones/tipos_jornada_helper.js"></script>

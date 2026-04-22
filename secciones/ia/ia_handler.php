@@ -1,132 +1,148 @@
 <?php
-// 1. Configuración de límites de tiempo
+// ─────────────────────────────────────────────────────────────
+// secciones/ia/ia_handler.php — Streaming SSE
+// Envía tokens al cliente conforme los genera Ollama
+// ─────────────────────────────────────────────────────────────
+
 set_time_limit(600);
 
-header('Content-Type: application/json');
+// Cabeceras SSE — el cliente leerá el stream con fetch + ReadableStream
+header('Content-Type: text/event-stream');
+header('Cache-Control: no-cache');
+header('X-Accel-Buffering: no');   // evitar que nginx/apache bufferice
+header('Access-Control-Allow-Origin: *');
+
+// Vaciar todos los buffers de salida
+while (ob_get_level()) ob_end_clean();
+
 require_once __DIR__ . '/../../config.php';
 
-// 2. Parámetros de la Máquina Virtual
-$ip_vm = "192.168.0.19";
+// ── Parámetros ───────────────────────────────────────────────
+$ip_vm      = "192.168.0.19";
 $url_ollama = "http://$ip_vm:11434/api/generate";
 
-// 3. Capturar datos del usuario (pregunta + contexto de sección)
-$input = json_decode(file_get_contents('php://input'), true);
-$preguntaUsuario  = trim($input['mensaje']  ?? '');
-$seccionActual    = trim($input['seccion']  ?? '');
-$vistaActual      = trim($input['vista']    ?? '');
-$esAdmin          = isset($input['es_admin']) ? (bool)$input['es_admin'] : false;
+$input       = json_decode(file_get_contents('php://input'), true);
+$pregunta    = trim($input['mensaje']  ?? '');
+$seccion     = trim($input['seccion']  ?? '');
+$vista       = trim($input['vista']    ?? '');
+$esAdmin     = isset($input['es_admin']) ? (bool)$input['es_admin'] : false;
+$historial   = $input['historial'] ?? [];
 
-if ($preguntaUsuario === '') {
-    echo json_encode(["success" => false, "respuesta" => "No se ha recibido ningún mensaje."]);
+if ($pregunta === '') {
+    echo "data: " . json_encode(['error' => 'Mensaje vacío']) . "\n\n";
+    flush();
     exit;
 }
 
-// 4. Construir contexto dinámico
+// ── System prompt ────────────────────────────────────────────
 $rolUsuario = $esAdmin ? 'administrador' : 'empleado';
 
 $contextoSecciones = [
     'fichaje' => [
-        'inicio'    => 'El usuario está en la pantalla de fichaje. Puede registrar su entrada y salida. Explica cómo fichar, qué ocurre si olvida fichar y cómo se registran las pausas.',
-        'ver'       => 'El usuario está viendo el historial de sus fichajes. Puede filtrar por fechas y revisar las horas registradas cada día.',
-        'modificar' => 'El usuario (administrador) está en la sección para corregir o modificar fichajes de empleados.',
+        'inicio'    => 'El usuario está en la pantalla de fichaje. Puede registrar su entrada y salida.',
+        'ver'       => 'El usuario está viendo el historial de sus fichajes.',
+        'modificar' => 'El administrador está corrigiendo fichajes de empleados.',
     ],
     'horario' => [
-        'peticiones' => 'El usuario está en la sección de peticiones de horario. Aquí puede solicitar cambios de turno, días libres o vacaciones.',
-        'cuadrantes' => 'El usuario está viendo los cuadrantes de horario.',
-        'eventos'    => 'El usuario está en la sección de eventos del horario.',
+        'peticiones' => 'El usuario está en peticiones de horario.',
+        'cuadrantes' => 'El usuario está en el cuadrante de horario.',
+        'vacaciones' => 'El usuario está viendo el cuadrante de vacaciones.',
     ],
     'reportes' => [
-        'generar'   => 'El usuario está generando un reporte. Puede exportar datos de fichajes a PDF o Excel.',
-        'historial' => 'El usuario está viendo el historial de reportes generados anteriormente.',
+        'generar'   => 'El usuario está generando un reporte PDF o Excel.',
+        'historial' => 'El usuario está viendo reportes generados.',
     ],
     'empleados' => [
-        'lista'  => 'El usuario (administrador) está viendo la lista de todos los empleados.',
-        'nuevo'  => 'El usuario (administrador) está añadiendo un nuevo empleado.',
+        'lista'  => 'El administrador está viendo la lista de empleados.',
+        'nuevo'  => 'El administrador está añadiendo un nuevo empleado.',
     ],
-    'perfil'         => ['*' => 'El usuario está en su perfil. Puede cambiar su contraseña, ver sus datos personales.'],
-    'notificaciones' => ['*' => 'El usuario está en la sección de notificaciones.'],
-    'documentos'     => ['*' => 'El usuario está en la sección de documentos.'],
+    'perfil'         => ['*' => 'El usuario está en su perfil.'],
+    'notificaciones' => ['*' => 'El usuario está en notificaciones.'],
+    'tickets'        => ['*' => 'El usuario está en el sistema de tickets.'],
 ];
 
-// Buscar el contexto específico
 $contextoSeccion = '';
-if (isset($contextoSecciones[$seccionActual])) {
-    $mapa = $contextoSecciones[$seccionActual];
-    if (isset($mapa[$vistaActual])) {
-        $contextoSeccion = $mapa[$vistaActual];
-    } elseif (isset($mapa['*'])) {
-        $contextoSeccion = $mapa['*'];
-    } elseif (!empty($mapa)) {
-        $contextoSeccion = reset($mapa);
-    }
+if (isset($contextoSecciones[$seccion])) {
+    $mapa = $contextoSecciones[$seccion];
+    $contextoSeccion = $mapa[$vista] ?? $mapa['*'] ?? reset($mapa);
 }
 
-// 5. System prompt
-$systemPrompt = "Eres el asistente inteligente del sistema de fichajes. 
+$systemPrompt = "Eres el asistente inteligente del sistema de fichajes FesolCheck.
 Tu función es ayudar a los usuarios ({$rolUsuario}s) con dudas sobre el uso de la aplicación.
 Responde siempre en español, de forma concisa, clara y amable.
-No inventes funcionalidades que no existan. Si no sabes algo, dilo con educación.
-No respondas preguntas que no tengan relación con el sistema de fichajes o gestión de personal.
-Los tipos de jornada disponibles son: TRABAJO (jornada continua), PARTIDA (jornada 
-partida en dos tramos: mañana y tarde), VACACIONES, MEDICO, LIBRE y FESTIVO.
-Respecto al tipo de jornada tambien son configurables puedes crear y personalizar el tipo de jornada que quieras";
+No inventes funcionalidades. Si no sabes algo, dilo con educación.
+No respondas preguntas ajenas al sistema de fichajes o gestión de personal.
+Los tipos de jornada son: TRABAJO, PARTIDA (mañana/tarde), VACACIONES, MEDICO, LIBRE, FESTIVO.
+Las plantillas de jornada son configurables por empresa.";
 
 if ($contextoSeccion !== '') {
-    $systemPrompt .= "\n\nContexto actual del usuario: {$contextoSeccion}";
+    $systemPrompt .= "\n\nContexto: {$contextoSeccion}";
 }
 
-// 6. Historial
-$historial = $input['historial'] ?? [];
+// ── Construir prompt con historial ───────────────────────────
 $promptConversacion = '';
-
 foreach ($historial as $turno) {
     $rol = $turno['rol'] === 'usuario' ? 'Usuario' : 'Asistente';
     $promptConversacion .= "{$rol}: " . trim($turno['texto']) . "\n";
 }
 
-$promptFinal = "Sistema: {$systemPrompt}\n\n{$promptConversacion}Usuario: {$preguntaUsuario}\nAsistente:";
+$promptFinal = "Sistema: {$systemPrompt}\n\n{$promptConversacion}Usuario: {$pregunta}\nAsistente:";
 
-// 7. Payload para Ollama (El nombre del modelo DEBE coincidir con el que crearemos)
-$data = [
-    "model"  => "asistente-fichajes",
-    "prompt" => $promptFinal,
-    "stream" => false,
+// ── Llamada a Ollama con stream:true ─────────────────────────
+$payload = [
+    "model"   => "asistente-fichajes",
+    "prompt"  => $promptFinal,
+    "stream"  => true,
     "options" => [
         "temperature" => 0.7,
         "num_predict" => 512
     ]
 ];
 
-// 8. Llamada cURL a Ollama
+$respuestaCompleta = '';
+
 $ch = curl_init($url_ollama);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
 curl_setopt($ch, CURLOPT_TIMEOUT, 450);
 
-$response  = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+// Callback que recibe cada chunk NDJSON de Ollama y lo reenvía al cliente
+curl_setopt($ch, CURLOPT_WRITEFUNCTION, function ($ch, $data) use (&$respuestaCompleta) {
+    // Ollama devuelve una línea JSON por cada token
+    $lineas = explode("\n", $data);
+    foreach ($lineas as $linea) {
+        $linea = trim($linea);
+        if ($linea === '') continue;
 
-if (curl_errno($ch)) {
-    echo json_encode([
-        "success"   => false,
-        "respuesta" => "Error de conexión con el servidor IA: " . curl_error($ch)
-    ]);
-} elseif ($http_code !== 200) {
-    echo json_encode([
-        "success"   => false,
-        "respuesta" => "Error del servidor IA (HTTP $http_code): $response"
-    ]);
-} else {
-    $responseData = json_decode($response, true);
-    $textoAsistente = $responseData['response'] ?? "No se pudo interpretar la respuesta de la IA.";
+        $json = json_decode($linea, true);
+        if (!$json) continue;
 
-    echo json_encode([
-        "success"   => true,
-        "respuesta" => trim($textoAsistente)
-    ]);
-}
+        // Token normal — reenviarlo al cliente
+        if (isset($json['response']) && $json['response'] !== '') {
+            $respuestaCompleta .= $json['response'];
+            echo "data: " . json_encode(['token' => $json['response']]) . "\n\n";
+            flush();
+        }
+
+        // Fin del stream
+        if (!empty($json['done'])) {
+            echo "data: [DONE]\n\n";
+            flush();
+        }
+    }
+    return strlen($data);
+});
+
+$ok = curl_exec($ch);
+$err = curl_error($ch);
+$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
-?>
+
+// Si hubo error de conexión, mandar evento de error para que el JS lo muestre
+if ($err || $code !== 200) {
+    echo "data: " . json_encode(['error' => "Error conectando con el asistente (HTTP {$code})"]) . "\n\n";
+    flush();
+}
