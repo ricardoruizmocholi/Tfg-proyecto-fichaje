@@ -1,5 +1,5 @@
 <?php
-// 1. Configuración de límites de tiempo (Vital para Ollama en CPU)
+// 1. Configuración de límites de tiempo
 set_time_limit(600);
 
 header('Content-Type: application/json');
@@ -21,34 +21,34 @@ if ($preguntaUsuario === '') {
     exit;
 }
 
-// 4. Construir contexto dinámico según la sección/vista en la que está el usuario
+// 4. Construir contexto dinámico
 $rolUsuario = $esAdmin ? 'administrador' : 'empleado';
 
 $contextoSecciones = [
     'fichaje' => [
         'inicio'    => 'El usuario está en la pantalla de fichaje. Puede registrar su entrada y salida. Explica cómo fichar, qué ocurre si olvida fichar y cómo se registran las pausas.',
         'ver'       => 'El usuario está viendo el historial de sus fichajes. Puede filtrar por fechas y revisar las horas registradas cada día.',
-        'modificar' => 'El usuario (administrador) está en la sección para corregir o modificar fichajes de empleados. Puede cambiar horas de entrada/salida y añadir justificaciones.',
+        'modificar' => 'El usuario (administrador) está en la sección para corregir o modificar fichajes de empleados.',
     ],
     'horario' => [
-        'peticiones' => 'El usuario está en la sección de peticiones de horario. Aquí puede solicitar cambios de turno, días libres o vacaciones, y ver el estado de sus solicitudes.',
-        'cuadrantes' => 'El usuario está viendo los cuadrantes de horario. Se muestran los turnos asignados a cada empleado por semana o mes.',
-        'eventos'    => 'El usuario está en la sección de eventos del horario, donde se gestionan días especiales, festivos y ausencias.',
+        'peticiones' => 'El usuario está en la sección de peticiones de horario. Aquí puede solicitar cambios de turno, días libres o vacaciones.',
+        'cuadrantes' => 'El usuario está viendo los cuadrantes de horario.',
+        'eventos'    => 'El usuario está en la sección de eventos del horario.',
     ],
     'reportes' => [
-        'generar'   => 'El usuario está generando un reporte. Puede exportar datos de fichajes a PDF o Excel, filtrando por empleado, rango de fechas o departamento.',
-        'historial' => 'El usuario está viendo el historial de reportes generados anteriormente. Puede descargarlos de nuevo.',
+        'generar'   => 'El usuario está generando un reporte. Puede exportar datos de fichajes a PDF o Excel.',
+        'historial' => 'El usuario está viendo el historial de reportes generados anteriormente.',
     ],
     'empleados' => [
-        'lista'  => 'El usuario (administrador) está viendo la lista de todos los empleados. Puede buscar, filtrar y acceder al perfil de cada uno.',
-        'nuevo'  => 'El usuario (administrador) está añadiendo un nuevo empleado. Debe rellenar nombre, apellidos, email, empresa y rol.',
+        'lista'  => 'El usuario (administrador) está viendo la lista de todos los empleados.',
+        'nuevo'  => 'El usuario (administrador) está añadiendo un nuevo empleado.',
     ],
-    'perfil'         => ['*' => 'El usuario está en su perfil. Puede cambiar su contraseña, ver sus datos personales y actualizar su información de contacto.'],
-    'notificaciones' => ['*' => 'El usuario está en la sección de notificaciones. Aquí aparecen alertas del sistema: fichajes pendientes, aprobaciones de solicitudes y avisos del administrador.'],
-    'documentos'     => ['*' => 'El usuario está en la sección de documentos, donde puede consultar o descargar documentos relacionados con su empresa.'],
+    'perfil'         => ['*' => 'El usuario está en su perfil. Puede cambiar su contraseña, ver sus datos personales.'],
+    'notificaciones' => ['*' => 'El usuario está en la sección de notificaciones.'],
+    'documentos'     => ['*' => 'El usuario está en la sección de documentos.'],
 ];
 
-// Buscar el contexto específico de la sección y vista actuales
+// Buscar el contexto específico
 $contextoSeccion = '';
 if (isset($contextoSecciones[$seccionActual])) {
     $mapa = $contextoSecciones[$seccionActual];
@@ -57,12 +57,11 @@ if (isset($contextoSecciones[$seccionActual])) {
     } elseif (isset($mapa['*'])) {
         $contextoSeccion = $mapa['*'];
     } elseif (!empty($mapa)) {
-        // Tomar el primero disponible si no hay coincidencia exacta
         $contextoSeccion = reset($mapa);
     }
 }
 
-// 5. System prompt completo y dinámico
+// 5. System prompt
 $systemPrompt = "Eres el asistente inteligente del sistema de fichajes. 
 Tu función es ayudar a los usuarios ({$rolUsuario}s) con dudas sobre el uso de la aplicación.
 Responde siempre en español, de forma concisa, clara y amable.
@@ -76,8 +75,7 @@ if ($contextoSeccion !== '') {
     $systemPrompt .= "\n\nContexto actual del usuario: {$contextoSeccion}";
 }
 
-// 6. Historial de conversación (para mantener contexto entre mensajes)
-// El frontend puede enviar un array 'historial' con los mensajes previos
+// 6. Historial
 $historial = $input['historial'] ?? [];
 $promptConversacion = '';
 
@@ -88,7 +86,7 @@ foreach ($historial as $turno) {
 
 $promptFinal = "Sistema: {$systemPrompt}\n\n{$promptConversacion}Usuario: {$preguntaUsuario}\nAsistente:";
 
-// 7. Payload para Ollama
+// 7. Payload para Ollama (El nombre del modelo DEBE coincidir con el que crearemos)
 $data = [
     "model"  => "asistente-fichajes",
     "prompt" => $promptFinal,
@@ -119,16 +117,16 @@ if (curl_errno($ch)) {
 } elseif ($http_code !== 200) {
     echo json_encode([
         "success"   => false,
-        "respuesta" => "Ollama devolvió un error (Código {$http_code}). Revisa que el servicio esté corriendo."
+        "respuesta" => "Error del servidor IA (HTTP $http_code): $response"
     ]);
 } else {
-    $result   = json_decode($response, true);
-    $respuesta = isset($result['response']) ? trim($result['response']) : 'No se obtuvo respuesta.';
+    $responseData = json_decode($response, true);
+    $textoAsistente = $responseData['response'] ?? "No se pudo interpretar la respuesta de la IA.";
+
     echo json_encode([
         "success"   => true,
-        "respuesta" => $respuesta
+        "respuesta" => trim($textoAsistente)
     ]);
 }
-
 curl_close($ch);
 ?>
