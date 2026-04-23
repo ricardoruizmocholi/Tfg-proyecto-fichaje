@@ -41,16 +41,29 @@ $stmtF = $pdo->prepare($sqlF);
 $stmtF->execute(['idu' => $usuario['id']]);
 $fichajesHoy = $stmtF->fetchAll(PDO::FETCH_ASSOC);
 
-$fichajeHoy   = $fichajesHoy[0] ?? null; // mañana o normal
-$fichajeTarde = $fichajesHoy[1] ?? null; // tarde
+$fichajeHoy   = $fichajesHoy[0] ?? null; // primero del día (referencia para partida)
+$fichajeTarde = $fichajesHoy[1] ?? null; // segundo (tarde en jornada partida)
 
 // ---------------------------------------------------------------
 // Lógica botones — Normal
+// Puede haber más de un fichaje si el empleado fichó salida por
+// error y volvió a fichar entrada. Buscamos el fichaje "activo":
+// el que tiene entrada registrada pero SIN salida todavía.
 // ---------------------------------------------------------------
-$mostrarEntrada  = !$fichajeHoy || $fichajeHoy['hora_salida'] !== null;
-$mostrarPausa    = $fichajeHoy && $fichajeHoy['hora_entrada'] !== null && $fichajeHoy['hora_pausa'] === null && $fichajeHoy['hora_salida'] === null;
-$mostrarReanudar = $fichajeHoy && $fichajeHoy['hora_pausa'] !== null && $fichajeHoy['hora_reanudacion'] === null && $fichajeHoy['hora_salida'] === null;
-$mostrarSalida   = $fichajeHoy && $fichajeHoy['hora_entrada'] !== null && $fichajeHoy['hora_salida'] === null;
+$fichajeActivo = null;
+foreach ($fichajesHoy as $f) {
+    if ($f['hora_entrada'] !== null && $f['hora_salida'] === null) {
+        $fichajeActivo = $f;
+        break; // el primero abierto es el activo
+    }
+}
+
+// ENTRADA: solo disponible si no hay ningún fichaje abierto ahora mismo
+$mostrarEntrada  = ($fichajeActivo === null);
+// Pausa / Reanudar / Salida: usan el fichaje que esté abierto
+$mostrarPausa    = $fichajeActivo !== null && $fichajeActivo['hora_pausa'] === null;
+$mostrarReanudar = $fichajeActivo !== null && $fichajeActivo['hora_pausa'] !== null && $fichajeActivo['hora_reanudacion'] === null;
+$mostrarSalida   = $fichajeActivo !== null;
 
 // ---------------------------------------------------------------
 // Lógica botones — Partida
@@ -63,6 +76,7 @@ $pMostrarSalT    = $fichajeTarde && $fichajeTarde['hora_entrada'] !== null && $f
 $jornadaCompleta = $mananaCerrado && $fichajeTarde && $fichajeTarde['hora_salida'] !== null;
 
 // IP
+$ip_usuario = $_SERVER['REMOTE_ADDR'];
 require_once __DIR__ . '/api/fichaje_ip_helper.php';
 $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa']);
 ?>
@@ -76,16 +90,16 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
     <div style="background:#e8eaf6;border-left:4px solid #3f51b5;padding:15px;border-radius:5px;margin-bottom:15px;">
         <p><strong> Hoy tienes una <u>jornada partida</u></strong></p>
         <?php if ($tienePartidaM): ?>
-            <p> Primer Tramo: <strong><?= substr($hiM,0,5) ?> – <?= substr($hfM,0,5) ?></strong></p>
+            <p>1º Tramo : <strong><?= substr($hiM,0,5) ?> – <?= substr($hfM,0,5) ?></strong></p>
         <?php endif; ?>
         <?php if ($tienePartidaT): ?>
-            <p> Segundo Tramo: <strong><?= substr($hiT,0,5) ?> – <?= substr($hfT,0,5) ?></strong></p>
+            <p> 2º Tramo : <strong><?= substr($hiT,0,5) ?> – <?= substr($hfT,0,5) ?></strong></p>
         <?php endif; ?>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
         <div style="background:#f0f4ff;padding:15px;border-radius:5px;">
-            <p><strong> Primer tramo</strong></p>
+            <p><strong>1º Tramo </strong></p>
             <?php if ($fichajeHoy): ?>
                 <p> Entrada: <strong><?= substr($fichajeHoy['hora_entrada'],0,5) ?? '-' ?></strong></p>
                 <p> Salida: <strong><?= $fichajeHoy['hora_salida'] ? substr($fichajeHoy['hora_salida'],0,5) : '—' ?></strong></p>
@@ -94,7 +108,7 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
             <?php endif; ?>
         </div>
         <div style="background:#fce4ec;padding:15px;border-radius:5px;">
-            <p><strong> Segundo Tramo</strong></p>
+            <p><strong>2º Tramo </strong></p>
             <?php if ($fichajeTarde): ?>
                 <p> Entrada: <strong><?= substr($fichajeTarde['hora_entrada'],0,5) ?? '-' ?></strong></p>
                 <p> Salida: <strong><?= $fichajeTarde['hora_salida'] ? substr($fichajeTarde['hora_salida'],0,5) : '—' ?></strong></p>
@@ -111,16 +125,16 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
                     <p style="color:#28a745;font-weight:bold;padding:10px;"> Jornada partida completada</p>
                 <?php else: ?>
                     <?php if ($pMostrarEntM): ?>
-                        <button type="submit" name="accion" value="entrada" class="btn-fichaje btn-entrada"> Entrada Mañana</button>
+                        <button type="submit" name="accion" value="entrada" class="btn-fichaje btn-entrada"> Entrada 1º Tramo</button>
                     <?php endif; ?>
                     <?php if ($pMostrarSalM): ?>
-                        <button type="submit" name="accion" value="salida" class="btn-fichaje btn-salida"> Salida Mañana</button>
+                        <button type="submit" name="accion" value="salida" class="btn-fichaje btn-salida"> Salida 1º Tramo</button>
                     <?php endif; ?>
                     <?php if ($pMostrarEntT): ?>
-                        <button type="submit" name="accion" value="entrada_tarde" class="btn-fichaje btn-reanudar" style="background:#3f51b5;"> Entrada Tarde</button>
+                        <button type="submit" name="accion" value="entrada_tarde" class="btn-fichaje btn-reanudar" style="background:#3f51b5;"> Entrada 2º Tramo</button>
                     <?php endif; ?>
                     <?php if ($pMostrarSalT): ?>
-                        <button type="submit" name="accion" value="salida_tarde" class="btn-fichaje btn-salida" style="background:#880e4f;"> Salida Tarde</button>
+                        <button type="submit" name="accion" value="salida_tarde" class="btn-fichaje btn-salida" style="background:#880e4f;">Salida 2º Tramo</button>
                     <?php endif; ?>
                 <?php endif; ?>
             </form>
@@ -147,7 +161,7 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
         </div>
     <?php else: ?>
         <div style="background:#fff3cd;padding:15px;border-radius:5px;margin-bottom:20px;">
-            <p> No has fichado hoy todavía.</p>
+            <p>⚠️ No has fichado hoy todavía.</p>
         </div>
     <?php endif; ?>
 
@@ -181,7 +195,7 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
 <?php endif; ?>
 
 <hr style="margin:30px 0;">
-<h3> Últimos fichajes</h3>
+<h3>Últimos fichajes</h3>
 <?php
 $sqlH = "SELECT * FROM FICHAJE WHERE id_usuario = :idu ORDER BY fecha DESC, id_fichaje DESC LIMIT 10";
 $stmtHL = $pdo->prepare($sqlH);
@@ -201,8 +215,8 @@ if(count($historial) > 0):
                 $tipo_f = $f['tipo'] ?? 'normal';
                 $claseF = $f['hora_salida'] ? 'fila-completo' : 'fila-proceso';
                 $tramoLabel = match($tipo_f) {
-                    'partida_tarde'  => ' Tarde',
-                    default          => ' Completa'
+                    'partida_tarde'  => '2º Tramo',
+                    default          => ' Continua'
                 };
             ?>
             <tr class="<?= $claseF ?>">

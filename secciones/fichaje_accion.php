@@ -10,6 +10,13 @@ if(!isset($_SESSION['usuario']['id'])) {
     exit();
 }
 
+// ── Validación de IP (lee config de BD, no de config.php) ──
+require_once __DIR__ . '../api/fichaje_ip_helper.php';
+if (!fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])) {
+    header("Location: ../panel.php?seccion=fichaje&error=ip_restringida");
+    exit();
+}
+
 $id_usuario = $_SESSION['usuario']['id'];
 $accion = $_POST['accion'] ?? '';
 
@@ -25,6 +32,16 @@ $fichajesHoy = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Primer fichaje = mañana/normal  |  Segundo fichaje = tarde (partida)
 $fichaje      = $fichajesHoy[0] ?? null;
 $fichajeTarde = $fichajesHoy[1] ?? null;
+
+// Para jornada normal, el fichaje "activo" es el que tiene entrada pero NO salida.
+// Puede ser [0], [1], [2]... si el empleado fichó salida por error y re-fichó entrada.
+$fichajeActivo = null;
+foreach ($fichajesHoy as $f) {
+    if ($f['hora_entrada'] !== null && $f['hora_salida'] === null) {
+        $fichajeActivo = $f;
+        break;
+    }
+}
 
 // ------------------------------------------------------------------
 // ENTRADA NORMAL o TRAMO MAÑANA
@@ -42,33 +59,33 @@ if ($accion === 'entrada') {
 }
 
 // ------------------------------------------------------------------
-// PAUSA
+// PAUSA — usa el fichaje activo (puede ser [1], [2]... no solo [0])
 // ------------------------------------------------------------------
-if ($accion === 'pausa' && $fichaje) {
-    if ($fichaje['hora_entrada'] !== null && $fichaje['hora_pausa'] === null && $fichaje['hora_salida'] === null) {
+if ($accion === 'pausa' && $fichajeActivo) {
+    if ($fichajeActivo['hora_pausa'] === null) {
         $pdo->prepare("UPDATE FICHAJE SET hora_pausa = CURTIME() WHERE id_fichaje = :id")
-            ->execute(['id' => $fichaje['id_fichaje']]);
+            ->execute(['id' => $fichajeActivo['id_fichaje']]);
     }
 }
 
 // ------------------------------------------------------------------
-// REANUDAR
+// REANUDAR — usa el fichaje activo
 // ------------------------------------------------------------------
-if ($accion === 'reanudar' && $fichaje) {
-    if ($fichaje['hora_pausa'] !== null && $fichaje['hora_reanudacion'] === null && $fichaje['hora_salida'] === null) {
+if ($accion === 'reanudar' && $fichajeActivo) {
+    if ($fichajeActivo['hora_pausa'] !== null && $fichajeActivo['hora_reanudacion'] === null) {
         $pdo->prepare("UPDATE FICHAJE SET hora_reanudacion = CURTIME() WHERE id_fichaje = :id")
-            ->execute(['id' => $fichaje['id_fichaje']]);
+            ->execute(['id' => $fichajeActivo['id_fichaje']]);
     }
 }
 
 // ------------------------------------------------------------------
-// SALIDA NORMAL o CIERRE TRAMO MAÑANA
+// SALIDA NORMAL — usa el fichaje activo
+// El empleado puede haber fichado entrada/salida/entrada: hay que cerrar
+// el último abierto, no siempre el [0].
 // ------------------------------------------------------------------
-if ($accion === 'salida' && $fichaje) {
-    if ($fichaje['hora_entrada'] !== null && $fichaje['hora_salida'] === null) {
-        $pdo->prepare("UPDATE FICHAJE SET hora_salida = CURTIME() WHERE id_fichaje = :id")
-            ->execute(['id' => $fichaje['id_fichaje']]);
-    }
+if ($accion === 'salida' && $fichajeActivo) {
+    $pdo->prepare("UPDATE FICHAJE SET hora_salida = CURTIME() WHERE id_fichaje = :id")
+        ->execute(['id' => $fichajeActivo['id_fichaje']]);
 }
 
 // ------------------------------------------------------------------
