@@ -10,6 +10,7 @@
     display: none; /* oculto en desktop */
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     width: 44px;
     height: 44px;
     background: transparent;
@@ -20,7 +21,7 @@
     flex-shrink: 0;
     transition: background 0.2s ease;
     -webkit-tap-highlight-color: transparent;
-    z-index: 3001;
+    z-index: 9999 !important;
     position: relative;
 }
 
@@ -42,9 +43,9 @@
     transform-origin: center;
 }
 
-.hbg-bar:nth-child(1) { margin-bottom: 5px; }
-.hbg-bar:nth-child(2) { margin-bottom: 5px; width: 16px; }
-.hbg-bar:nth-child(3) { width: 20px; }
+.hbg-bar:nth-child(1) { margin-bottom: 5px; width: 100%;}
+.hbg-bar:nth-child(2) { margin-bottom: 5px; width: 100%; }
+.hbg-bar:nth-child(3) { margin-bottom: 5px; width: 100%; }
 
 /* Estado abierto → X */
 body.menu-open #hamburger-btn .hbg-bar:nth-child(1) {
@@ -340,4 +341,18 @@ body.menu-open #menu-overlay {
     .sidebar-mobile-header {
         display: flex;
     }
+}
+
+/* Transformación de Hamburguesa a X */
+body.menu-open .hbg-bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+body.menu-open .hbg-bar:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+body.menu-open .hbg-bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
 }

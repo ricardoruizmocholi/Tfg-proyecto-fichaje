@@ -544,6 +544,34 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
         }
     }
 
+    // Variable booleana para controlar el estado del menú
+    let isMenuOpen = false;
+
+    const btnHamburguesa = document.getElementById('hamburger-btn');
+    const cuerpoPagina = document.body;
+
+    btnHamburguesa.addEventListener('click', () => {
+        // Alternamos el valor booleano
+        isMenuOpen = !isMenuOpen;
+
+        if (isMenuOpen) {
+            cuerpoPagina.classList.add('menu-open');
+        } else {
+            cuerpoPagina.classList.remove('menu-open');
+        }
+    });
+
+    
+
+
+    // Opcional: Cerrar el menú si se hace click en un enlace del sidebar (móvil)
+    document.querySelectorAll('.sidebar_container a').forEach(enlace => {
+        enlace.addEventListener('click', () => {
+            isMenuOpen = false;
+            cuerpoPagina.classList.remove('menu-open');
+        });
+    });
+
     // ── Cargar historial al arrancar la página ────────────────
     cargarHistorial();
 
