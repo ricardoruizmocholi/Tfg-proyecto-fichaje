@@ -671,6 +671,10 @@ input[type="radio"],
     .day-container{
         overflow-x: auto !important;
     }
+    
+    .day-header{
+        width: 262%;
+    }
     .solicitud-footer{
         flex-direction: column;
         gap: 15px;
