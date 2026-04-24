@@ -664,4 +664,31 @@ input[type="radio"],
         flex-direction: column;
         gap: 15px;
     }
+    .perfil-container{
+        position: relative !important;
+        left: 8% !important;
+    }
+    .day-container{
+        overflow-x: auto !important;
+    }
+    .solicitud-footer{
+        flex-direction: column;
+        gap: 15px;
+    }
+    .solicitud-footer .btn-group{
+        flex-direction: column;
+    }
+    .calendar-container{
+        overflow-x: auto;
+    }
+    .form-actions{
+        flex-direction: column;
+    }
+    .selector-card{
+        flex-direction: column;
+    }
+    .selector-card select{
+        width: 98%;
+    }
+
 }

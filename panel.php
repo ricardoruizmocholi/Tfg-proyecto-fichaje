@@ -56,7 +56,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
 <header>
     <!-- Botón hamburguesa — solo visible en mobile (CSS lo controla) -->
     <button id="hamburger-btn"
-            onclick="toggleMobileMenu()"
+           
             aria-label="Abrir menú"
             aria-expanded="false"
             aria-controls="main-sidebar">
@@ -164,7 +164,7 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
             </div>
 
             <div class="sidebar_container">              
-                <h3>👤 Empleado</h3>
+                <h3> Empleado</h3>
                 <a href="panel.php?seccion=fichaje" onclick="closeMobileMenu()"> Fichaje</a>
                 <a href="panel.php?seccion=horario" onclick="closeMobileMenu()"> Horario</a>
                 <a href="panel.php?seccion=documentos" onclick="closeMobileMenu()"> Mis Nóminas</a>
@@ -257,325 +257,194 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
     <!-- =============================================
          JAVASCRIPT
     ============================================= -->
-    <script>
-    // ─────────────────────────────────────────────────────────
-    // MENÚ HAMBURGUESA MOBILE
-    // ─────────────────────────────────────────────────────────
-    function toggleMobileMenu() {
-        const isOpen = document.body.classList.toggle('menu-open');
-        const btn    = document.getElementById('hamburger-btn');
-        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        btn.setAttribute('aria-label',    isOpen ? 'Cerrar menú' : 'Abrir menú');
-    }
+   <script>
+// ─────────────────────────────────────────────────────────
+// 1. GESTIÓN DEL MENÚ (REESCRITURA LIMPIA)
+// ─────────────────────────────────────────────────────────
 
-    function closeMobileMenu() {
-        document.body.classList.remove('menu-open');
-        const btn = document.getElementById('hamburger-btn');
-        btn.setAttribute('aria-expanded', 'false');
-        btn.setAttribute('aria-label', 'Abrir menú');
-    }
+function closeMobileMenu() {
+    document.body.classList.remove('menu-open');
+    const btn = document.getElementById('hamburger-btn');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+}
 
-    // Cerrar con tecla Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && document.body.classList.contains('menu-open')) {
-            closeMobileMenu();
-        }
+function toggleMobileMenu() {
+    const isOpen = document.body.classList.toggle('menu-open');
+    const btn = document.getElementById('hamburger-btn');
+    if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+// Escuchador exclusivo para el botón hamburguesa
+const btnHamburguesa = document.getElementById('hamburger-btn');
+if (btnHamburguesa) {
+    btnHamburguesa.addEventListener('click', (e) => {
+        e.stopPropagation(); // Previene que otros clics interfieran
+        toggleMobileMenu();
     });
+}
 
-    // Cerrar si el usuario hace resize a desktop
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            closeMobileMenu();
-        }
-    });
+// Cierra el menú al pulsar la tecla Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMobileMenu();
+});
 
-    // ─────────────────────────────────────────────────────────
-    // SUBMENÚS ACORDEÓN (admin)
-    // ─────────────────────────────────────────────────────────
-    document.querySelectorAll(".submenu-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const content = btn.nextElementSibling;
-            const isOpening = !content.classList.contains('open');
-            
-            // Cerrar todos los demás
-            document.querySelectorAll(".submenu-content").forEach(other => {
-                if (other !== content) {
-                    other.classList.remove("open");
-                    other.previousElementSibling?.classList.remove("active");
-                }
-            });
-
-            btn.classList.toggle("active", isOpening);
-            content.classList.toggle("open", isOpening);
+// Cierra el menú si se hace grande la pantalla (vuelve a desktop)
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) closeMobileMenu();
+});
+// ─────────────────────────────────────────────────────────
+// 2. SUBMENÚS ACORDEÓN (ADMIN)
+// ─────────────────────────────────────────────────────────
+document.querySelectorAll(".submenu-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        const content = btn.nextElementSibling;
+        const isOpening = !content.classList.contains('open');
+        
+        // Cerrar los demás submenús
+        document.querySelectorAll(".submenu-content").forEach(other => {
+            if (other !== content) {
+                other.classList.remove("open");
+                other.previousElementSibling?.classList.remove("active");
+            }
         });
+
+        btn.classList.toggle("active", isOpening);
+        content.classList.toggle("open", isOpening);
     });
+});
 
-    // ─────────────────────────────────────────────────────────
-    // NOTIFICACIONES
-    // ─────────────────────────────────────────────────────────
-    function toggleNotificaciones() {
-        const dropdown = document.getElementById('notif-dropdown');
-        const isVisible = dropdown.style.display === 'block';
-        dropdown.style.display = isVisible ? 'none' : 'block';
-        if (!isVisible) {
-            const list = document.getElementById('notif-list');
-            list.innerHTML = '<div style="padding:15px; text-align:center;">Cargando...</div>';
-            fetch('secciones/notificaciones_obtener.php')
-                .then(res => res.json())
-                .then(data => {
-                    list.innerHTML = '';
-                    if (data.length === 0) {
-                        list.innerHTML = '<div class="notif-item">No tienes notificaciones pendientes</div>';
-                    } else {
-                        data.forEach(n => {
-                            const div = document.createElement('div');
-                            div.className = `notif-item ${n.leida == 0 ? 'unread' : ''}`;
-                            const fecha = new Date(n.fecha_creacion).toLocaleString();
-                            div.innerHTML = `
-                                <div style="margin-bottom:4px;">${n.mensaje}</div>
-                                <small style="color:#888;font-size:11px;">${fecha}</small>
-                            `;
-                            list.appendChild(div);
-                        });
-                        const footer = document.createElement('div');
-                        footer.style = "padding:10px;text-align:center;border-top:1px solid #eee;";
-                        footer.innerHTML = `<a href="panel.php?seccion=notificaciones" style="text-decoration:none;color:#007bff;font-size:12px;">VER TODAS</a>`;
-                        list.appendChild(footer);
-                    }
-                    const badge = document.querySelector('.notification-badge');
-                    if (badge) badge.style.display = 'none';
-                });
-        }
-    }
 
-    // ─────────────────────────────────────────────────────────
-    // ─────────────────────────────────────────────────────────
-    // CHATBOT — Streaming + persistencia sessionStorage
-    // ─────────────────────────────────────────────────────────
-    const chatFab      = document.getElementById('chatFab');
-    const chatModal    = document.getElementById('chatModal');
-    const chatCloseBtn = document.getElementById('chatCloseBtn');
-    const chatInput    = document.getElementById('chatInput');
-    const chatSendBtn  = document.getElementById('chatSendBtn');
-    const chatMessages = document.getElementById('chatMessages');
-    const chatClearBtn = document.getElementById('chatClearBtn');
+// ─────────────────────────────────────────────────────────
+// 3. CHATBOT (STREAMING Y PERSISTENCIA)
+// ─────────────────────────────────────────────────────────
+const chatFab      = document.getElementById('chatFab');
+const chatModal    = document.getElementById('chatModal');
+const chatCloseBtn = document.getElementById('chatCloseBtn');
+const chatInput    = document.getElementById('chatInput');
+const chatSendBtn  = document.getElementById('chatSendBtn');
+const chatMessages = document.getElementById('chatMessages');
+const chatClearBtn = document.getElementById('chatClearBtn');
 
-    const ctxSeccion = <?= json_encode($seccion) ?>;
-    const ctxVista   = <?= json_encode($vista) ?>;
-    const ctxEsAdmin = <?= json_encode((bool)$esAdmin) ?>;
+const ctxSeccion = <?= json_encode($seccion) ?>;
+const ctxVista   = <?= json_encode($vista) ?>;
+const ctxEsAdmin = <?= json_encode((bool)$esAdmin) ?>;
+const STORAGE_KEY = 'chat_historial_<?= $idUsuario ?>';
 
-    const STORAGE_KEY = 'chat_historial_<?= $idUsuario ?>';
-    let historialChat = [];
+let historialChat = [];
 
-    // ── Persistencia: cargar conversación guardada ────────────
-    function cargarHistorial() {
-        try {
-            const guardado = sessionStorage.getItem(STORAGE_KEY);
-            if (!guardado) return;
-            const datos = JSON.parse(guardado);
-            if (!Array.isArray(datos) || datos.length === 0) return;
-            historialChat = datos;
-
-            // Reconstruir visualmente los mensajes guardados
-            chatMessages.innerHTML = '';
-            datos.forEach(turno => {
-                const div = document.createElement('div');
-                div.className = 'chat-bubble ' + (turno.rol === 'usuario' ? 'user' : 'bot');
-                div.textContent = turno.texto;
-                chatMessages.appendChild(div);
-            });
-            scrollAbajo();
-        } catch (e) {
-            sessionStorage.removeItem(STORAGE_KEY);
-        }
-    }
-
-    function guardarHistorial() {
-        try {
-            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(historialChat));
-        } catch (e) { /* quota exceeded — ignorar */ }
-    }
-
-    // ── Abrir/cerrar modal ────────────────────────────────────
-    chatFab.addEventListener('click', () => {
-        chatModal.classList.toggle('open');
-        if (chatModal.classList.contains('open')) chatInput.focus();
-    });
-    chatCloseBtn.addEventListener('click', () => chatModal.classList.remove('open'));
-
-    // ── Limpiar conversación ──────────────────────────────────
-    chatClearBtn.addEventListener('click', () => {
-        historialChat = [];
-        sessionStorage.removeItem(STORAGE_KEY);
-        chatMessages.innerHTML = `
-            <div class="chat-bubble bot">
-                👋 Hola, soy tu asistente. ¿En qué puedo ayudarte?
-            </div>`;
-    });
-
-    // ── Input auto-resize + envío con Enter ───────────────────
-    chatInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensaje(); }
-    });
-    chatSendBtn.addEventListener('click', enviarMensaje);
-    chatInput.addEventListener('input', () => {
-        chatInput.style.height = 'auto';
-        chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
-    });
-
-    // ── Helpers visuales ─────────────────────────────────────
-    function scrollAbajo() {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function crearBurbuja(tipo) {
-        const div = document.createElement('div');
-        div.className = 'chat-bubble ' + tipo;
-        chatMessages.appendChild(div);
+function cargarHistorial() {
+    try {
+        const guardado = sessionStorage.getItem(STORAGE_KEY);
+        if (!guardado) return;
+        historialChat = JSON.parse(guardado);
+        
+        chatMessages.innerHTML = '';
+        historialChat.forEach(turno => {
+            const div = document.createElement('div');
+            div.className = 'chat-bubble ' + (turno.rol === 'usuario' ? 'user' : 'bot');
+            div.textContent = turno.texto;
+            chatMessages.appendChild(div);
+        });
         scrollAbajo();
-        return div;
-    }
+    } catch (e) { sessionStorage.removeItem(STORAGE_KEY); }
+}
 
-    function mostrarCursor(burbuja) {
-        // Cursor parpadeante mientras escribe
-        burbuja.classList.add('streaming');
-    }
+function guardarHistorial() {
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(historialChat)); } catch (e) {}
+}
 
-    function quitarCursor(burbuja) {
-        burbuja.classList.remove('streaming');
-    }
+chatFab.addEventListener('click', () => {
+    chatModal.classList.toggle('open');
+    if (chatModal.classList.contains('open')) chatInput.focus();
+});
 
-    // ── Enviar mensaje con streaming ─────────────────────────
-    async function enviarMensaje() {
-        const texto = chatInput.value.trim();
-        if (!texto || chatSendBtn.disabled) return;
+chatCloseBtn.addEventListener('click', () => chatModal.classList.remove('open'));
 
-        // Burbuja del usuario
-        const burbujaUser = crearBurbuja('user');
-        burbujaUser.textContent = texto;
-        chatInput.value = '';
-        chatInput.style.height = 'auto';
+chatClearBtn.addEventListener('click', () => {
+    historialChat = [];
+    sessionStorage.removeItem(STORAGE_KEY);
+    chatMessages.innerHTML = `<div class="chat-bubble bot">👋 Hola, ¿en qué puedo ayudarte?</div>`;
+});
 
-        historialChat.push({ rol: 'usuario', texto });
-        guardarHistorial();
+chatInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensaje(); }
+});
 
-        chatSendBtn.disabled = true;
-        chatInput.disabled   = true;
+chatSendBtn.addEventListener('click', enviarMensaje);
 
-        // Burbuja del bot — empieza vacía, se llena token a token
-        const burbujaBot = crearBurbuja('bot');
-        burbujaBot.textContent = '';
-        mostrarCursor(burbujaBot);
+function scrollAbajo() { chatMessages.scrollTop = chatMessages.scrollHeight; }
 
-        let textoCompleto = '';
-        let hayError = false;
+async function enviarMensaje() {
+    const texto = chatInput.value.trim();
+    if (!texto || chatSendBtn.disabled) return;
 
-        try {
-            const response = await fetch('secciones/ia/ia_handler.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    mensaje:   texto,
-                    seccion:   ctxSeccion,
-                    vista:     ctxVista,
-                    es_admin:  ctxEsAdmin,
-                    historial: historialChat.slice(-10)
-                })
-            });
+    const burbujaUser = document.createElement('div');
+    burbujaUser.className = 'chat-bubble user';
+    burbujaUser.textContent = texto;
+    chatMessages.appendChild(burbujaUser);
+    
+    chatInput.value = '';
+    historialChat.push({ rol: 'usuario', texto });
+    guardarHistorial();
 
-            if (!response.ok) throw new Error('HTTP ' + response.status);
+    chatSendBtn.disabled = true;
+    const burbujaBot = document.createElement('div');
+    burbujaBot.className = 'chat-bubble bot streaming';
+    chatMessages.appendChild(burbujaBot);
+    scrollAbajo();
 
-            const reader  = response.body.getReader();
-            const decoder = new TextDecoder();
-            let buffer    = '';
+    try {
+        const response = await fetch('secciones/ia/ia_handler.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                mensaje: texto,
+                seccion: ctxSeccion,
+                vista: ctxVista,
+                es_admin: ctxEsAdmin,
+                historial: historialChat.slice(-10)
+            })
+        });
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let respuestaCompleta = '';
 
-                // Acumular chunks parciales (un chunk puede contener varios eventos SSE)
-                buffer += decoder.decode(value, { stream: true });
-
-                // Procesar líneas completas
-                const lineas = buffer.split('\n');
-                buffer = lineas.pop(); // la última línea puede estar incompleta
-
-                for (const linea of lineas) {
-                    if (!linea.startsWith('data: ')) continue;
-                    const payload = linea.slice(6).trim();
-                    if (payload === '[DONE]') continue;
-
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = decoder.decode(value);
+            const lineas = chunk.split('\n');
+            for (const linea of lineas) {
+                if (linea.startsWith('data: ')) {
+                    const data = linea.slice(6);
+                    if (data === '[DONE]') continue;
                     try {
-                        const json = JSON.parse(payload);
-
-                        if (json.error) {
-                            textoCompleto = '⚠️ ' + json.error;
-                            burbujaBot.textContent = textoCompleto;
-                            hayError = true;
-                            break;
-                        }
-
+                        const json = JSON.parse(data);
                         if (json.token) {
-                            textoCompleto += json.token;
-                            burbujaBot.textContent = textoCompleto;
+                            respuestaCompleta += json.token;
+                            burbujaBot.textContent = respuestaCompleta;
                             scrollAbajo();
                         }
-                    } catch { /* JSON parcial — ignorar */ }
+                    } catch (e) {}
                 }
-
-                if (hayError) break;
             }
-
-        } catch (err) {
-            textoCompleto = '⚠️ No se pudo conectar con el asistente.';
-            burbujaBot.textContent = textoCompleto;
-            hayError = true;
-        } finally {
-            quitarCursor(burbujaBot);
-            chatSendBtn.disabled = false;
-            chatInput.disabled   = false;
-            chatInput.focus();
         }
-
-        // Guardar respuesta en historial solo si fue exitosa
-        if (!hayError && textoCompleto) {
-            historialChat.push({ rol: 'asistente', texto: textoCompleto });
-            guardarHistorial();
-        }
+        historialChat.push({ rol: 'asistente', texto: respuestaCompleta });
+        guardarHistorial();
+    } catch (err) {
+        burbujaBot.textContent = '⚠️ Error de conexión.';
+    } finally {
+        burbujaBot.classList.remove('streaming');
+        chatSendBtn.disabled = false;
     }
+}
 
-    // Variable booleana para controlar el estado del menú
-    let isMenuOpen = false;
+// Cargar al inicio
+document.addEventListener('DOMContentLoaded', cargarHistorial);
 
-    const btnHamburguesa = document.getElementById('hamburger-btn');
-    const cuerpoPagina = document.body;
-
-    btnHamburguesa.addEventListener('click', () => {
-        // Alternamos el valor booleano
-        isMenuOpen = !isMenuOpen;
-
-        if (isMenuOpen) {
-            cuerpoPagina.classList.add('menu-open');
-        } else {
-            cuerpoPagina.classList.remove('menu-open');
-        }
-    });
-
-    
-
-
-    // Opcional: Cerrar el menú si se hace click en un enlace del sidebar (móvil)
-    document.querySelectorAll('.sidebar_container a').forEach(enlace => {
-        enlace.addEventListener('click', () => {
-            isMenuOpen = false;
-            cuerpoPagina.classList.remove('menu-open');
-        });
-    });
-
-    // ── Cargar historial al arrancar la página ────────────────
-    cargarHistorial();
-
-    </script>
+</script>
 
     <script src="secciones/tipos_jornada_helper.js"></script>
 </body>
