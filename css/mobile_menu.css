@@ -13,7 +13,8 @@
     flex-direction: column;
     width: 44px;
     height: 44px;
-    background: transparent;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
     border: none;
     cursor: pointer;
     padding: 10px;
@@ -21,7 +22,7 @@
     flex-shrink: 0;
     transition: background 0.2s ease;
     -webkit-tap-highlight-color: transparent;
-    z-index: 9999 !important;
+    z-index: 11000 !important;
     position: relative;
 }
 

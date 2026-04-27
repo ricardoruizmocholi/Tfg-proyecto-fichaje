@@ -1,6 +1,9 @@
 <link rel="stylesheet" href="css/fichaje.css">
 
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // ---------------------------------------------------------------
 // Detectar si hoy tiene jornada partida asignada en HORARIOS
 // ---------------------------------------------------------------
