@@ -11,7 +11,7 @@ if(!isset($_SESSION['usuario']['id'])) {
 }
 
 // ── Validación de IP (lee config de BD, no de config.php) ──
-require_once __DIR__ . '../api/fichaje_ip_helper.php';
+require_once __DIR__ . '/api/fichaje_ip_helper.php';
 if (!fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])) {
     header("Location: ../panel.php?seccion=fichaje&error=ip_restringida");
     exit();
