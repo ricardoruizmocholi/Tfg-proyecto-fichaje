@@ -99,27 +99,34 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
             <p> 2º Tramo : <strong><?= substr($hiT,0,5) ?> – <?= substr($hfT,0,5) ?></strong></p>
         <?php endif; ?>
     </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
-        <div style="background:#f0f4ff;padding:15px;border-radius:5px;">
-            <p><strong>1º Tramo </strong></p>
-            <?php if ($fichajeHoy): ?>
-                <p> Entrada: <strong><?= substr($fichajeHoy['hora_entrada'],0,5) ?? '-' ?></strong></p>
-                <p> Salida: <strong><?= $fichajeHoy['hora_salida'] ? substr($fichajeHoy['hora_salida'],0,5) : '—' ?></strong></p>
-            <?php else: ?>
-                <p style="color:#888;">Sin fichar</p>
-            <?php endif; ?>
+    <div class="contenedor-fichaje">
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+            <div style="background:#f0f4ff;padding:15px;border-radius:5px;">
+                <p><strong>1º Tramo </strong></p>
+                <?php if ($fichajeHoy): ?>
+                    <p> Entrada: <strong><?= substr($fichajeHoy['hora_entrada'],0,5) ?? '-' ?></strong></p>
+                    <p> Salida: <strong><?= $fichajeHoy['hora_salida'] ? substr($fichajeHoy['hora_salida'],0,5) : '—' ?></strong></p>
+                <?php else: ?>
+                    <p style="color:#888;">Sin fichar</p>
+                <?php endif; ?>
+            </div>
+            <div style="background:#fce4ec;padding:15px;border-radius:5px;">
+                <p><strong>2º Tramo </strong></p>
+                <?php if ($fichajeTarde): ?>
+                    <p> Entrada: <strong><?= substr($fichajeTarde['hora_entrada'],0,5) ?? '-' ?></strong></p>
+                    <p> Salida: <strong><?= $fichajeTarde['hora_salida'] ? substr($fichajeTarde['hora_salida'],0,5) : '—' ?></strong></p>
+                <?php else: ?>
+                    <p style="color:#888;">Sin fichar</p>
+                <?php endif; ?>
+            </div>
         </div>
-        <div style="background:#fce4ec;padding:15px;border-radius:5px;">
-            <p><strong>2º Tramo </strong></p>
-            <?php if ($fichajeTarde): ?>
-                <p> Entrada: <strong><?= substr($fichajeTarde['hora_entrada'],0,5) ?? '-' ?></strong></p>
-                <p> Salida: <strong><?= $fichajeTarde['hora_salida'] ? substr($fichajeTarde['hora_salida'],0,5) : '—' ?></strong></p>
-            <?php else: ?>
-                <p style="color:#888;">Sin fichar</p>
-            <?php endif; ?>
+    
+        <div id="weather-widget" style="margin-bottom: 20px;">
+            <div class="weather-loading">Cargando clima local...</div>
         </div>
     </div>
+
 
     <div class="fichaje-panel">
         <?php if ($acceso_permitido): ?>
@@ -154,19 +161,26 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
     <!-- ======================================
          JORNADA NORMAL (código original)
     ======================================= -->
-    <?php if($fichajeHoy): ?>
-        <div style="background:#cacacaa8;padding:15px;border-radius:5px;margin-bottom:20px;">
-            <p><strong>Estado del fichaje de hoy:</strong></p>
-            <p> Entrada: <strong><?= $fichajeHoy['hora_entrada'] ?? '-' ?></strong></p>
-            <p> Pausa: <strong><?= $fichajeHoy['hora_pausa'] ?? '-' ?></strong></p>
-            <p> Reanudación: <strong><?= $fichajeHoy['hora_reanudacion'] ?? '-' ?></strong></p>
-            <p> Salida: <strong><?= $fichajeHoy['hora_salida'] ?? '-' ?></strong></p>
+    <div class="contenedor-fichaje">
+
+        <?php if($fichajeHoy): ?>
+            <div class="contendor_horas" >
+                <p><strong>Estado del fichaje de hoy:</strong></p>
+                <p> Entrada: <strong><?= $fichajeHoy['hora_entrada'] ?? '-' ?></strong></p>
+                <p> Pausa: <strong><?= $fichajeHoy['hora_pausa'] ?? '-' ?></strong></p>
+                <p> Reanudación: <strong><?= $fichajeHoy['hora_reanudacion'] ?? '-' ?></strong></p>
+                <p> Salida: <strong><?= $fichajeHoy['hora_salida'] ?? '-' ?></strong></p>
+            </div>
+        <?php else: ?>
+            <div class="contendor_sin_horas">
+                <p>⚠️ No has fichado hoy todavía.</p>
+            </div>
+        <?php endif; ?>
+    
+        <div id="weather-widget" style="margin-bottom: 20px;">
+            <div class="weather-loading">Cargando clima local...</div>
         </div>
-    <?php else: ?>
-        <div style="background:#fff3cd;padding:15px;border-radius:5px;margin-bottom:20px;">
-            <p>⚠️ No has fichado hoy todavía.</p>
-        </div>
-    <?php endif; ?>
+    </div>
 
     <div class="fichaje-panel">
         <?php if ($acceso_permitido): ?>
@@ -237,3 +251,69 @@ if(count($historial) > 0):
 <?php else: ?>
     <p>No hay fichajes registrados.</p>
 <?php endif; ?>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const apiKey = '69d2e88e83a50d651ac646d55dc998bb';
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=es`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const temp = Math.round(data.main.temp);
+                        const desc = data.weather[0].description;
+                        const icon = data.weather[0].icon;
+                        const city = data.name;
+                        const code = data.weather[0].id; // Código de condición
+                        const wind = data.wind.speed * 3.6; // Convertir m/s a km/h
+
+                        // --- LÓGICA DE ALERTA ROJA ---
+                        // Códigos 781 (Tornado) o vientos > 70km/h o tormentas extremas
+                        let alertaRoja = false;
+                        if (code === 781 || wind > 70 || desc.includes("extremo") || desc.includes("tornado")) {
+                            alertaRoja = true;
+                        }
+
+                        let dangerHtml = '';
+                        if (alertaRoja) {
+                            dangerHtml = `
+                                <div class="danger-msg">
+                                    ⚠️ PELIGRO METEOROLÓGICO: Fichaje deshabilitado por seguridad.
+                                </div>
+                            `;
+                            // Deshabilitar todos los botones de fichaje
+                            document.querySelectorAll('.btn-fichaje, button[type="submit"]').forEach(btn => {
+                                btn.classList.add('btn-disabled');
+                                btn.disabled = true;
+                            });
+                        }
+
+                        document.getElementById('weather-widget').innerHTML = `
+                            <div class="weather-card ${alertaRoja ? 'danger' : ''}">
+                                <div style="width: 100%;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div class="weather-info">
+                                            <span class="weather-city">${city} ${alertaRoja ? '🚨' : ''}</span>
+                                            <span class="weather-desc">${desc}</span>
+                                            <span class="weather-temp">${temp}°C</span>
+                                        </div>
+                                        <div class="weather-icon-container">
+                                            <img src="https://openweathermap.org/img/wn/${icon}@2x.png">
+                                        </div>
+                                    </div>
+                                    ${dangerHtml}
+                                </div>
+                            </div>
+                        `;
+                    });
+            });
+        }
+    });
+
+</script>

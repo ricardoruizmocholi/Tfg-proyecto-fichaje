@@ -81,3 +81,114 @@
 .fichajes-table tbody tr:hover {
     background-color: #f8f9ff;
 }
+#weather-widget{
+    width: 50%;
+}
+.weather-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+    color: white;
+    height: 88%;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    animation: fadeIn 0.8s ease-in;
+}
+
+.weather-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.weather-city {
+    font-size: 0.9em;
+    font-weight: bold;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.weather-temp {
+    font-size: 2.2em;
+    font-weight: 800;
+    margin: 5px 0;
+}
+
+.weather-desc {
+    text-transform: capitalize;
+    font-size: 1em;
+}
+
+.weather-icon-container img {
+    width: 80px;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+}
+
+.weather-loading {
+    padding: 15px;
+    background: #f0f0f0;
+    border-radius: 12px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tarjeta de Alerta Roja */
+.weather-card.danger {
+    background: linear-gradient(135deg, #ed213a, #93291e) !important;
+    border: 2px solid #ff0000;
+    animation: pulse-danger 2s infinite;
+}
+
+.danger-msg {
+    background-color: #fff;
+    color: #ff0000;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #ff0000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+@keyframes pulse-danger {
+    0% { box-shadow: 0 0 0 0 rgba(237, 33, 58, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(237, 33, 58, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(237, 33, 58, 0); }
+}
+
+/* Estado deshabilitado para botones */
+.btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    filter: grayscale(1);
+}
+.contenedor-fichaje{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+.contendor_horas{
+    background:#cacacaa8;
+    padding:15px;
+    margin-bottom:20px;
+    width: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 12px;
+}
+.contendor_sin_horas{
+    background:#fff3cd;padding:15px;margin-bottom:20px; width: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 12px;
+}
