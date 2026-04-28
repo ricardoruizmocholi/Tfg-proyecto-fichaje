@@ -218,10 +218,19 @@ function crearCeldaDia(dia, mes, anio, otroMes) {
 
     eventosDelDia.forEach((evento) => {
         // Si está rechazado no lo mostramos
+        
         if (evento.estado === 'RECHAZADO') return;
 
         const scheduleBlock = document.createElement('div');
         
+       
+    
+        // Si viene de nuestra nueva tabla de festivos globales
+        if (evento.estado === 'FESTIVO_GLOBAL') {
+            scheduleBlock.className = 'schedule-block schedule-festivo-global';
+            scheduleBlock.title = 'Festivo Oficial';
+        }
+
         // Clase de estado
         let claseEstado = '';
         if (evento.estado === 'PENDIENTE')      claseEstado = 'status-pendiente';

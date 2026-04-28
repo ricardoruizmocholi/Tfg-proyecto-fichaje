@@ -1,4 +1,5 @@
 <?php
+// obtener_horarios.php
 session_start();
 header('Content-Type: application/json');
 
@@ -35,50 +36,57 @@ try {
     // ============================================
     // 2. OBTENER HORARIOS APROBADOS (BD)
     // ============================================
-    $sqlHorarios = "SELECT fecha, orden_dia, tipo_jornada, hora_inicio, hora_fin, 
-                           horas_totales, observaciones, 'APROBADO' as estado 
+    $sqlHorarios = "SELECT fecha, orden_dia, tipo_jornada, hora_inicio, hora_fin, horas_totales, estado, observaciones 
                     FROM HORARIOS 
-                    WHERE id_usuario = :id_u AND id_empresa = :id_e 
-                    AND fecha BETWEEN :p1 AND :u1";
+                    WHERE id_usuario = ? AND id_empresa = ? AND fecha BETWEEN ? AND ?
+                    ORDER BY fecha ASC, orden_dia ASC";
     
     $stmt = $pdo->prepare($sqlHorarios);
-    $stmt->execute(['id_u' => $idUsuario, 'id_e' => $idEmpresa, 'p1' => $primerDia, 'u1' => $ultimoDia]);
+    $stmt->execute([$idUsuario, $idEmpresa, $primerDia, $ultimoDia]);
+    $horarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($horarios as $h) {
+        $calendario[$h['fecha']][] = [
+            'fecha'         => $h['fecha'],
+            'orden_dia'     => (int)$h['orden_dia'],
+            'tipo_jornada'  => $h['tipo_jornada'],
+            'hora_inicio'   => $h['hora_inicio'],
+            'hora_fin'      => $h['hora_fin'],
+            'horas_totales' => $h['horas_totales'],
+            'observaciones' => $h['observaciones'] ?? '',
+            'estado'        => $h['estado'],
+            'editable'      => false
+        ];
+    }
+
+    // 2. OBTENER FESTIVOS DE LA EMPRESA (De la tabla festivos_empresa)
+    $sqlFestivos = "SELECT fecha, nombre_festivo 
+                    FROM festivos_empresa 
+                    WHERE id_empresa = ? AND MONTH(fecha) = ? AND YEAR(fecha) = ?";
     
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $row['editable'] = false;
-        $calendario[$row['fecha']][] = $row;
+    $stmtF = $pdo->prepare($sqlFestivos);
+    $stmtF->execute([$idEmpresa, $mes, $anio]);
+    $festivos = $stmtF->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($festivos as $f) {
+        // Añadimos el festivo al array del día correspondiente
+        $calendario[$f['fecha']][] = [
+            'tipo_jornada'  => $f['nombre_festivo'],
+            'estado'        => 'FESTIVO_GLOBAL', // Etiqueta clave para el CSS
+            'hora_inicio'   => null,
+            'hora_fin'      => null,
+            'horas_totales' => null,
+            'editable'      => false
+        ];
     }
 
     // ============================================
-    // 3. OBTENER SOLICITUDES (PENDIENTES/RECHAZADAS)
-    // ============================================
-    $sqlSolicitudes = "SELECT D.fecha, D.orden_dia, D.tipo_jornada, D.hora_inicio, 
-                              D.hora_fin, D.horas_totales, 
-                              COALESCE(D.observaciones, S.observaciones) as observaciones,
-                              S.estado, S.motivo_rechazo, S.id_solicitud
-                       FROM SOLICITUDES_HORARIO S
-                       JOIN DETALLE_SOLICITUD_HORARIO D ON S.id_solicitud = D.id_solicitud
-                       WHERE S.id_usuario = :id_u AND S.id_empresa = :id_e
-                       AND S.estado IN ('PENDIENTE', 'RECHAZADO')
-                       AND D.fecha BETWEEN :p1 AND :u1";
-    
-    $stmt = $pdo->prepare($sqlSolicitudes);
-    $stmt->execute(['id_u' => $idUsuario, 'id_e' => $idEmpresa, 'p1' => $primerDia, 'u1' => $ultimoDia]);
-    
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $row['editable'] = ($row['estado'] === 'RECHAZADO');
-        $calendario[$row['fecha']][] = $row;
-    }
-
-    // ============================================
-    // 4. OBTENER TEMPORALES (SESIÓN)
+    // 4. OBTENER HORARIOS TEMPORALES (SESIÓN)
     // ============================================
     $totalTemporalesGlobal = 0;
-    if (isset($_SESSION['horarios_temporales']) && is_array($_SESSION['horarios_temporales'])) {
-        $totalTemporalesGlobal = count($_SESSION['horarios_temporales']);
-        
+    if (isset($_SESSION['horarios_temporales']) && !empty($_SESSION['horarios_temporales'])) {
         foreach ($_SESSION['horarios_temporales'] as $temp) {
-            // Solo procesar si está en el rango del mes visible
+            $totalTemporalesGlobal++;
             if ($temp['fecha'] >= $primerDia && $temp['fecha'] <= $ultimoDia) {
                 $calendario[$temp['fecha']][] = [
                     'fecha'         => $temp['fecha'],
@@ -114,9 +122,8 @@ try {
     ]);
 
 } catch (Exception $e) {
-    error_log("Error en obtener_horarios.php: " . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => 'Error en el servidor al cargar datos'
+        'message' => 'Error al obtener horarios: ' . $e->getMessage()
     ]);
 }

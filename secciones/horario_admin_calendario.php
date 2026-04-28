@@ -59,6 +59,42 @@ $idEmpleadoSel = $_GET['empleado'] ?? ($empleados[0]['id_usuario'] ?? null);
         <div class="toolbar-right">
             <button class="btn-toolbar btn-success" onclick="abrirModalMasivoAdmin()"> Añadir en bloque</button>
         </div>
+        <div class="hac-selector" style="margin-top: 10px; background: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+    <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+        <div>
+            <label style="display:block; font-size: 12px; font-weight: bold;">Comunidad Autónoma:</label>
+            <select id="cfg_region" class="form-control" style="width: 200px;">
+                <option value="ES-AN">Andalucía</option>
+                <option value="ES-AR">Aragón</option>
+                <option value="ES-AS">Asturias</option>
+                <option value="ES-CB">Cantabria</option>
+                <option value="ES-CE">Ceuta</option>
+                <option value="ES-CL">Castilla y León</option>
+                <option value="ES-CM">Castilla-La Mancha</option>
+                <option value="ES-CN">Canarias</option>
+                <option value="ES-CT">Cataluña</option>
+                <option value="ES-EX">Extremadura</option>
+                <option value="ES-GA">Galicia</option>
+                <option value="ES-IB">Islas Baleares</option>
+                <option value="ES-MC">Murcia</option>
+                <option value="ES-MD">Madrid</option>
+                <option value="ES-ML">Melilla</option>
+                <option value="ES-NC">Navarra</option>
+                <option value="ES-PV">País Vasco</option>
+                <option value="ES-RI">La Rioja</option>
+                <option value="ES-VC" selected>C. Valenciana</option>
+            </select>
+        </div>
+        <div>
+            <label style="display:block; font-size: 12px; font-weight: bold;">Municipio / Ciudad:</label>
+            <input type="text" id="cfg_ciudad" class="form-control" value="Valencia" placeholder="Ej: Valencia">
+        </div>
+        <button class="btn-toolbar btn-primary" onclick="sincronizarFestivosAPI()" style="height: 38px;">
+            🔄 Sincronizar Festivos
+        </button>
+    </div>
+    <small style="color: #666; margin-top: 5px; display: block;">Esto importará los festivos nacionales, regionales y locales de la API.</small>
+</div>
     </div>
 
     <div class="legend">
@@ -238,7 +274,49 @@ async function cargarCalAdmin() {
         mostrarLoadingAdmin(false);
     }
 }
+//____ Sincronizar con la API de festivos_____________
 
+async function sincronizarFestivosAPI() {
+    const reg = document.getElementById('cfg_region').value;
+    const ciu = document.getElementById('cfg_ciudad').value;
+    
+    if(!ciu) return alert("Por favor, escribe el nombre de la ciudad");
+    if(!confirm(`¿Sincronizar festivos para ${ciu} (${reg})?`)) return;
+
+    mostrarLoadingAdmin(true);
+    try {
+        // 1. Verificamos que la ruta al archivo existe
+        const response = await fetch('secciones/api/sincronizar_festivos.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ region: reg, ciudad: ciu })
+        });
+
+        // 2. Si el servidor responde pero con error (404, 500, etc)
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error del servidor:", errorText);
+            throw new Error(`Servidor respondió con código ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if(data.success) {
+            alert("✅ " + data.mensaje);
+            location.reload(); 
+        } else {
+            // Si la API de Festivo falló, nos dará el detalle aquí
+            alert("❌ Error: " + (data.message || "Error desconocido"));
+            console.log("Debug data:", data.debug);
+        }
+    } catch(e) { 
+        // 3. Error de red real (ruta mal escrita o servidor caído)
+        console.error("Error de red:", e);
+        alert('❌ Fallo crítico: ' + e.message + '\nRevisa la consola (F12) para más detalles.'); 
+    } finally { 
+        mostrarLoadingAdmin(false); 
+    }
+}
 // ── Generar calendario ────────────────────────────────────────
 function generarCalAdmin() {
     const container = document.getElementById('calendarMonthAdmin');
