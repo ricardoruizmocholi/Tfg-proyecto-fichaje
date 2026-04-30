@@ -1,7 +1,11 @@
 <?php
-// secciones/api/guardar_ausencia.php
-// Crea una solicitud de ausencia (VACACIONES, MEDICO, LIBRE, FESTIVO)
-// directamente desde el calendario del empleado, sin pasar por temporales.
+/*
+ * guardar_ausencia.php — Endpoint POST de la API de Horario
+ * Crea una solicitud de ausencia (VACACIONES, MEDICO, LIBRE, FESTIVO) directamente
+ * desde el botón "Solicitar ausencia" del calendario empleado, sin pasar por horarios temporales.
+ * Genera una notificación al admin. Acceso: empleado y admin.
+ * Devuelve JSON {success, message}.
+ */
 session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

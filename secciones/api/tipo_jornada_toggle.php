@@ -1,5 +1,9 @@
 <?php
-// secciones/api/tipo_jornada_toggle.php
+/*
+ * tipo_jornada_toggle.php — Endpoint POST de la API de Tipos de Jornada
+ * Activa o desactiva una plantilla de jornada custom (campo `activo`).
+ * Acceso: solo admin. Devuelve JSON {success, message, nuevo_estado}.
+ */
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

@@ -1,4 +1,10 @@
 <?php
+/*
+ * config.php — Conexión global a la base de datos
+ * Crea el objeto PDO ($pdo) para MySQL con la base de datos sistema_fichajes.
+ * Incluido por panel.php y por todos los endpoints que acceden a la BD.
+ * Si la conexión falla en una petición AJAX devuelve JSON de error; en páginas normales hace die().
+ */
 $host = "localhost";
 $user = "root";
 $pass = "";

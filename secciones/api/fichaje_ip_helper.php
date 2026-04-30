@@ -1,11 +1,12 @@
 <?php
-// secciones/api/fichaje_ip_helper.php
-// ─────────────────────────────────────────────────────────────
-// Función única de verificación. Úsala así en cualquier PHP:
-//
-//   require_once __DIR__ . '/api/fichaje_ip_helper.php';
-//   $permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa']);
-// ─────────────────────────────────────────────────────────────
+/*
+ * fichaje_ip_helper.php — Utilidad de verificación de IP para fichaje
+ * Define la función fichaje_ip_permitida($pdo, $idEmpresa).
+ * Comprueba si la IP del cliente está en la lista blanca de EMPRESA_IPS_AUTORIZADAS.
+ * Admite IPs exactas y prefijos de subred (ej. "192.168.1."). Localhost siempre permitido.
+ * Uso: require_once __DIR__ . '/../api/fichaje_ip_helper.php';
+ *      $ok = fichaje_ip_permitida($pdo, $idEmpresa);
+ */
 
 /**
  * Comprueba si la IP actual tiene permiso para fichar en la empresa.

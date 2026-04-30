@@ -1,5 +1,10 @@
 <?php
-// secciones/api/ticket_crear.php
+/*
+ * ticket_crear.php — Endpoint POST de la API de Tickets
+ * Crea un nuevo ticket de soporte en la tabla INCIDENCIAS.
+ * Acceso: empleado y admin. Campos: asunto, descripcion, categoria, prioridad.
+ * Devuelve JSON {success, message, id_incidencia}.
+ */
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

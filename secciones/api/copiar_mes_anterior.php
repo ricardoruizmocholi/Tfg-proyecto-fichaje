@@ -1,4 +1,9 @@
 <?php
+/*
+ * copiar_mes_anterior.php — Endpoint POST de la API de Horario
+ * Copia los horarios temporales del mes anterior al mes actual del empleado.
+ * Acceso: empleado y admin. Devuelve JSON {success, message, copiados}.
+ */
 session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

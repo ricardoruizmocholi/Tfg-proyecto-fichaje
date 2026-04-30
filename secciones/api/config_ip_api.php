@@ -1,7 +1,13 @@
 <?php
-// secciones/api/config_ip_api.php
-// Maneja 3 acciones via POST JSON: toggle, add_ip, delete_ip
-// ─────────────────────────────────────────────────────────────
+/*
+ * config_ip_api.php — Endpoint POST del módulo Config
+ * Gestiona la configuración de restricción de fichaje por IP.
+ * Acceso: solo admin. Acepta POST JSON con campo `accion`:
+ *   "toggle"    → activa/desactiva la restricción global de IP para la empresa.
+ *   "add_ip"    → añade una IP o prefijo de subred a EMPRESA_IPS_AUTORIZADAS.
+ *   "delete_ip" → elimina una IP de la lista blanca.
+ * Devuelve JSON {success, message}.
+ */
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');

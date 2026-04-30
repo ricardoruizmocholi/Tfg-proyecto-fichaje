@@ -1,4 +1,10 @@
 <?php
+/*
+ * obtener_detalle_solicitud.php — Endpoint GET de la API de Horario
+ * Devuelve JSON con el detalle completo de una solicitud de horario por ?id_solicitud=X.
+ * Incluye los días del detalle (DETALLE_SOLICITUD_HORARIO) y estadísticas (total días/horas).
+ * Acceso: solo admin. Usado por el modal de detalle en horario_admin.js.
+ */
 session_start();
 header('Content-Type: application/json');
 

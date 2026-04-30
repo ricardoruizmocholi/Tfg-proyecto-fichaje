@@ -1,6 +1,10 @@
 <link rel="stylesheet" href="css/fichaje.css">
 
 <?php
+$usuario   = $_SESSION['usuario'];
+$empresa   = $_SESSION['empresa_activa'];
+$idUsuario = $_SESSION['usuario']['id'];
+$esAdmin   = $_SESSION['es_admin'] ?? 0;
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);

@@ -1,4 +1,10 @@
 <?php
+/*
+ * eliminar_horario_temporal.php — Endpoint POST de la API de Horario
+ * Elimina un horario temporal (no aprobado) del calendario del empleado.
+ * Acepta fecha o ID en el body JSON. Solo borra registros del empleado en sesión.
+ * Acceso: empleado y admin. Devuelve JSON {success, message}.
+ */
 session_start();
 header('Content-Type: application/json');
 

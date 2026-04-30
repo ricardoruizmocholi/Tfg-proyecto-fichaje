@@ -1,5 +1,11 @@
 <?php
-// secciones/api/enviar_solicitud.php
+/*
+ * enviar_solicitud.php — Endpoint POST de la API de Horario
+ * Convierte los horarios temporales del empleado en una solicitud formal de validación.
+ * Crea un registro en SOLICITUDES_HORARIO y sus detalles en DETALLE_SOLICITUD_HORARIO.
+ * Genera una notificación al admin. Acceso: empleado y admin.
+ * Devuelve JSON {success, message, id_solicitud}.
+ */
 session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

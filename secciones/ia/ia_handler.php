@@ -1,8 +1,12 @@
 <?php
-// ─────────────────────────────────────────────────────────────
-// secciones/ia/ia_handler.php — Streaming SSE
-// Envía tokens al cliente conforme los genera Ollama
-// ─────────────────────────────────────────────────────────────
+/*
+ * ia_handler.php — Endpoint SSE del módulo IA
+ * Recibe el mensaje del usuario (POST JSON) e historial de conversación.
+ * Construye el contexto del sistema (sección activa, rol admin/empleado)
+ * y hace streaming de la respuesta token a token desde Ollama (LLM local).
+ * Protocolo: Server-Sent Events → formato "data: {\"token\":\"...\"}\n\n".
+ * Acceso: empleado y admin. LLM configurado en 192.168.0.19:11434.
+ */
 
 set_time_limit(600);
 

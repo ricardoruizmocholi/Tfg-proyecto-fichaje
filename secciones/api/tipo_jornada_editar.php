@@ -1,5 +1,10 @@
 <?php
-// secciones/api/tipo_jornada_editar.php
+/*
+ * tipo_jornada_editar.php — Endpoint POST de la API de Tipos de Jornada
+ * Actualiza nombre_display, color_hex o es_productivo de una plantilla custom.
+ * Acceso: solo admin. Valida que la plantilla pertenezca a la empresa activa.
+ * Devuelve JSON {success, message}.
+ */
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

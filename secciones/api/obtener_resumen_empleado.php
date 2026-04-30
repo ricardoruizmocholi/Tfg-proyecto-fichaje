@@ -1,6 +1,11 @@
 <?php
-// secciones/api/obtener_resumen_empleado.php
-// Devuelve vacaciones restantes + horas extra mes/año para el empleado (o cualquiera si es admin)
+/*
+ * obtener_resumen_empleado.php — Endpoint GET de la API de Empleados
+ * Devuelve JSON con el resumen de actividad del empleado: vacaciones restantes,
+ * días trabajados, horas extra del mes y del año.
+ * Acceso: empleado y admin (el admin puede consultar cualquier empleado con ?id_usuario=X).
+ * Usado por perfil.php para mostrar las estadísticas del perfil.
+ */
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');

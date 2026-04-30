@@ -1,5 +1,10 @@
 <?php
-// secciones/api/tipo_jornada_eliminar.php
+/*
+ * tipo_jornada_eliminar.php — Endpoint POST de la API de Tipos de Jornada
+ * Elimina una plantilla de jornada custom de TIPOS_JORNADA_CUSTOM.
+ * Acceso: solo admin. Valida pertenencia a la empresa antes de borrar.
+ * Devuelve JSON {success, message}.
+ */
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

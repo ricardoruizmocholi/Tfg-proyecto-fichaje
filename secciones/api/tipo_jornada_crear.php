@@ -1,5 +1,10 @@
 <?php
-// secciones/api/tipo_jornada_crear.php
+/*
+ * tipo_jornada_crear.php — Endpoint POST de la API de Tipos de Jornada
+ * Crea una nueva plantilla de jornada custom en TIPOS_JORNADA_CUSTOM.
+ * Acceso: solo admin. Campos: nombre_display, color_hex, es_productivo.
+ * Devuelve JSON {success, message, id_tipo}.
+ */
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

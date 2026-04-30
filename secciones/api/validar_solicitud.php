@@ -1,4 +1,10 @@
 <?php
+/*
+ * validar_solicitud.php — Endpoint POST de la API de Horario
+ * Aprueba o rechaza una solicitud de horario. Si se aprueba, inserta los registros
+ * correspondientes en la tabla HORARIOS. Registra la acción en HISTORIAL_VALIDACIONES.
+ * Acceso: solo admin. Devuelve JSON {success, message}.
+ */
 session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

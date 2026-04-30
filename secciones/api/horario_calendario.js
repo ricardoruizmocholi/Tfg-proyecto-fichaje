@@ -1,3 +1,16 @@
+/**
+ * horario_calendario.js — Calendario interactivo de horarios para el empleado
+ * Cargado por horario_empleado.php (script src). Empleado y admin (vista empleado).
+ * Renderiza un calendario mensual editable donde el empleado puede asignar tipo de jornada
+ * y horas por día. Se comunica con:
+ *   - api/obtener_horarios.php        (cargar horarios del mes)
+ *   - api/guardar_horario_dia.php     (guardar un día)
+ *   - api/eliminar_horario_temporal.php (borrar un día temporal)
+ *   - api/enviar_solicitud.php        (enviar mes a validar)
+ *   - horario/horario_guardar_masivo.php (guardar varios días a la vez)
+ *   - api/copiar_mes_anterior.php     (copiar mes anterior)
+ *   - api/guardar_ausencia.php        (solicitar ausencia)
+ */
 // ============================================
 // VARIABLES GLOBALES
 // ============================================
@@ -482,7 +495,7 @@ async function guardarMasivo() {
     mostrarLoading(true);
     
     try {
-        const response = await fetch('secciones/horario_guardar_masivo.php', {
+        const response = await fetch('secciones/horario/horario_guardar_masivo.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({

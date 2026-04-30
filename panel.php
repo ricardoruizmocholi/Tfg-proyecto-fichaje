@@ -1,4 +1,11 @@
-<?php 
+<?php
+/*
+ * panel.php — Punto de entrada principal de la aplicación
+ * Gestiona la sesión, carga el CSS de empresa, renderiza el layout (header + sidebar + main)
+ * y actúa como router: incluye la sección correcta de secciones/ según los parámetros
+ * GET ?seccion= y ?vista=. También aloja el chatbot IA flotante (SSE via ia_handler.php).
+ * Rutas protegidas: redirige a login.php si no hay sesión activa.
+ */
 
 session_start();
 require_once 'config.php';
@@ -178,41 +185,41 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
         <?php
         if ($esAdmin) {
             if ($seccion === "fichaje") {
-                if ($vista === "ver")        include "secciones/fichaje_ver.php";
-                if ($vista === "config_ip")  include "secciones/config_ip.php";
-                if ($vista === "modificar")  include "secciones/fichaje_modificar.php";
-                if ($vista === "inicio")     include "secciones/fichaje.php";
+                if ($vista === "ver")        include "secciones/fichaje/fichaje_ver.php";
+                if ($vista === "config_ip")  include "secciones/config/config_ip.php";
+                if ($vista === "modificar")  include "secciones/fichaje/fichaje_modificar.php";
+                if ($vista === "inicio")     include "secciones/fichaje/fichaje.php";
             }
             if ($seccion === "horario") {
-                if ($vista === "peticiones") include "secciones/horario.php";
-                if ($vista === "cuadrantes") include "secciones/horario_cuadrantes.php";
-                if ($vista === "vacaciones") include "secciones/vacaciones_cuadrante.php";
-                if ($vista === "plantillas") include "secciones/tipos_jornada_admin.php";
-                if ($vista === "calendario") include "secciones/horario_admin_calendario.php";
-                if (!$vista)                 include "secciones/horario.php";
+                if ($vista === "peticiones") include "secciones/horario/horario.php";
+                if ($vista === "cuadrantes") include "secciones/horario/horario_cuadrantes.php";
+                if ($vista === "vacaciones") include "secciones/vacaciones/vacaciones_cuadrante.php";
+                if ($vista === "plantillas") include "secciones/tipos-jornada/tipos_jornada_admin.php";
+                if ($vista === "calendario") include "secciones/horario/horario_admin_calendario.php";
+                if (!$vista)                 include "secciones/horario/horario.php";
             }
             if ($seccion === "reportes") {
-                if ($vista === "generar")    include "secciones/reportes.php";
-                if ($vista === "historial")  include "secciones/reportes_historial.php";
-                if (!$vista)                 include "secciones/reportes.php";
+                if ($vista === "generar")    include "secciones/reportes/reportes.php";
+                if ($vista === "historial")  include "secciones/reportes/reportes_historial.php";
+                if (!$vista)                 include "secciones/reportes/reportes.php";
             }
             if ($seccion === "empleados") {
-                if ($vista === "lista")    include "secciones/empleados_lista.php";
-                if ($vista === "nuevo")    include "secciones/empleados_nuevo.php";
-                if ($vista === "nominas")  include "secciones/nominas_admin.php";
-                if ($vista === "tickets")  include "secciones/tickets_admin.php";
+                if ($vista === "lista")    include "secciones/empleados/empleados_lista.php";
+                if ($vista === "nuevo")    include "secciones/empleados/empleados_nuevo.php";
+                if ($vista === "nominas")  include "secciones/nominas/nominas_admin.php";
+                if ($vista === "tickets")  include "secciones/tickets/tickets_admin.php";
             }
         }
 
         if (!$esAdmin) {
-            if ($seccion === "fichaje") include "secciones/fichaje.php";
-            if ($seccion === "horario") include "secciones/horario.php";
+            if ($seccion === "fichaje") include "secciones/fichaje/fichaje.php";
+            if ($seccion === "horario") include "secciones/horario/horario.php";
         }
 
-        if ($seccion === "documentos")     include "secciones/mis_nominas.php";
-        if ($seccion === "perfil")         include "secciones/perfil.php";
-        if ($seccion === "notificaciones") include "secciones/notificaciones.php";
-        if ($seccion === "tickets")        include "secciones/tickets.php";
+        if ($seccion === "documentos")     include "secciones/nominas/mis_nominas.php";
+        if ($seccion === "perfil")         include "secciones/perfil/perfil.php";
+        if ($seccion === "notificaciones") include "secciones/notificaciones/notificaciones.php";
+        if ($seccion === "tickets")        include "secciones/tickets/tickets.php";
         ?>
     </main>
 
@@ -446,6 +453,6 @@ document.addEventListener('DOMContentLoaded', cargarHistorial);
 
 </script>
 
-    <script src="secciones/tipos_jornada_helper.js"></script>
+    <script src="secciones/tipos-jornada/tipos_jornada_helper.js"></script>
 </body>
 </html>

@@ -1,5 +1,10 @@
 <?php
-// secciones/api/ticket_estado.php
+/*
+ * ticket_estado.php — Endpoint POST de la API de Tickets
+ * Cambia el estado de un ticket (abierto, en_progreso, cerrado).
+ * Acceso: solo admin. Valida que el ticket pertenezca a la empresa activa.
+ * Devuelve JSON {success, message}.
+ */
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

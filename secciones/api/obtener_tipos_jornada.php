@@ -1,7 +1,11 @@
 <?php
-// secciones/api/obtener_tipos_jornada.php
-// Devuelve la lista completa de tipos para rellenar <select>
-// Primero los tipos ENUM genéricos (siempre presentes) y después los custom activos de la empresa.
+/*
+ * obtener_tipos_jornada.php — Endpoint GET de la API de Tipos de Jornada
+ * Devuelve JSON con todos los tipos de jornada disponibles para rellenar selectores.
+ * Combina los tipos ENUM genéricos (TRABAJO, VACACIONES, etc.) con los tipos
+ * custom activos de la empresa (TIPOS_JORNADA_CUSTOM).
+ * Acceso: empleado y admin. Usado por tipos_jornada_helper.js globalmente.
+ */
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');

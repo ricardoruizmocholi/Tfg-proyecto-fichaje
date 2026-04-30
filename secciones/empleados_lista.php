@@ -1,6 +1,9 @@
 <?php
 // Lista de empleados de la empresa
 
+$empresa   = $_SESSION['empresa_activa'];
+
+
 $sqlEmpleados = "SELECT 
     U.id_usuario, U.nombre, U.apellidos, U.NIF, U.Numero_Afiliciacion,
     U.email, U.foto_perfil, U.activo as usuario_activo, U.created_at,

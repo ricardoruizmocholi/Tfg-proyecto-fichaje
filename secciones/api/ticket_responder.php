@@ -1,5 +1,10 @@
 <?php
-// secciones/api/ticket_responder.php
+/*
+ * ticket_responder.php — Endpoint POST de la API de Tickets
+ * Añade un mensaje de respuesta a un ticket existente en MENSAJES_TICKET.
+ * Acceso: empleado y admin. Valida que el ticket pertenezca a la empresa activa.
+ * Devuelve JSON {success, message}.
+ */
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

@@ -1,7 +1,10 @@
 <?php
-// secciones/api/obtener_horarios_admin.php
-// Igual que obtener_horarios.php pero acepta ?id_usuario=X para que el admin
-// pueda ver el calendario de cualquier empleado. Solo admins.
+/*
+ * obtener_horarios_admin.php — Endpoint GET de la API de Horario
+ * Versión admin de obtener_horarios.php. Acepta ?id_usuario=X&mes=M&anio=Y.
+ * Permite al admin consultar el calendario de cualquier empleado de la empresa.
+ * Acceso: solo admin. Usado por horario_admin_calendario.php.
+ */
 session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

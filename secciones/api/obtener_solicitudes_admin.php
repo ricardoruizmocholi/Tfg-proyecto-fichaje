@@ -1,4 +1,11 @@
 <?php
+/*
+ * obtener_solicitudes_admin.php — Endpoint GET de la API de Horario
+ * Devuelve JSON con las solicitudes de horario de la empresa, filtrables por
+ * ?estado=, ?tipo= y ?empleado=. Incluye estadísticas (pendientes/aprobadas/rechazadas)
+ * y la lista de empleados para rellenar el filtro de la vista admin.
+ * Acceso: solo admin. Usado por horario_admin.js.
+ */
 session_start();
 header('Content-Type: application/json');
 

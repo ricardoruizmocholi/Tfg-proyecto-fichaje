@@ -1,5 +1,10 @@
 <?php
-// secciones/api/actualizar_contrato.php
+/*
+ * actualizar_contrato.php — Endpoint POST de la API de Empleados
+ * Actualiza los datos de contrato de un empleado (tipo contrato, horas semanales, etc.).
+ * Acceso: solo admin. Valida que el empleado pertenezca a la empresa activa.
+ * Devuelve JSON {success, message}.
+ */
 if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';

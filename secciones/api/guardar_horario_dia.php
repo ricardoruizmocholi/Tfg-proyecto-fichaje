@@ -1,4 +1,10 @@
 <?php
+/*
+ * guardar_horario_dia.php — Endpoint POST de la API de Horario
+ * Guarda o actualiza el horario de un día individual desde el calendario del empleado.
+ * Los horarios guardados aquí son temporales (estado pendiente) hasta que se envíen a validar.
+ * Acceso: empleado y admin. Devuelve JSON {success, message}.
+ */
 session_start();
 header('Content-Type: application/json');
 

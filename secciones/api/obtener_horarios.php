@@ -1,4 +1,10 @@
 <?php
+/*
+ * obtener_horarios.php — Endpoint GET de la API de Horario
+ * Devuelve JSON con los horarios del empleado en sesión para un mes/año (?mes=X&anio=Y).
+ * Incluye tanto los registros aprobados (HORARIOS) como los temporales pendientes.
+ * Acceso: empleado y admin. Usado por horario_calendario.js.
+ */
 session_start();
 header('Content-Type: application/json');
 
