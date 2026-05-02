@@ -264,9 +264,75 @@ if(count($historial) > 0):
     <p>No hay fichajes registrados.</p>
 <?php endif; ?>
 
+<style>
+.alerta-amarilla { background:#fffbeb; border-left:4px solid #f59e0b; color:#92400e; }
+.alerta-naranja  { background:#fff7ed; border-left:4px solid #ea580c; color:#9a3412; }
+.alerta-roja     { background:#fff1f2; border-left:4px solid #dc2626; color:#991b1b; }
+</style>
+
+<div id="modal-alerta-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;padding:32px 28px;max-width:420px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);">
+        <div id="modal-alerta-icono" style="font-size:3rem;line-height:1;margin-bottom:12px;"></div>
+        <h3 id="modal-alerta-titulo" style="margin:0 0 10px;font-size:1.25rem;"></h3>
+        <p id="modal-alerta-texto" style="margin:0 0 22px;color:#555;line-height:1.5;"></p>
+        <button id="modal-alerta-cerrar" onclick="cerrarAlerta()" style="padding:10px 30px;border:none;border-radius:6px;cursor:pointer;font-size:1rem;font-weight:600;color:#fff;">Entendido</button>
+    </div>
+</div>
+
+<div id="qa-test-buttons" style="position:fixed;bottom:18px;right:18px;z-index:9000;display:flex;flex-direction:column;gap:4px;opacity:0.5;font-size:0.72rem;">
+    <span style="text-align:center;color:#555;letter-spacing:1px;font-weight:700;font-size:0.6rem;">TEST</span>
+    <button onclick="mostrarAlerta('amarilla')" style="padding:3px 8px;border:1px solid #d97706;background:#fef3c7;border-radius:4px;cursor:pointer;">🟡 Alerta Amarilla</button>
+    <button onclick="mostrarAlerta('naranja')"  style="padding:3px 8px;border:1px solid #ea580c;background:#fff7ed;border-radius:4px;cursor:pointer;">🟠 Alerta Naranja</button>
+    <button onclick="mostrarAlerta('roja')"     style="padding:3px 8px;border:1px solid #dc2626;background:#fff1f2;border-radius:4px;cursor:pointer;">🔴 Alerta Roja</button>
+</div>
+
 <script>
+    const ALERTAS = {
+        amarilla: { icono: '🟡', titulo: 'Alerta Meteorológica Amarilla', texto: 'Se han detectado condiciones meteorológicas adversas en tu zona. Extrema la precaución durante los desplazamientos.', color: '#d97706' },
+        naranja:  { icono: '🟠', titulo: 'Alerta Meteorológica Naranja',  texto: 'Condiciones meteorológicas de riesgo elevado en tu área. Actúa con mayor precaución y sigue las recomendaciones de las autoridades.', color: '#ea580c' },
+        roja:     { icono: '🔴', titulo: 'Alerta Meteorológica Roja',     texto: 'ALERTA ROJA: Se recomienda evitar desplazamientos. El fichaje ha sido deshabilitado por seguridad mientras persistan estas condiciones extremas.', color: '#dc2626', bloqueaFichaje: true }
+    };
+
+    // Umbrales: amarilla ≥50 km/h o ≥15 mm/h | naranja ≥70 km/h o ≥30 mm/h | roja ≥90 km/h o ≥60 mm/h
+    function evaluarAlertaMeteorologica(weatherData) {
+        const viento = (weatherData.wind?.speed ?? 0) * 3.6; // m/s → km/h
+        const lluvia = weatherData.rain?.['1h'] ?? 0;        // mm/h (ausente = sin lluvia)
+        if (viento >= 90 || lluvia >= 60) return 'roja';
+        if (viento >= 70 || lluvia >= 30) return 'naranja';
+        if (viento >= 50 || lluvia >= 15) return 'amarilla';
+        return null;
+    }
+
+    function bloquearFichaje(activar) {
+        document.querySelectorAll('.btn-fichaje, form button[type="submit"]').forEach(btn => {
+            btn.disabled = activar;
+            btn.classList.toggle('btn-disabled', activar);
+        });
+    }
+
+    function mostrarAlerta(nivel, esReal = false) {
+        const alerta = ALERTAS[nivel];
+        const overlay = document.getElementById('modal-alerta-overlay');
+        document.getElementById('modal-alerta-icono').textContent = alerta.icono;
+        document.getElementById('modal-alerta-titulo').textContent = alerta.titulo;
+        document.getElementById('modal-alerta-texto').textContent  = alerta.texto;
+        document.getElementById('modal-alerta-cerrar').style.background = alerta.color;
+        overlay.style.display  = 'flex';
+        overlay.dataset.nivel  = nivel;
+        overlay.dataset.esReal = esReal ? '1' : '';
+        if (alerta.bloqueaFichaje) {
+            bloquearFichaje(true);
+            sessionStorage.setItem('alertaRoja', 'activa');
+        }
+    }
+
+    function cerrarAlerta() {
+        document.getElementById('modal-alerta-overlay').style.display = 'none';
+    }
 
     document.addEventListener("DOMContentLoaded", function() {
+        if (sessionStorage.getItem('alertaRoja') === 'activa') bloquearFichaje(true);
+
         const apiKey = '69d2e88e83a50d651ac646d55dc998bb';
 
         if (navigator.geolocation) {
@@ -285,33 +351,29 @@ if(count($historial) > 0):
                         const code = data.weather[0].id; // Código de condición
                         const wind = data.wind.speed * 3.6; // Convertir m/s a km/h
 
-                        // --- LÓGICA DE ALERTA ROJA ---
-                        // Códigos 781 (Tornado) o vientos > 70km/h o tormentas extremas
-                        let alertaRoja = false;
-                        if (code === 781 || wind > 70 || desc.includes("extremo") || desc.includes("tornado")) {
-                            alertaRoja = true;
+                        const nivelAlerta = evaluarAlertaMeteorologica(data);
+                        if (nivelAlerta) {
+                            mostrarAlerta(nivelAlerta, true);
+                        } else if (sessionStorage.getItem('alertaRoja') === 'activa') {
+                            bloquearFichaje(false);
+                            sessionStorage.removeItem('alertaRoja');
                         }
 
-                        let dangerHtml = '';
-                        if (alertaRoja) {
-                            dangerHtml = `
-                                <div class="danger-msg">
-                                    ⚠️ PELIGRO METEOROLÓGICO: Fichaje deshabilitado por seguridad.
-                                </div>
-                            `;
-                            // Deshabilitar todos los botones de fichaje
-                            document.querySelectorAll('.btn-fichaje, button[type="submit"]').forEach(btn => {
-                                btn.classList.add('btn-disabled');
-                                btn.disabled = true;
-                            });
-                        }
+                        const alertaMsgs = {
+                            amarilla: '🟡 ALERTA AMARILLA: Condiciones meteorológicas adversas en tu zona.',
+                            naranja:  '🟠 ALERTA NARANJA: Condiciones de riesgo elevado. Actúa con precaución.',
+                            roja:     '🚨 ALERTA ROJA: Evita desplazamientos. Fichaje deshabilitado por seguridad.'
+                        };
+                        const dangerHtml = nivelAlerta
+                            ? `<div class="danger-msg alerta-${nivelAlerta}">${alertaMsgs[nivelAlerta]}</div>`
+                            : '';
 
                         document.getElementById('weather-widget').innerHTML = `
-                            <div class="weather-card ${alertaRoja ? 'danger' : ''}">
+                            <div class="weather-card ${nivelAlerta === 'roja' ? 'danger' : ''}">
                                 <div style="width: 100%;">
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <div class="weather-info">
-                                            <span class="weather-city">${city} ${alertaRoja ? '🚨' : ''}</span>
+                                            <span class="weather-city">${city} ${nivelAlerta === 'roja' ? '🚨' : ''}</span>
                                             <span class="weather-desc">${desc}</span>
                                             <span class="weather-temp">${temp}°C</span>
                                         </div>
