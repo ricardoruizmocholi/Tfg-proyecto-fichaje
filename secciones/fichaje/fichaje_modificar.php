@@ -145,11 +145,13 @@ $filtroHasta     = $_GET['fecha_hasta'] ?? date('Y-m-d');
     </div>
 <?php else: ?>
 
-    <?php foreach ($grupos as $fecha => $usuariosDelDia): ?>
+    <?php
+    $diasES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    foreach ($grupos as $fecha => $usuariosDelDia): ?>
         <!-- ── BLOQUE DÍA ── -->
         <div style="margin-bottom:25px;">
             <div style="background:#667eea;color:white;padding:10px 20px;border-radius:8px 8px 0 0;font-weight:700;font-size:15px;">
-                 <?= date('d/m/Y', strtotime($fecha)) ?> — <?= ucfirst(strftime('%A', strtotime($fecha))) ?>
+                 <?= date('d/m/Y', strtotime($fecha)) ?> — <?= $diasES[(int)date('w', strtotime($fecha))] ?>
             </div>
 
             <?php foreach ($usuariosDelDia as $idUsuario => $tramosUsuario): 

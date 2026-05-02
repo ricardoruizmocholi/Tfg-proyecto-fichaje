@@ -220,13 +220,15 @@ function formatearDuracion($seg) {
         </div>
     <?php else: ?>
 
-        <?php foreach ($fechasUnicas as $fecha): 
+        <?php
+        $diasES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+        foreach ($fechasUnicas as $fecha):
             $usuariosEnFecha = $usuariosPorFecha[$fecha] ?? [];
             if (empty($usuariosEnFecha)) continue;
         ?>
             <div class="day-container">
                 <div class="day-header">
-                     <?= date('d/m/Y', strtotime($fecha)) ?> — <?= ucfirst(strftime('%A', strtotime($fecha))) ?>
+                     <?= date('d/m/Y', strtotime($fecha)) ?> — <?= $diasES[(int)date('w', strtotime($fecha))] ?>
                 </div>
                 <div class="table-responsive">
                     <table class="f-table">
