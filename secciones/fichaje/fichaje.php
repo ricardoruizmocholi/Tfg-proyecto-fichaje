@@ -162,7 +162,7 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
             </form>
         <?php else: ?>
             <div style="background:#fff3f3;color:#d32f2f;padding:20px;border-radius:8px;border:1px solid #ffcdd2;text-align:center;">
-                <strong>🚫 Acceso Restringido</strong>
+                <strong><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></svg> Acceso Restringido</strong>
                 <p style="margin:10px 0 0;">Solo puedes fichar desde la red del despacho.</p>
                 <small>Tu IP: <?= $ip_usuario ?></small>
             </div>
@@ -185,7 +185,7 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
             </div>
         <?php else: ?>
             <div class="contendor_sin_horas">
-                <p>⚠️ No has fichado hoy todavía.</p>
+                <p><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg> No has fichado hoy todavía.</p>
             </div>
         <?php endif; ?>
     
@@ -209,7 +209,7 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
                 <?php if($mostrarSalida): ?>
                     <button type="submit" name="accion" value="salida" class="btn-fichaje btn-salida"> Fichar Salida</button>
                     <?php if($fichajeHoy['hora_pausa'] !== null && $fichajeHoy['hora_reanudacion'] === null): ?>
-                        <p style="color:#ff9800;margin-top:10px;">⚠️ Estás en pausa...</p>
+                        <p style="color:#ff9800;margin-top:10px;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg> Estás en pausa...</p>
                     <?php endif; ?>
                 <?php endif; ?>
             </form>

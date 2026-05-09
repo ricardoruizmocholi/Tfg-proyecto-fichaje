@@ -114,7 +114,7 @@ $umbralAlerta = max(1, ceil($totalEmpleados * 0.33));
     <div class="vac-leyenda">
         <span><span class="vac-chip aprobada"></span> Aprobada</span>
         <span><span class="vac-chip pendiente"></span> Pendiente aprobación</span>
-        <span><span class="vac-chip alerta"></span> ⚠️ Más del 33% del equipo</span>
+        <span><span class="vac-chip alerta"></span> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg> Más del 33% del equipo</span>
         <span><span class="vac-chip finde"></span> Fin de semana</span>
         <span style="color:#6c757d;font-size:12px;">Umbral de alerta: <?= $umbralAlerta ?> empleados/día</span>
     </div>
@@ -163,7 +163,7 @@ $umbralAlerta = max(1, ceil($totalEmpleados * 0.33));
                         <th class="vac-th-dia <?= $clsHead ?> <?= $esAlerta ? 'dia-alerta' : '' ?>">
                             <div><?= ['','L','M','X','J','V','S','D'][$dow] ?></div>
                             <div class="vac-th-num"><?= $d ?></div>
-                            <?php if ($esAlerta): ?><div class="vac-alerta-ico">⚠️</div><?php endif; ?>
+                            <?php if ($esAlerta): ?><div class="vac-alerta-ico"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg></div><?php endif; ?>
                         </th>
                     <?php endfor; ?>
                 </tr>
@@ -231,7 +231,7 @@ $umbralAlerta = max(1, ceil($totalEmpleados * 0.33));
     <!-- ── Aviso cobertura ──────────────────────────────── -->
     <?php if ($diasAlerta > 0): ?>
     <div style="margin-top:16px;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:14px 18px;font-size:13px;color:#856404;">
-        ⚠️ <strong>Atención:</strong> Hay <?= $diasAlerta ?> día<?= $diasAlerta > 1 ? 's' : '' ?>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg> <strong>Atención:</strong> Hay <?= $diasAlerta ?> día<?= $diasAlerta > 1 ? 's' : '' ?>
         en <?= $mesesNombres[$mesVer] ?> en los que más del 33% de la plantilla
         (≥ <?= $umbralAlerta ?> personas) coincide de vacaciones.
         Revisa las celdas marcadas antes de aprobar nuevas solicitudes.

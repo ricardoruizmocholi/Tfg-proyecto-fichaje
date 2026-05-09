@@ -41,7 +41,7 @@ $labelTipoContrato = [
                      alt="Foto de perfil" class="foto-perfil" id="fotoPerfil">
                 <button class="cambiar-foto-btn"
                         onclick="document.getElementById('inputFoto').click();"
-                        title="Cambiar foto">📷</button>
+                        title="Cambiar foto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/></svg></button>
                 <form id="formFoto" enctype="multipart/form-data" style="display:none;">
                     <input type="file" id="inputFoto" name="foto" accept="image/*" class="input-file-custom">
                 </form>
@@ -69,7 +69,7 @@ $labelTipoContrato = [
             </div>
             <div class="dato-item">
                 <div class="dato-label"> Estado</div>
-                <div class="dato-valor"><?= $datosUsuario['activo'] ? '✅ Activo' : '❌ Inactivo' ?></div>
+                <div class="dato-valor"><?= $datosUsuario['activo'] ? '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> Activo' : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> Inactivo' ?></div>
             </div>
         </div>
 
@@ -171,7 +171,7 @@ async function cargarResumen() {
                 Llevas <strong>${ha.acumuladas}h</strong> extra este año. El límite legal son <strong>${ha.limite}h/año</strong>.
                 Habla con tu responsable.</div></div>`;
         } else if (hm.excede) {
-            alertas += `<div class="alerta-laboral aviso">⚠️ <div><strong>Has excedido tu jornada este mes en ${hm.horas_extra}h.</strong>
+            alertas += `<div class="alerta-laboral aviso"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg> <div><strong>Has excedido tu jornada este mes en ${hm.horas_extra}h.</strong>
                 Se computarán como horas extra. Llevas <strong>${ha.acumuladas}h</strong> de ${ha.limite}h permitidas al año.</div></div>`;
         }
         if (v.dias_disponibles <= 2 && v.dias_disponibles > 0) {

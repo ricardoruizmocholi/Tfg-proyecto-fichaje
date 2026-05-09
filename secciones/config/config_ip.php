@@ -82,14 +82,14 @@ $ipActual = $_SERVER['REMOTE_ADDR'] ?? '';
                     IP exacta <code>192.168.1.50</code> o prefijo de subred <code>192.168.1.</code>
                 </p>
             </div>
-            <button class="cip-btn-add" onclick="abrirModal()">＋ Añadir IP</button>
+            <button class="cip-btn-add" onclick="abrirModal()"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Añadir IP</button>
         </div>
 
         <!-- Lista -->
         <div class="cip-ip-list" id="ipList">
             <?php if (empty($ipsAutorizadas)): ?>
                 <div class="cip-empty" id="emptyState">
-                    <span class="cip-empty-icon">🚫</span>
+                    <span class="cip-empty-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></svg></span>
                     <p>Sin IPs autorizadas. Con restricción activa <strong>nadie podrá fichar</strong>.</p>
                 </div>
             <?php else: ?>
@@ -150,7 +150,7 @@ function renderIpRow(array $row, string $ipActual): string {
             " . ($etq ? "<span class='cip-row-etq'>{$etq}</span>" : '') . "
         </div>
         {$badge}
-        <button class='cip-btn-del' onclick='eliminarIP({$id})' title='Eliminar'>🗑</button>
+        <button class='cip-btn-del' onclick='eliminarIP({$id})' title='Eliminar'><svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' width='1em' height='1em'><path stroke-linecap='round' stroke-linejoin='round' d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0'/></svg></button>
     </div>";
 }
 ?>
@@ -243,7 +243,7 @@ async function eliminarIP(id) {
             if (!document.querySelector('.cip-ip-row')) {
                 document.getElementById('ipList').innerHTML = `
                     <div class="cip-empty" id="emptyState">
-                        <span class="cip-empty-icon">🚫</span>
+                        <span class="cip-empty-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></svg></span>
                         <p>Sin IPs autorizadas. Con restricción activa <strong>nadie podrá fichar</strong>.</p>
                     </div>`;
             }
@@ -268,7 +268,7 @@ function insertarFilaIP(ip) {
             ${etqHtml}
         </div>
         ${badge}
-        <button class="cip-btn-del" onclick="eliminarIP(${ip.id})" title="Eliminar">🗑</button>
+        <button class="cip-btn-del" onclick="eliminarIP(${ip.id})" title="Eliminar"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg></button>
     </div>`;
     document.getElementById('ipList').insertAdjacentHTML('beforeend', html);
     requestAnimationFrame(() =>

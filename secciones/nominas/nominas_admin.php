@@ -28,9 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subir_nomina'])) {
     $ext = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
 
     if ($ext !== 'pdf') {
-        $alertaHtml = '<div class="nominas-alert error">❌ Solo se permiten archivos PDF.</div>';
+        $alertaHtml = '<div class="nominas-alert error"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> Solo se permiten archivos PDF.</div>';
     } elseif ($archivo['size'] > 10 * 1024 * 1024) {
-        $alertaHtml = '<div class="nominas-alert error">❌ El archivo no puede superar los 10MB.</div>';
+        $alertaHtml = '<div class="nominas-alert error"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> El archivo no puede superar los 10MB.</div>';
     } else {
         $directorio = __DIR__ . '/../uploads/nominas/';
         if (!is_dir($directorio)) mkdir($directorio, 0777, true);
@@ -48,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subir_nomina'])) {
             $pdo->prepare("INSERT INTO NOTIFICACIONES (id_usuario, mensaje, leida) VALUES (?, ?, 0)")
                 ->execute([$idEmpleado, $msgNotif]);
 
-            $alertaHtml = '<div class="nominas-alert success">✅ Documento subido y empleado notificado correctamente.</div>';
+            $alertaHtml = '<div class="nominas-alert success"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> Documento subido y empleado notificado correctamente.</div>';
         } else {
-            $alertaHtml = '<div class="nominas-alert error">❌ Error al guardar el archivo en el servidor.</div>';
+            $alertaHtml = '<div class="nominas-alert error"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> Error al guardar el archivo en el servidor.</div>';
         }
     }
 }
@@ -68,7 +68,7 @@ if (isset($_GET['borrar'])) {
         $rutaFisica = __DIR__ . '/../' . $doc['ruta_archivo'];
         if (file_exists($rutaFisica)) unlink($rutaFisica);
         $pdo->prepare("DELETE FROM documentos WHERE id_documento = ?")->execute([$idDoc]);
-        $alertaHtml = '<div class="nominas-alert success">✅ Documento eliminado correctamente.</div>';
+        $alertaHtml = '<div class="nominas-alert success"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> Documento eliminado correctamente.</div>';
     }
 }
 
@@ -109,7 +109,7 @@ $meses = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
             <h2> Gestión de Nóminas y Documentos</h2>
             <p>Sube y gestiona los documentos de los empleados de tu empresa</p>
         </div>
-        <div style="font-size:40px;opacity:0.3;">📄</div>
+        <div style="font-size:40px;opacity:0.3;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></div>
     </div>
 
     <?= $alertaHtml ?>
@@ -175,7 +175,7 @@ $meses = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
                                onchange="actualizarNombreArchivo(this)">
                         <!-- Label visual que activa el input por id -->
                         <label for="inputDocumento" class="file-input-label" id="fileLabel">
-                            <span class="file-icon">📎</span>
+                            <span class="file-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13"/></svg></span>
                             <span id="fileLabelText">Haz clic para seleccionar un PDF...</span>
                         </label>
                     </div>
@@ -201,7 +201,7 @@ $meses = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
         <div class="historial-table-wrapper">
             <?php if (empty($documentos)): ?>
                 <div class="empty-historial">
-                    <div class="empty-icon">📂</div>
+                    <div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 0 0-1.883 2.542l.857 6a2.25 2.25 0 0 0 2.227 1.932H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-1.883-2.542m-16.5 0V6A2.25 2.25 0 0 1 6 3.75h3.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 0 1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776"/></svg></div>
                     <p>No hay documentos subidos todavía</p>
                 </div>
             <?php else: ?>

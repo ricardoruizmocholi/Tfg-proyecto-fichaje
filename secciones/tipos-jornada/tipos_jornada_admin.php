@@ -61,10 +61,10 @@ $plantillas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php endif; ?>
                     </div>
                     <span class="plantilla-badge <?= $p['es_productivo'] ? 'productivo' : 'noproductivo' ?>">
-                        <?= $p['es_productivo'] ? '✅ Productiva' : '⏸ No productiva' ?>
+                        <?= $p['es_productivo'] ? '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> Productiva' : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5"/></svg> No productiva' ?>
                     </span>
                     <?php if (!$p['activo']): ?>
-                        <span class="plantilla-badge inactiva">🔴 Inactiva</span>
+                        <span class="plantilla-badge inactiva"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></svg> Inactiva</span>
                     <?php endif; ?>
                 </div>
                 <div class="plantilla-actions">
@@ -73,11 +73,11 @@ $plantillas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <button class="btn-action" title="<?= $p['activo'] ? 'Desactivar' : 'Activar' ?>"
                             onclick="toggleActivo(<?= $p['id_tipo_custom'] ?>, <?= $p['activo'] ? 0 : 1 ?>)"
                             style="color:<?= $p['activo'] ? '#dc3545' : '#28a745' ?>">
-                        <?= $p['activo'] ? '🚫 Desactivar' : '✅ Activar' ?>
+                        <?= $p['activo'] ? '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></svg> Desactivar' : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> Activar' ?>
                     </button>
                     <button class="btn-action" title="Eliminar"
                             onclick="eliminarPlantilla(<?= $p['id_tipo_custom'] ?>, '<?= htmlspecialchars($p['nombre_display']) ?>')"
-                            style="color:#dc3545;margin-left:auto;">🗑️</button>
+                            style="color:#dc3545;margin-left:auto;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg></button>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -137,7 +137,7 @@ $plantillas = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-primary">💾 Guardar</button>
+                <button type="submit" class="btn-primary"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg> Guardar</button>
                 <button type="button" class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
             </div>
         </form>
