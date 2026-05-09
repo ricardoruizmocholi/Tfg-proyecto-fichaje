@@ -48,7 +48,7 @@ if($tamano > 5 * 1024 * 1024) {
 }
 
 // Crear carpeta uploads si no existe
-$directorioUploads = __DIR__ . '/../secciones/uploads/';
+$directorioUploads = __DIR__ . '/../uploads/';
 if(!is_dir($directorioUploads)) {
     mkdir($directorioUploads, 0755, true);
 }
