@@ -21,7 +21,7 @@ require_once __DIR__ . '/../../config.php';
 
 // ── Parámetros de entrada ────────────────────────────────────
 $ip_vm      = "192.168.0.19";
-$url_ollama = "http://$ip_vm:11434/api/generate";
+$url_ollama = "https://ia.ricardorm.es/api/generate";
 
 $input    = json_decode(file_get_contents('php://input'), true);
 $pregunta = trim($input['mensaje']  ?? '');

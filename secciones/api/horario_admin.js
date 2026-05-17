@@ -383,13 +383,13 @@ async function aprobarDirecto(idSolicitud) {
     await procesarValidacion(idSolicitud, 'APROBAR', null);
 }
 
-async function rechazarDirecto(idSolicitud) {
-    const motivo = prompt('Indica el motivo del rechazo:');
-    if (!motivo || motivo.trim() === '') {
-        alert('Debes indicar un motivo para rechazar');
-        return;
-    }
-    await procesarValidacion(idSolicitud, 'RECHAZAR', motivo);
+function rechazarDirecto(idSolicitud) {
+    const sol = solicitudesData.find(s => s.id_solicitud == idSolicitud);
+    idSolicitudPendienteRechazo = idSolicitud;
+    document.getElementById('spanNombreEmpleado').textContent =
+        sol ? `${sol.nombre} ${sol.apellidos}` : '';
+    document.getElementById('inputMotivoRechazoFinal').value = '';
+    document.getElementById('modalConfirmarRechazo').style.display = 'block';
 }
 
 async function procesarValidacion(idSolicitud, accion, motivo) {
@@ -455,6 +455,28 @@ function formatearFechaCorta(fechaISO) {
         month: '2-digit',
         year: 'numeric'
     });
+}
+
+// ============================================
+// LIMPIAR PETICIONES RESUELTAS
+// ============================================
+async function limpiarResueltas() {
+    const dias = typeof DIAS_RETENER !== 'undefined' ? DIAS_RETENER : 30;
+    if (!confirm(`¿Eliminar todas las peticiones aprobadas/rechazadas con más de ${dias} días?\n\nEsta acción no se puede deshacer. Las pendientes no se tocarán.`)) return;
+    try {
+        const r = await fetch('secciones/api/limpiar_peticiones.php', { method: 'POST' });
+        const d = await r.json();
+        if (d.success) {
+            const n = d.eliminadas;
+            alert(`Limpieza completada: ${n} petición${n !== 1 ? 'es' : ''} eliminada${n !== 1 ? 's' : ''}.`);
+            cargarSolicitudes();
+        } else {
+            alert('Error: ' + d.message);
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Error de conexión al limpiar peticiones');
+    }
 }
 
 // Cerrar modal al hacer clic fuera
