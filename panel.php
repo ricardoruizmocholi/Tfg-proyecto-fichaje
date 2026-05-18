@@ -227,7 +227,10 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
          CHATBOT: Botón flotante
     ============================================= -->
     <button class="chat-fab" id="chatFab" title="Asistente IA" aria-label="Abrir asistente IA">
-        💬
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1.3em" height="1.3em" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"/>
+        </svg>
+        <span class="chat-badge" id="chatBadge" hidden aria-label="Respuesta pendiente"></span>
     </button>
 
     <div class="chat-modal" id="chatModal" role="dialog" aria-label="Asistente IA">
@@ -236,7 +239,14 @@ foreach ($_SESSION['usuario']['empresas'] as $emp) {
                 <span class="dot"></span>
                 Asistente IA
             </div>
-            <button class="chat-close-btn" id="chatCloseBtn" aria-label="Cerrar chat">×</button>
+            <div class="chat-header-btns">
+                <button class="chat-minimize-btn" id="chatMinimizeBtn" aria-label="Minimizar chat" title="Minimizar">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" width="1em" height="1em" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+                    </svg>
+                </button>
+                <button class="chat-close-btn" id="chatCloseBtn" aria-label="Cerrar chat" title="Minimizar">×</button>
+            </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
@@ -322,15 +332,19 @@ document.querySelectorAll(".submenu-btn").forEach(btn => {
 
 
 // ─────────────────────────────────────────────────────────
-// 3. CHATBOT (STREAMING DIRECTO A OLLAMA)
+// 3. CHATBOT (STREAMING DIRECTO A OLLAMA — HILO PARALELO)
 // ─────────────────────────────────────────────────────────
-const chatFab      = document.getElementById('chatFab');
-const chatModal    = document.getElementById('chatModal');
-const chatCloseBtn = document.getElementById('chatCloseBtn');
-const chatInput    = document.getElementById('chatInput');
-const chatSendBtn  = document.getElementById('chatSendBtn');
-const chatMessages = document.getElementById('chatMessages');
-const chatClearBtn = document.getElementById('chatClearBtn');
+
+// ── Referencias DOM ───────────────────────────────────────
+const chatFab         = document.getElementById('chatFab');
+const chatBadge       = document.getElementById('chatBadge');
+const chatModal       = document.getElementById('chatModal');
+const chatMinimizeBtn = document.getElementById('chatMinimizeBtn');
+const chatCloseBtn    = document.getElementById('chatCloseBtn');
+const chatInput       = document.getElementById('chatInput');
+const chatSendBtn     = document.getElementById('chatSendBtn');
+const chatMessages    = document.getElementById('chatMessages');
+const chatClearBtn    = document.getElementById('chatClearBtn');
 
 const ctxSeccion  = <?= json_encode($seccion) ?>;
 const ctxVista    = <?= json_encode($vista) ?>;
@@ -433,7 +447,17 @@ function construirPrompt(pregunta, historial) {
     return `Sistema: ${system}\n\n${conversacion ? conversacion + '\n' : ''}Usuario: ${pregunta}\nAsistente:`;
 }
 
-let historialChat = [];
+// ── Estado ───────────────────────────────────────────────
+let historialChat  = [];
+let burbujaBot     = null;
+let peticionActiva = false;
+let controller     = null;   // AbortController activo
+
+// ── Badge FAB ─────────────────────────────────────────────
+function mostrarBadge() { chatBadge.hidden = false; }
+function limpiarBadge() { chatBadge.hidden = true; }
+
+// ── Historial (sessionStorage) ────────────────────────────
 
 function cargarHistorial() {
     try {
@@ -455,12 +479,23 @@ function guardarHistorial() {
     try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(historialChat)); } catch (e) {}
 }
 
-chatFab.addEventListener('click', () => {
-    chatModal.classList.toggle('open');
-    if (chatModal.classList.contains('open')) chatInput.focus();
-});
+// ── Abrir / minimizar ─────────────────────────────────────
+function abrirChat() {
+    chatModal.classList.add('open');
+    limpiarBadge();
+    chatInput.focus();
+    scrollAbajo();
+}
 
-chatCloseBtn.addEventListener('click', () => chatModal.classList.remove('open'));
+function minimizarChat() {
+    chatModal.classList.remove('open');
+}
+
+chatFab.addEventListener('click', () => {
+    chatModal.classList.contains('open') ? minimizarChat() : abrirChat();
+});
+chatMinimizeBtn.addEventListener('click', minimizarChat);
+chatCloseBtn.addEventListener('click',    minimizarChat);
 
 chatClearBtn.addEventListener('click', () => {
     historialChat = [];
@@ -471,86 +506,101 @@ chatClearBtn.addEventListener('click', () => {
 chatInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensaje(); }
 });
-
 chatSendBtn.addEventListener('click', enviarMensaje);
 
 function scrollAbajo() { chatMessages.scrollTop = chatMessages.scrollHeight; }
 
-async function enviarMensaje() {
+// ── Enviar mensaje ────────────────────────────────────────
+function enviarMensaje() {
     const texto = chatInput.value.trim();
-    if (!texto || chatSendBtn.disabled) return;
+    if (!texto || peticionActiva) return;
 
-    const burbujaUser = document.createElement('div');
-    burbujaUser.className = 'chat-bubble user';
-    burbujaUser.textContent = texto;
-    chatMessages.appendChild(burbujaUser);
+    // Prompt ANTES de añadir al historial (evita duplicar el turno actual)
+    const prompt = construirPrompt(texto, historialChat);
+
+    const divUser = document.createElement('div');
+    divUser.className = 'chat-bubble user';
+    divUser.textContent = texto;
+    chatMessages.appendChild(divUser);
 
     chatInput.value = '';
     historialChat.push({ rol: 'usuario', texto });
     guardarHistorial();
 
-    chatSendBtn.disabled = true;
-    const burbujaBot = document.createElement('div');
+    burbujaBot = document.createElement('div');
     burbujaBot.className = 'chat-bubble bot streaming';
     chatMessages.appendChild(burbujaBot);
     scrollAbajo();
 
+    peticionActiva       = true;
+    chatSendBtn.disabled = true;
+    controller           = new AbortController();
+    _doFetch(prompt);
+}
+
+async function _doFetch(prompt) {
+    let textoCompleto = '';
     try {
         const response = await fetch(OLLAMA_URL, {
-            method: 'POST',
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+            body:    JSON.stringify({
                 model:   'asistente-fichajes',
-                prompt:  construirPrompt(texto, historialChat),
+                prompt,
                 stream:  true,
-                options: {
-                    temperature:    0.3,
-                    num_predict:    300,
-                    top_p:          0.85,
-                    repeat_penalty: 1.1,
-                    stop:           ['Usuario:', 'Sistema:']
-                }
-            })
+                options: { temperature: 0.3, num_predict: 300, top_p: 0.85, repeat_penalty: 1.1, stop: ['Usuario:', 'Sistema:'] }
+            }),
+            signal: controller.signal
         });
 
         const reader  = response.body.getReader();
         const decoder = new TextDecoder();
-        let respuestaCompleta = '';
         let buffer = '';
 
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-
-            // Acumular en buffer para manejar líneas partidas entre chunks
             buffer += decoder.decode(value, { stream: true });
-            const lineas = buffer.split('\n');
-            buffer = lineas.pop(); // la última puede estar incompleta
-
-            for (const linea of lineas) {
-                const raw = linea.trim();
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+            for (const line of lines) {
+                const raw = line.trim();
                 if (!raw) continue;
                 try {
                     const json = JSON.parse(raw);
-                    if (json.response) {
-                        respuestaCompleta += json.response;
-                        burbujaBot.textContent = respuestaCompleta;
-                        scrollAbajo();
+                    if (json.response && burbujaBot) {
+                        textoCompleto += json.response;
+                        burbujaBot.textContent += json.response;
+                        if (chatModal.classList.contains('open')) scrollAbajo();
+                        else mostrarBadge();
                     }
-                    // json.done === true → fin natural del stream
-                } catch (e) { /* línea incompleta o no JSON */ }
+                } catch (e) {}
             }
         }
 
-        historialChat.push({ rol: 'asistente', texto: respuestaCompleta });
+        if (burbujaBot) burbujaBot.classList.remove('streaming');
+        historialChat.push({ rol: 'asistente', texto: textoCompleto });
         guardarHistorial();
+        if (!chatModal.classList.contains('open') && textoCompleto) mostrarBadge();
+
     } catch (err) {
-        burbujaBot.textContent = '⚠️ Error de conexión con el asistente.';
+        if (err.name !== 'AbortError' && burbujaBot) {
+            burbujaBot.textContent = '⚠️ Error de conexión con el asistente.';
+            burbujaBot.classList.remove('streaming');
+        }
+        // AbortError = cambio de sección → silencioso
     } finally {
-        burbujaBot.classList.remove('streaming');
+        peticionActiva       = false;
         chatSendBtn.disabled = false;
+        burbujaBot           = null;
+        controller           = null;
     }
 }
+
+// Cancelar petición al cambiar de sección (page reload)
+window.addEventListener('beforeunload', () => {
+    if (controller) controller.abort();
+});
 
 // Cargar al inicio
 document.addEventListener('DOMContentLoaded', cargarHistorial);

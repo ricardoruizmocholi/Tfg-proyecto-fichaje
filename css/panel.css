@@ -4,7 +4,7 @@
         .chat-fab {
             position: fixed;
             bottom: 24px;
-            left: 1%; /* alineado con el sidebar de 220px */
+            right: 24px;
             width: 48px;
             height: 48px;
             background: #007bff;
@@ -39,7 +39,7 @@
         .chat-modal {
             position: fixed;
             bottom: 80px;
-            left: 230px;
+            right: 24px;
             width: 360px;
             max-height: 520px;
             background: #fff;
@@ -84,6 +84,41 @@
             border-radius: 50%;
             display: inline-block;
         }
+        /* Badge de respuesta pendiente en el FAB */
+        .chat-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 11px;
+            height: 11px;
+            background: #dc3545;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Agrupación de botones en la cabecera */
+        .chat-header-btns {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        /* Botón minimizar */
+        .chat-minimize-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            line-height: 1;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.8;
+            transition: opacity 0.15s;
+        }
+        .chat-minimize-btn:hover { opacity: 1; }
+
         .chat-close-btn {
             background: none;
             border: none;
@@ -206,13 +241,12 @@
         /* Responsive: en móvil el fab y modal ocupan bien */
         @media (max-width: 700px) {
             .chat-fab {
-                left: auto;
                 right: 16px;
-                bottom: 80px; /* encima de la barra inferior */
+                bottom: 80px;
             }
             .chat-modal {
-                left: 8px;
                 right: 8px;
+                left: 8px;
                 bottom: 140px;
                 width: auto;
             }
