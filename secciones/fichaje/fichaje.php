@@ -323,6 +323,17 @@ if(count($historial) > 0):
         if (alerta.bloqueaFichaje) {
             bloquearFichaje(true);
             sessionStorage.setItem('alertaRoja', 'activa');
+            if (!sessionStorage.getItem('alertaRojaEmailEnviado')) {
+                sessionStorage.setItem('alertaRojaEmailEnviado', 'true');
+                fetch('secciones/api/send_alerta_roja.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ empresa_id: <?= (int)$empresa ?>, nivel: 'roja' })
+                })
+                .then(r => r.json())
+                .then(d => { if (!d.success || d.errores?.length) console.error('Alerta roja email:', d); })
+                .catch(e => console.error('Alerta roja email fetch:', e));
+            }
         }
     }
 
@@ -357,6 +368,7 @@ if(count($historial) > 0):
                         } else if (sessionStorage.getItem('alertaRoja') === 'activa') {
                             bloquearFichaje(false);
                             sessionStorage.removeItem('alertaRoja');
+                            sessionStorage.removeItem('alertaRojaEmailEnviado');
                         }
 
                         const alertaMsgs = {
