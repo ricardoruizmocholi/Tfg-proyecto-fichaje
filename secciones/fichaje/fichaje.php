@@ -23,7 +23,7 @@ $hoy = date('Y-m-d');
 $idEmpresaActual = $_SESSION['empresa_activa'];
 
 $sqlHorarioHoy = "SELECT tipo_jornada, hora_inicio, hora_fin, orden_dia
-                  FROM HORARIOS
+                  FROM horarios
                   WHERE id_usuario = :idu AND id_empresa = :ide AND fecha = :hoy
                   ORDER BY orden_dia ASC";
 $stmtH = $pdo->prepare($sqlHorarioHoy);
@@ -51,7 +51,7 @@ $esPartida = $tienePartidaM || $tienePartidaT;
 // ---------------------------------------------------------------
 // Obtener fichajes de hoy (puede haber 2 en jornada partida)
 // ---------------------------------------------------------------
-$sqlF = "SELECT * FROM FICHAJE WHERE id_usuario = :idu AND fecha = CURDATE() ORDER BY id_fichaje ASC";
+$sqlF = "SELECT * FROM fichaje WHERE id_usuario = :idu AND fecha = CURDATE() ORDER BY id_fichaje ASC";
 $stmtF = $pdo->prepare($sqlF);
 $stmtF->execute(['idu' => $usuario['id']]);
 $fichajesHoy = $stmtF->fetchAll(PDO::FETCH_ASSOC);
@@ -223,10 +223,12 @@ $acceso_permitido = fichaje_ip_permitida($pdo, (int)$_SESSION['empresa_activa'])
     </div>
 <?php endif; ?>
 
+<div id="alerta-bloqueo-msg" style="display:none;margin:12px 0 0;background:#fff1f2;border:1px solid #dc2626;border-radius:8px;padding:12px 16px;color:#991b1b;font-size:0.93rem;font-weight:500;"></div>
+
 <hr style="margin:30px 0;">
 <h3>Últimos fichajes</h3>
 <?php
-$sqlH = "SELECT * FROM FICHAJE WHERE id_usuario = :idu ORDER BY fecha DESC, id_fichaje DESC LIMIT 10";
+$sqlH = "SELECT * FROM fichaje WHERE id_usuario = :idu ORDER BY fecha DESC, id_fichaje DESC LIMIT 10";
 $stmtHL = $pdo->prepare($sqlH);
 $stmtHL->execute(['idu' => $usuario['id']]);
 $historial = $stmtHL->fetchAll(PDO::FETCH_ASSOC);
@@ -283,7 +285,7 @@ if(count($historial) > 0):
     <span style="text-align:center;color:#555;letter-spacing:1px;font-weight:700;font-size:0.6rem;">TEST</span>
     <button onclick="mostrarAlerta('amarilla')" style="padding:3px 8px;border:1px solid #d97706;background:#fef3c7;border-radius:4px;cursor:pointer;">🟡 Alerta Amarilla</button>
     <button onclick="mostrarAlerta('naranja')"  style="padding:3px 8px;border:1px solid #ea580c;background:#fff7ed;border-radius:4px;cursor:pointer;">🟠 Alerta Naranja</button>
-    <button onclick="mostrarAlerta('roja')"     style="padding:3px 8px;border:1px solid #dc2626;background:#fff1f2;border-radius:4px;cursor:pointer;">🔴 Alerta Roja</button>
+    <button onclick="mostrarAlerta('roja', false, 'simulacion')" style="padding:3px 8px;border:1px solid #dc2626;background:#fff1f2;border-radius:4px;cursor:pointer;">🔴 Alerta Roja</button>
 </div>
 
 <script>
@@ -297,20 +299,37 @@ if(count($historial) > 0):
     function evaluarAlertaMeteorologica(weatherData) {
         const viento = (weatherData.wind?.speed ?? 0) * 3.6; // m/s → km/h
         const lluvia = weatherData.rain?.['1h'] ?? 0;        // mm/h (ausente = sin lluvia)
-        if (viento >= 90 || lluvia >= 60) return 'roja';
-        if (viento >= 70 || lluvia >= 30) return 'naranja';
-        if (viento >= 50 || lluvia >= 15) return 'amarilla';
+        const altaV = viento >= 90;
+        const altaL = lluvia >= 60;
+        if (altaV && altaL) return { nivel: 'roja',    causa: 'ambas'   };
+        if (altaV)          return { nivel: 'roja',    causa: 'viento'  };
+        if (altaL)          return { nivel: 'roja',    causa: 'lluvia'  };
+        if (viento >= 70 || lluvia >= 30) return { nivel: 'naranja',  causa: null };
+        if (viento >= 50 || lluvia >= 15) return { nivel: 'amarilla', causa: null };
         return null;
     }
 
-    function bloquearFichaje(activar) {
+    function bloquearFichaje(causa) {
+        const bloqueado = causa !== null && causa !== undefined && causa !== false;
         document.querySelectorAll('.btn-fichaje, form button[type="submit"]').forEach(btn => {
-            btn.disabled = activar;
-            btn.classList.toggle('btn-disabled', activar);
+            btn.disabled = bloqueado;
+            btn.classList.toggle('btn-disabled', bloqueado);
         });
+        const msgDiv = document.getElementById('alerta-bloqueo-msg');
+        if (!msgDiv) return;
+        if (!bloqueado) { msgDiv.style.display = 'none'; msgDiv.innerHTML = ''; return; }
+        const msgs = {
+            viento:     'Fichaje bloqueado — Alerta roja por viento extremo (≥90 km/h). Evite desplazamientos.',
+            lluvia:     'Fichaje bloqueado — Alerta roja por lluvias extremas (≥60 mm/h). Evite desplazamientos.',
+            ambas:      'Fichaje bloqueado — Alerta roja por viento extremo y lluvias extremas. Evite desplazamientos.',
+            simulacion: 'Fichaje bloqueado — Alerta roja activa. Evite desplazamientos.'
+        };
+        const svgStop = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="1em" height="1em" style="vertical-align:-0.125em"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></svg>';
+        msgDiv.innerHTML = svgStop + ' ' + (msgs[causa] ?? msgs.simulacion);
+        msgDiv.style.display = 'block';
     }
 
-    function mostrarAlerta(nivel, esReal = false) {
+    function mostrarAlerta(nivel, esReal = false, causa = 'simulacion') {
         const alerta = ALERTAS[nivel];
         const overlay = document.getElementById('modal-alerta-overlay');
         document.getElementById('modal-alerta-icono').textContent = alerta.icono;
@@ -321,8 +340,8 @@ if(count($historial) > 0):
         overlay.dataset.nivel  = nivel;
         overlay.dataset.esReal = esReal ? '1' : '';
         if (alerta.bloqueaFichaje) {
-            bloquearFichaje(true);
-            sessionStorage.setItem('alertaRoja', 'activa');
+            bloquearFichaje(causa);
+            sessionStorage.setItem('alertaRoja', causa);
             if (!sessionStorage.getItem('alertaRojaEmailEnviado')) {
                 sessionStorage.setItem('alertaRojaEmailEnviado', 'true');
                 fetch('secciones/api/send_alerta_roja.php', {
@@ -342,7 +361,8 @@ if(count($historial) > 0):
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        if (sessionStorage.getItem('alertaRoja') === 'activa') bloquearFichaje(true);
+        const causaGuardada = sessionStorage.getItem('alertaRoja');
+        if (causaGuardada) bloquearFichaje(causaGuardada);
 
         const apiKey = '69d2e88e83a50d651ac646d55dc998bb';
 
@@ -362,15 +382,16 @@ if(count($historial) > 0):
                         const code = data.weather[0].id; // Código de condición
                         const wind = data.wind.speed * 3.6; // Convertir m/s a km/h
 
-                        const nivelAlerta = evaluarAlertaMeteorologica(data);
-                        if (nivelAlerta) {
-                            mostrarAlerta(nivelAlerta, true);
-                        } else if (sessionStorage.getItem('alertaRoja') === 'activa') {
-                            bloquearFichaje(false);
+                        const resultadoAlerta = evaluarAlertaMeteorologica(data);
+                        if (resultadoAlerta) {
+                            mostrarAlerta(resultadoAlerta.nivel, true, resultadoAlerta.causa);
+                        } else if (sessionStorage.getItem('alertaRoja')) {
+                            bloquearFichaje(null);
                             sessionStorage.removeItem('alertaRoja');
                             sessionStorage.removeItem('alertaRojaEmailEnviado');
                         }
 
+                        const nivelAlerta = resultadoAlerta?.nivel ?? null;
                         const alertaMsgs = {
                             amarilla: '🟡 ALERTA AMARILLA: Condiciones meteorológicas adversas en tu zona.',
                             naranja:  '🟠 ALERTA NARANJA: Condiciones de riesgo elevado. Actúa con precaución.',
