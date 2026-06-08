@@ -259,7 +259,7 @@ if(count($historial) > 0):
 <script>
 
     document.addEventListener("DOMContentLoaded", function() {
-        const apiKey = '69d2e88e83a50d651ac646d55dc998bb';
+        const apiKey = '<?= OWM_API_KEY ?>';
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {

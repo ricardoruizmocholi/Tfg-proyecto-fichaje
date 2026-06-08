@@ -45,12 +45,12 @@ $mail = new PHPMailer(true);
 try {
     // Configuración del servidor SMTP
     $mail->isSMTP();
-    $mail->Host       = 'smtp.gmail.com';
+    $mail->Host       = MAIL_HOST;
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'ricardoruizm99@gmail.com';
-    $mail->Password   = 'acqu mnfq gfxc bngd';
+    $mail->Username   = MAIL_USERNAME;
+    $mail->Password   = MAIL_PASSWORD;
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = 587;
+    $mail->Port       = MAIL_PORT;
     $mail->CharSet    = 'UTF-8';
     
     // Opciones SSL para desarrollo local
@@ -63,7 +63,7 @@ try {
     );
 
     // Remitente y destinatario
-    $mail->setFrom('ricardoruizm99@gmail.com', 'Sistema de Fichajes');
+    $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
     $mail->addAddress($email, $user['nombre']);
 
     // Contenido del email

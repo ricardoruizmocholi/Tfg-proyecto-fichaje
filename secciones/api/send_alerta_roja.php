@@ -48,12 +48,12 @@ foreach ($empleados as $emp) {
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
+        $mail->Host       = MAIL_HOST;
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'ricardoruizm99@gmail.com';
-        $mail->Password   = 'acqu mnfq gfxc bngd';
+        $mail->Username   = MAIL_USERNAME;
+        $mail->Password   = MAIL_PASSWORD;
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Port       = MAIL_PORT;
         $mail->CharSet    = 'UTF-8';
         $mail->SMTPOptions = [
             'ssl' => [
@@ -63,7 +63,7 @@ foreach ($empleados as $emp) {
             ]
         ];
 
-        $mail->setFrom('ricardoruizm99@gmail.com', 'Sistema de Fichajes');
+        $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
         $mail->addAddress($emp['email'], $emp['nombre'] . ' ' . $emp['apellidos']);
 
         $nombre = htmlspecialchars($emp['nombre']);

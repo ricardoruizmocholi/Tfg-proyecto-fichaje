@@ -1,2 +1,5 @@
 # Ignorar dependencias
 PHPMailer/
+
+# Credenciales sensibles — nunca subir a git
+secrets.php

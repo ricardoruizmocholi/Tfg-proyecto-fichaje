@@ -364,7 +364,7 @@ if(count($historial) > 0):
         const causaGuardada = sessionStorage.getItem('alertaRoja');
         if (causaGuardada) bloquearFichaje(causaGuardada);
 
-        const apiKey = '69d2e88e83a50d651ac646d55dc998bb';
+        const apiKey = '<?= OWM_API_KEY ?>';
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {

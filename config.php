@@ -5,6 +5,8 @@
  * Incluido por panel.php y por todos los endpoints que acceden a la BD.
  * Si la conexión falla en una petición AJAX devuelve JSON de error; en páginas normales hace die().
  */
+require_once __DIR__ . '/secrets.php';
+
 $host = "localhost";
 $user = "root";
 $pass = "";
